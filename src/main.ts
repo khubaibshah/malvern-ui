@@ -1,5 +1,6 @@
 import './assets/style.css'
-import 'primevue/resources/themes/aura-light-indigo/theme.css';
+// import 'primevue/resources/themes/aura-light-indigo/theme.css';
+import 'primevue/resources/themes/aura-dark-indigo/theme.css';
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 const pinia = createPinia();
@@ -31,6 +32,9 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import ProgressBar from 'primevue/progressbar';
 
+import InputGroup from 'primevue/inputgroup';
+import InputGroupAddon from 'primevue/inputgroupaddon';
+
 
 
 
@@ -54,6 +58,7 @@ app.use(router)
 app.directive('badge', BadgeDirective);
 app.directive('styleclass', StyleClass);
 app.directive('ripple', Ripple);
+app.directive('styleclass', StyleClass);
 
 
 app.component('InputText', InputText);
@@ -75,6 +80,8 @@ app.component('PrimeCard', Card);
 app.component('IconField', IconField);
 app.component('InputIcon', InputIcon);
 app.component('ProgressBar', ProgressBar);
+app.component('InputGroup', InputGroup);
+app.component('InputGroupAddon', InputGroupAddon);
 
 app.config.globalProperties.$filters = {
     currencyGBP(value: number | string) {

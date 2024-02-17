@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import axios from 'axios'
-import Nav from './components/navigation.vue'
+
 
 const name = ref('')
 const email = ref('')
@@ -83,7 +83,7 @@ onMounted(async () => {})
 <template>
   <div>
     <PrimeToast />
-    <Nav /> 
+    <!-- <Nav />  -->
       <div class="surface-section px-4 py-5 md:px-6 lg:px-8 mt-3">
       <div
         class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border"
@@ -143,21 +143,6 @@ onMounted(async () => {})
         </div>
       </div>
     </div>
-<div class="grid grid-nogutter surface-section text-800">
-    <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center ">
-        <section>
-            <span class="block text-6xl font-bold mb-1">Create the screens</span>
-            <div class="text-6xl text-primary font-bold mb-3">visitors deserve to see</div>
-            <p class="mt-0 mb-4 text-700 line-height-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-
-            <PrimeButton label="Learn More" type="button" class="mr-3 p-button-raised"></PrimeButton>
-            <PrimeButton label="Live Demo" type="button" class="p-button-outlined"></PrimeButton>
-        </section>
-    </div>
-    <div class="col-12 md:col-6 overflow-hidden">
-        <img src="../assets/img/hero-bg.jpg" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
-    </div>
-</div>
 
 <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
     <div class="grid">
@@ -170,7 +155,8 @@ onMounted(async () => {})
         <div class="col-12 md:col-6 flex align-items-center md:justify-content-end">
             <div>
                 <div class="text-900 font-medium justify-content-start mb-3">Round Trip Dates</div>
-                <PrimeCalendar v-model="date1" dateFormat="dd/mm/yy" :showIcon="true" selectionMode="range" :style="{'min-width': '240px'}" inputClass="'bg-transparent text-900 border-400'"></PrimeCalendar>
+                <PrimeCalendar id="calendar-24h" v-model="datetime24h" showTime hourFormat="24"  :showIcon="true" selectionMode="range" :style="{'min-width': '240px'}" inputClass="'bg-transparent text-900 border-400'"/>
+                <!-- <PrimeCalendar v-model="date1" dateFormat="dd/mm/yy" :showIcon="true" selectionMode="range" :style="{'min-width': '240px'}" inputClass="'bg-transparent text-900 border-400'"></PrimeCalendar> -->
                 <PrimeButton label="Book Now" icon="pi pi-check" class="block mt-3 font-bold white-space-nowrap p-button-outlined w-full"></PrimeButton>
             </div>
         </div>
