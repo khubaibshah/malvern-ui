@@ -40,7 +40,7 @@ import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import BadgeDirective from 'primevue/badgedirective';
 import App from './App.vue'
-import router from './router'
+import router from './router/router'
 
 
 const app = createApp(App)
@@ -76,7 +76,28 @@ app.component('IconField', IconField);
 app.component('InputIcon', InputIcon);
 app.component('ProgressBar', ProgressBar);
 
-
+app.config.globalProperties.$filters = {
+    currencyGBP(value: number | string) {
+        return Intl.NumberFormat("en-GB", {
+            style: "currency",
+            currency: import.meta.env.VITE_APP_REGION === 'UK' ? 'GBP' : 'EUR',
+            currencyDisplay: 'symbol',
+        }).format(Number(value))
+    },
+    formatDate: (value: string) => {
+        return new Intl.DateTimeFormat('en-GB').format(new Date(value));
+    },
+    formatDateTime: (value: string) => {
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        };
+        return new Intl.DateTimeFormat('en-GB', options).format(new Date(value));
+    },
+};
 
 
 app.mount('#app')
