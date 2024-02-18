@@ -57,9 +57,11 @@
                 </ul>
             </li>
             <li>
-                <a v-ripple :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'">
-                    <i class="pi pi-calendar mr-2"></i>
-                    <span>Calendar</span>
+                <a v-ripple 
+                @click="router.push({name: 'createbooking'})"
+                :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'">
+                    <i class="pi pi-booking mr-2"></i>
+                    <span>Create Booking</span>
                 </a>
             </li>
             <li>
