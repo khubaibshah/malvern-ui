@@ -13,7 +13,7 @@
             Malvern Autos
           </div>
           <p class="mt-0 mb-2 text-700 line-height-3">
-            To book an appointment with us, please fill in the fields below. Testing for deployment of aws
+            To book an appointment with us, please fill in the fields below.
           </p>
           <div class="grid">
             <div class="col-12 md:col-12 lg:col-12">
