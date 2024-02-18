@@ -1,8 +1,32 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import type { Nullable } from 'primevue/ts-helpers';
+import { ref } from 'vue';
 
-const quantities1 = ref(["test"]);
-const selectedCard = ref();
+// Define reactive properties
+const selectedAddress = ref<string>(''); // Assuming selectedAddress is a string
+const address1 = ref<string>(''); // Assuming address1 is a string
+const address2 = ref<string>(''); // Assuming address2 is a string
+const quantities1 = ref<Nullable<number>[]>([null]); // Assuming quantities1 is an array of nullable numbers
+const selectedCard = ref<string>(''); // Assuming selectedCard is a string
+const card1 = ref<string>(''); // Assuming card1 is a string
+const card2 = ref<string>(''); // Assuming card2 is a string
+    const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+};
+
+// You can initialize these properties with appropriate values if needed
+// For example:
+// selectedAddress.value = 'Some default value';
+// address1.value = 'Some default value';
+// address2.value = 'Some default value';
+// quantities1.value = ['test'];
+
+// Define methods or computed properties if needed
+
 </script>
 <template>
   <div class="surface-50 px-4 py-5 md:px-6 lg:px-8">

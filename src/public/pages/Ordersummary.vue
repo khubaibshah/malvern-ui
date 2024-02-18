@@ -1,6 +1,17 @@
 <script lang="ts" setup>
 import router from '@/router/router'
+import { ref } from 'vue';
+const date = ref<Date | null>(null); // Define date property
+const quantities1 = ref<number>(0); // Define quantities1 property
+const value3 = ref<string>(''); // Define value3 property
 
+// Define $filters object with formatDate method
+const $filters = {
+  formatDate(date: Date): string {
+    // Implement your date formatting logic here
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  }
+};
 </script>
 
 <template>
@@ -78,7 +89,7 @@ import router from '@/router/router'
                 <div class="py-2 mt-3 border-bottom-1 surface-border">
                   <div class="flex justify-content-between align-items-center mb-3">
                     <span class="text-900">Date for Repairs</span>
-                    <span class="text-900">{{ $filters.formatDate(Date()) }}</span>
+                    <span class="text-900">{{ $filters.formatDate(new Date()) }}</span>
                   </div>
                   <div class="flex justify-content-between align-items-center mb-3">
                     <span class="text-900">Subtotal</span>

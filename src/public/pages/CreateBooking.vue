@@ -12,7 +12,7 @@ const notes = ref('')
 
 const date = ref()
 const bookings = ref()
-
+const datetime24h = ref()
 
 
 const toast = useToast()
