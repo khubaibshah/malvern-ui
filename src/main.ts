@@ -1,6 +1,6 @@
 import './assets/style.css'
 // import 'primevue/resources/themes/aura-light-indigo/theme.css';
-import 'primevue/resources/themes/aura-dark-indigo/theme.css';
+import 'primevue/resources/themes/aura-dark-amber/theme.css';
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 const pinia = createPinia();
@@ -31,13 +31,12 @@ import Card from 'primevue/card';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import ProgressBar from 'primevue/progressbar';
-
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
-
-
-
-
+import Tree from 'primevue/tree';
+import Steps from 'primevue/steps';
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
 
 
 import Toast from 'primevue/toast';
@@ -61,6 +60,8 @@ app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
 
 
+app.component('AccordionTab', AccordionTab);
+app.component('Accordion', Accordion);
 app.component('InputText', InputText);
 app.component('PrimeButton', Button);
 app.component('DataTable', DataTable);
@@ -82,6 +83,8 @@ app.component('InputIcon', InputIcon);
 app.component('ProgressBar', ProgressBar);
 app.component('InputGroup', InputGroup);
 app.component('InputGroupAddon', InputGroupAddon);
+app.component('PrimeTree', Tree);
+app.component('PrimeSteps', Steps);
 
 app.config.globalProperties.$filters = {
     currencyGBP(value: number | string) {
