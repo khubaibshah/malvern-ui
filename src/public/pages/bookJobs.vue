@@ -163,7 +163,7 @@ import { nodes } from "@/components/reusable/repairMenu";
           filterMode="lenient"
         ></PrimeTree>
       </div>
-      <div class="col-12 md:col-12 lg:col-5">
+      <div class="col-12 md:col-12 lg:col-6">
         <div class="px-0 py-4 md:px-4">
           <div class="border-round surface-card">
             <div class="text-2xl text-500 mb-3">
@@ -181,7 +181,7 @@ The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line
           </div>
         </div>
       </div>
-      <div class="col-12 md:col-12 lg:col-4">
+      <div class="col-12 md:col-12 lg:col-3">
         <div class="px-0 py-4 md:px-4">
           <div class="border-round surface-card">
             <div class="text-2xl text-500 mb-3">
