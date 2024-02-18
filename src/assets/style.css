@@ -30,3 +30,15 @@
     height: 4vh;
     font-size: medium;
   }
+  .car-details-container {
+    animation: fadeIn 0.7s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }

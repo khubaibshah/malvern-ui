@@ -4,7 +4,7 @@
       class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center"
     >
       <section>
-        <div v-if="!showCarDetails">
+        <div>
           <span class="block text-6xl font-bold mb-1">Welcome to</span>
           <div class="text-6xl text-primary font-bold mb-3" style="color:#f97316!important">Malvern Autos</div>
           <p class="mt-0 mb-4 text-700 line-height-3">
@@ -40,7 +40,7 @@
               <PrimeButton
                 class="w-full border-400 md:w-30rem"
                 label="Create Booking"
-                @click="showCarDetails = true"
+                @click="router.push({name: 'cardetails'})"
                 v-styleclass="{
                   selector: '.carDetailsForm',
                   enterActiveClass: 'my-fadein',
@@ -50,9 +50,9 @@
           </div>
         </div>
 
-        <div v-else class="carDetailsForm">
+        <!-- <div v-else class="carDetailsForm">
           <CarDetails />
-        </div>
+        </div> -->
       </section>
     </div>
     <div class="col-12 md:col-6 overflow-hidden" style="height: 60vh">
@@ -69,7 +69,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CarDetails from "@/public/pages/CarDetails.vue";
-
+import router from "@/router/router";
 const showCarDetails = ref(false);
 </script>
 

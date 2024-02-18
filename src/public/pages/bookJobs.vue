@@ -4,7 +4,7 @@ import { nodes } from "@/components/reusable/repairMenu";
 </script>
 
 <template>
-  <div class="surface-section px-4 pt-5 md:px-6 lg:px-8">
+  <div class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container">
     <div
       class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border mb-3"
     >
