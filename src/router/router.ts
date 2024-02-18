@@ -3,6 +3,7 @@ import CreateBookingVue from '@/public/pages/CreateBooking.vue'
 import HomePage from '@/public/pages/HomePage.vue'
 import CarDetails from '@/public/pages/CarDetails.vue'
 import bookJob from '@/public/pages/bookJobs.vue'
+import payment from '@/public/pages/Payment.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/bookJob',
       name: 'bookJob',
       component: bookJob
+    },
+    {
+      path: '/payment',
+      name: 'payment',
+      component: payment
     },
     // {
     //   path: '/about',

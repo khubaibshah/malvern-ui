@@ -17,7 +17,7 @@ const router = useRouter();
             Malvern Autos
           </div>
           <p class="mt-0 mb-4 text-700 line-height-3">
-            To book an appointment with us, please fill in the fields below.
+            Please confirm this is your car.
           </p>
           <div class="grid">
             <div class="col-12 md:col-12 lg:col-4">

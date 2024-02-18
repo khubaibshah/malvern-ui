@@ -28,7 +28,7 @@ export const nodes = [
     },
     {
       label: 'Exhaust',
-      icon: 'pi wrench'
+      icon: 'pi pi-wrench'
     }
   ];
   
