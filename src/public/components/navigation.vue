@@ -11,7 +11,9 @@
     <div :class="'align-items-center flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full bg-' + backgroundColor + '-500 left-0 top-100 z-1 shadow-2 lg:shadow-none'">
         <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row">
             <li>
-                <a v-ripple :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'">
+                <a v-ripple 
+                @click="router.push({name: 'home'})"
+                :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'">
                     <i class="pi pi-home mr-2"></i>
                     <span>Home</span>
                 </a>
@@ -93,6 +95,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-
+import router from '@/router/router';
 const backgroundColor = ref('orange'); // Default color is indigo 
 </script>

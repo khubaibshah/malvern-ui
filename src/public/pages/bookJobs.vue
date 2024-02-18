@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { nodes } from "@/components/reusable/repairNode";
+import { nodes } from "@/components/reusable/repairMenu";
 </script>
 
 <template>
@@ -152,6 +152,11 @@ import { nodes } from "@/components/reusable/repairNode";
             Vivamus id nisl interdum, blandit augue sit amet, eleifend mi.
           </div>
         </div>
+        <div class="surface-card pl-4 border-round">
+          <div class="text-2xl text-500 mb-3">
+            Search for repairs below.
+          </div>
+        </div>
         <PrimeTree
           :value="nodes"
           :filter="true"
@@ -160,14 +165,41 @@ import { nodes } from "@/components/reusable/repairNode";
       </div>
       <div class="col-12 md:col-12 lg:col-5">
         <div class="px-0 py-4 md:px-4">
-          <div class="border-2 surface-border border-round surface-card"></div>
+          <div class="border-round surface-card">
+            <div class="text-2xl text-500 mb-3">
+            Avaliable Repairs
+          </div>
+          <PrimeDivider></PrimeDivider>
+            Where does it come from?
+Contrary to popular belief, Lorem Ipsum is not simply random text. 
+It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. 
+Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, 
+from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. 
+Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, 
+written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. 
+The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+          </div>
         </div>
       </div>
       <div class="col-12 md:col-12 lg:col-4">
         <div class="px-0 py-4 md:px-4">
-          <div class="border-2 surface-border border-round surface-card"></div>
+          <div class="border-round surface-card">
+            <div class="text-2xl text-500 mb-3">
+            Summary
+          </div>
+          <PrimeDivider></PrimeDivider>
+            Where does it come from?
+Contrary to popular belief, Lorem Ipsum is not simply random text. 
+It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. 
+Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, 
+from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. 
+Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, 
+written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. 
+The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+@/components/reusable/repairMenu

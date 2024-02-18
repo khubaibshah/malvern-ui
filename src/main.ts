@@ -37,6 +37,8 @@ import Tree from 'primevue/tree';
 import Steps from 'primevue/steps';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
+import FloatLabel from 'primevue/floatlabel';
+
 
 
 import Toast from 'primevue/toast';
@@ -85,6 +87,8 @@ app.component('InputGroup', InputGroup);
 app.component('InputGroupAddon', InputGroupAddon);
 app.component('PrimeTree', Tree);
 app.component('PrimeSteps', Steps);
+app.component('PrimeFloatLabel', FloatLabel);
+
 
 app.config.globalProperties.$filters = {
     currencyGBP(value: number | string) {
