@@ -189,6 +189,22 @@ onMounted(() => {
               />
             </InputGroup>
           </div>
+          <div class="font-medium text-500 mb-3">
+
+            <div class="flex justify-content-between flex-wrap">
+                <div
+                  class="flex align-items-center justify-content-center font-bold border-round"
+                >
+                Not your car? Type in your Reg
+                  <PrimeButton
+                    label="and click me"
+                    text
+                    class="ml-0"
+                    @click="handleRegistrationNumberChange()"
+                  />
+                </div>
+              </div>
+          </div>
           <!-- extra data to add here about users car -->
           <div class="font-medium text-500 mb-3" v-if="vehicleDataDb">
             <div class="flex justify-content-between flex-wrap mt-3">
@@ -249,35 +265,7 @@ onMounted(() => {
                   <PrimeDivider></PrimeDivider>
                 </div>
           </div> 
-          <div class="font-medium text-500 mb-3">
-            Not your car? Click here to change your vehicle.
-            <div class="flex justify-content-between flex-wrap">
-                <div
-                  class="flex align-items-center justify-content-center font-bold border-round"
-                >
-                  <PrimeButton
-                    label="Not my car"
-                    text
-                    class="ml-0"
-                    icon="pi pi-refresh"
-                    @click="handleRegistrationNumberChange()"
-                  />
-                </div>
-                <div
-                  class="flex align-items-center justify-content-center font-bold border-round"
-                >
-                  <!-- <PrimeButton
-                    label="Get Vehicle Details"
-                    @click="router.push({name:'bookJob'})"
-                    class="w-full flex justify-content-end mt-2"
-                    v-styleclass="{
-                      selector: '.carDetailsForm',
-                      enterActiveClass: 'my-fadein',
-                    }"
-                  /> -->
-                </div>
-              </div>
-          </div>
+          
         </div>
         <div class="surface-card border-round">
           <div class="text-2xl text-500 mb-3">Search for repairs below.</div>
