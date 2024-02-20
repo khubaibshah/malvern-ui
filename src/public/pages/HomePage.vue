@@ -84,31 +84,26 @@
     </div>
     <div v-else>
       <!-- Render the CarDetails component when showCarDetails is true -->
-      <CarDetails :vehData="vehData" @showHomePage="handleCarDetails"/>
+      <CarDetails :vehData="vehData"/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import CarDetails from "@/public/pages/CarDetails.vue";
-import router from "@/router/router";
-const showCarDetails = ref(false);
-const vehData = ref();
-import axios from "axios";
-const registrationNumber = ref(""); // Reactive variable to store the registration number input
-const handleCarDetails = (isVisible: boolean) => {
-  showCarDetails.value = isVisible
-}
+import { ref } from 'vue';
+import axios from 'axios';
+import CarDetails from '@/public/pages/CarDetails.vue';
+
+const showCarDetails = ref(false); // Reactive variable to control whether to show the car details section
+const vehData = ref(); // Reactive variable to store the vehicle details
+const registrationNumber = ref(''); // Reactive variable to store the registration number input
+
 // Method to make a request to the backend and display the details
 const getVehicleDetails = async () => {
   try {
-    const response = await axios.post(
-      "http://127.0.0.1:8000/admin/get-vehicle-details",
-      {
-        registrationNumber: registrationNumber.value, // Pass the registration number input
-      }
-    );
+    const response = await axios.post('http://127.0.0.1:8000/admin/get-vehicle-details', {
+      registrationNumber: registrationNumber.value, // Pass the registration number input
+    });
 
     // Assuming the response contains the vehicle details
     console.log(response.data); // Log the response data
@@ -121,6 +116,7 @@ const getVehicleDetails = async () => {
   }
 };
 </script>
+
 
 <style scoped>
 @keyframes my-fadein {
