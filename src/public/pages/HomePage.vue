@@ -1,7 +1,8 @@
 <template>
-  <div class="grid grid-nogutter surface-section text-800">
+  <div class="surface-section text-800 flex justify-content-center flex-wrap">
     <div
-      class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center"
+      v-if="!showCarDetails"
+      class="col-12 md:col-12 p-6 text-center md:text-left flex align-items-center justify-content-center"
     >
       <section>
         <div>
@@ -31,10 +32,11 @@
                         GB
                       </InputGroupAddon>
                       <InputText
+                        v-model="registrationNumber"
                         style="background-color: #fbe90a; border-color: #00309a"
                         placeholder="REG"
                         inputClass="'bg-transparent text-900 border-400 border-blue-500'"
-                        class="text-7xl w-10 text-900 font-bold"
+                        class="text-7xl w-10 text-100 font-bold"
                       />
                     </InputGroup>
                   </div>
@@ -45,17 +47,18 @@
               <PrimeFieldset legend="What is your car registration? *">
                 <div class="flex justify-content-center flex-wrap">
                   <div
-                    class="flex align-items-center justify-content-center h-4rem  font-bold border-round m-2"
+                    class="flex align-items-center justify-content-center h-4rem font-bold border-round m-2"
                   >
-                  <div class="flex flex-column gap-2 justify-center">
-                  <InputText
-                    class="w-full border-400 md:w-30rem"
-                    placeholder="Enter Postcode"
-                  />
-                  <small id="username-help"
-                    >We use this to find how far you are from our garage.</small
-                  >
-                </div>
+                    <div class="flex flex-column gap-2 justify-center">
+                      <InputText
+                        class="w-full border-400 md:w-30rem"
+                        placeholder="Enter Postcode"
+                      />
+                      <small id="username-help"
+                        >We use this to find how far you are from our
+                        garage.</small
+                      >
+                    </div>
                   </div>
                 </div>
               </PrimeFieldset>
@@ -65,30 +68,34 @@
                 <div
                   class="flex align-items-center justify-content-center h-4rem font-bold border-round"
                 >
-                <PrimeButton
-                label="Create Booking"
-                @click="router.push({ name: 'cardetails' })"
-                class="w-full"
-                v-styleclass="{
-                  selector: '.carDetailsForm',
-                  enterActiveClass: 'my-fadein',
-                }"
-              />
-              </div>
+                  <PrimeButton
+                    label="Get Vehicle Details"
+                    @click="getVehicleDetails"
+                    class="w-full"
+                    v-styleclass="{
+                      selector: '.carDetailsForm',
+                      enterActiveClass: 'my-fadein',
+                    }"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
     </div>
-    <div class="col-12 md:col-6 overflow-hidden" style="height: 60vh">
+    <div v-else>
+      <!-- Render the CarDetails component when showCarDetails is true -->
+      <CarDetails :vehData="vehData" @showHomePage="handleCarDetails"/>
+    </div>
+    <!-- <div class="col-12 md:col-6 overflow-hidden" style="height: 60vh">
       <img
         src="../../assets/img/hero-bg.jpg"
         alt="Image"
         class="md:ml-auto block md:h-full"
         style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -97,6 +104,32 @@ import { ref } from "vue";
 import CarDetails from "@/public/pages/CarDetails.vue";
 import router from "@/router/router";
 const showCarDetails = ref(false);
+const vehData = ref();
+import axios from "axios";
+const registrationNumber = ref(""); // Reactive variable to store the registration number input
+const handleCarDetails = (isVisible: boolean) => {
+  showCarDetails.value = isVisible
+}
+// Method to make a request to the backend and display the details
+const getVehicleDetails = async () => {
+  try {
+    const response = await axios.post(
+      "http://127.0.0.1:8000/admin/get-vehicle-details",
+      {
+        registrationNumber: registrationNumber.value, // Pass the registration number input
+      }
+    );
+
+    // Assuming the response contains the vehicle details
+    console.log(response.data); // Log the response data
+    vehData.value = response.data;
+    showCarDetails.value = true; // Set showCarDetails to true to render the CarDetails component
+    // Handle displaying the response data on the template
+  } catch (error) {
+    console.error(error); // Log any errors
+    // Handle displaying error messages on the template
+  }
+};
 </script>
 
 <style scoped>

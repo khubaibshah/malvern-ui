@@ -38,6 +38,7 @@ import Steps from 'primevue/steps';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import FloatLabel from 'primevue/floatlabel';
+import Panel from 'primevue/panel';
 
 
 
@@ -88,6 +89,7 @@ app.component('InputGroupAddon', InputGroupAddon);
 app.component('PrimeTree', Tree);
 app.component('PrimeSteps', Steps);
 app.component('PrimeFloatLabel', FloatLabel);
+app.component('PrimePanel', Panel);
 
 
 app.config.globalProperties.$filters = {

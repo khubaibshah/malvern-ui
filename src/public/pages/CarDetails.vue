@@ -1,14 +1,25 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 const router = useRouter();
+import { defineProps } from "vue";
+
+const props = defineProps<{
+  vehData: any;
+}>();
+
+const emit = defineEmits(['showHomePage'])
+const showHomePage = () => {
+  emit('showHomePage', false)
+}
+
 </script>
 <template>
-  <div class="grid grid-nogutter surface-section text-800">
+  <div class="surface-section text-800 flex justify-content-center flex-wrap">
     <div
-      class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center"
+      class="col-12 md:col-12 p-6 text-center flex align-items-center justify-content-center"
     >
       <section>
-        <div class="car-details-container">
+        <div>
           <span class="block text-6xl font-bold mb-1">Welcome to</span>
           <div
             class="text-6xl text-primary font-bold mb-3"
@@ -17,17 +28,25 @@ const router = useRouter();
             Malvern Autos
           </div>
           <p class="mt-0 mb-2 text-700 line-height-3">
-            Please confirm this is your car.
+            Please Confirm your Vehicle Details below.
           </p>
           <div class="grid">
-            <div class="col-12 md:col-12 lg:col-12">
-              <PrimeFieldset legend="Can you confirm this is your car?">
+            <div class="col-12 md:col-12 lg:col-12 text-left">
+              <PrimeFieldset legend="Is this your Vehicle?*">
                 <div class="flex justify-content-center flex-wrap">
                   <div
-                    class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2"
+                    class="flex align-items-center justify-content-center font-bold border-round m-2"
                   >
+                  <i class="pi pi-car" style="font-size: 2.5rem"></i>
+                  </div>
+                  </div>
+                <div class="flex justify-content-center flex-wrap">
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                  >
+                  
                     <InputGroup
-                      class="w-full md:w-30rem h-5rem flex justify-center"
+                      class="w-full md:w-20rem h-2rem flex justify-center"
                     >
                       <InputGroupAddon
                         style="background-color: #00309a; color: #fbe90a"
@@ -35,107 +54,105 @@ const router = useRouter();
                         GB
                       </InputGroupAddon>
                       <InputText
+                        v-model="vehData.registrationNumber"
                         style="background-color: #fbe90a; border-color: #00309a"
                         placeholder="REG"
                         inputClass="'bg-transparent text-900 border-400 border-blue-500'"
-                        class="text-7xl w-10 text-900 font-bold"
+                        class="text-2xl w-10 text-100 font-bold"
+                        readonly
                       />
                     </InputGroup>
                   </div>
                 </div>
+                <div class="flex justify-content-between flex-wrap mt-3">
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round mb-2"
+                  >
+                    Vehicle Make
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                  >
+                    {{ vehData.make }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round mb-2"
+                  >
+                    Vehicle Colour
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                  >
+                    {{ vehData.colour }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round mb-2"
+                  >
+                    Vehicle Engine
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                  >
+                    {{ vehData.engineCapacity }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round mb-2"
+                  >
+                    Vehicle Fuel Type
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                  >
+                    {{ vehData.fuelType }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round mb-2"
+                  >
+                    Manufacture Date
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                  >
+                    {{ vehData.yearOfManufacture }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                </div>
               </PrimeFieldset>
-            </div>
-          </div>
-          <div class="grid">
-            <div class="col-12 md:col-12 lg:col-12">
-              <input
-                id="reg"
-                type="text"
-                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-                placeholder="Registration"
-              />
-            </div>
-            <div class="col-12 md:col-12 lg:col-12">
-              <input
-                id="Make"
-                type="text"
-                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-                placeholder="Make"
-              />
-            </div>
-            <div class="col-12 md:col-12 lg:col-12">
-              <input
-                id="Model"
-                type="text"
-                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-                placeholder="Model"
-              />
-            </div>
-            <div class="col-12 md:col-12 lg:col-12">
-              <input
-                id="variation"
-                type="text"
-                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-                placeholder="variation"
-              />
-            </div>
-
-            <div class="col-12 md:col-12 lg:col-12">
-              <input
-                id="milage"
-                type="text"
-                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-                placeholder="milage"
-              />
-            </div>
-
-            <div class="col-12 md:col-12 lg:col-12">
               <div class="flex justify-content-between flex-wrap">
                 <div
-                  class="flex align-items-center justify-content-center h-4rem font-bold border-round"
+                  class="flex align-items-center justify-content-center font-bold border-round"
                 >
                   <PrimeButton
-                    class="w-full p-0"
                     label="Back"
-                    v-styleclass="{
-                      selector: '.carDetailsForm',
-                      enterActiveClass: 'my-fadein',
-                    }"
-                    @click="router.push({ name: 'home' })"
                     text
-                    icon="pi pi-angle-left"
+                    class="mt-2"
+                    icon="pi pi-arrow-left"
+                    @click="showHomePage()"
                   />
                 </div>
                 <div
-                  class="flex align-items-center justify-content-center h-4rem font-bold border-round"
+                  class="flex align-items-center justify-content-center font-bold border-round"
                 >
                   <PrimeButton
-                    class="w-full border-400 md:w-15rem"
-                    label="Next Step"
+                    label="Get Vehicle Details"
+                    @click="getVehicleDetails"
+                    class="w-full flex justify-content-end mt-2"
                     v-styleclass="{
                       selector: '.carDetailsForm',
                       enterActiveClass: 'my-fadein',
                     }"
-                    @click="router.push({ name: 'bookJob' })"
                   />
                 </div>
               </div>
+              
             </div>
           </div>
         </div>
-
-        <!-- <div v-else class="carDetailsForm">
-            <CarDetails />
-          </div> -->
       </section>
-    </div>
-    <div class="col-12 md:col-6 overflow-hidden" style="height: 60vh">
-      <img
-        src="../../assets/img/hero-bg.jpg"
-        alt="Image"
-        class="md:ml-auto block md:h-full"
-        style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)"
-      />
     </div>
   </div>
 </template>
