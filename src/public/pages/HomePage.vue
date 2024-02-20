@@ -2,7 +2,7 @@
   <div class="surface-section text-800 flex justify-content-center flex-wrap">
     <div
       v-if="!showCarDetails"
-      class="col-12 md:col-12 p-6 text-center md:text-left flex align-items-center justify-content-center"
+      class="col-12 md:col-12 p-6 text-center md:text-left flex align-items-center justify-content-center carDetailsForm"
     >
       <section>
         <div>
@@ -133,6 +133,6 @@ const getVehicleDetails = async () => {
 }
 
 .my-fadein {
-  animation: my-fadein 150ms linear;
+  animation: my-fadein 200ms linear;
 }
 </style>

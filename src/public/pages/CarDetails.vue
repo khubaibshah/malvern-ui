@@ -14,7 +14,7 @@ const showHomePage = () => {
 
 </script>
 <template>
-  <div class="surface-section text-800 flex justify-content-center flex-wrap">
+  <div class="surface-section text-800 flex justify-content-center flex-wrap my-fadein">
     <div
       class="col-12 md:col-12 p-6 text-center flex align-items-center justify-content-center"
     >
@@ -46,7 +46,7 @@ const showHomePage = () => {
                   >
                   
                     <InputGroup
-                      class="w-full md:w-20rem h-2rem flex justify-center"
+                      class="w-full md:w-20rem h-3rem flex justify-center"
                     >
                       <InputGroupAddon
                         style="background-color: #00309a; color: #fbe90a"
@@ -139,7 +139,7 @@ const showHomePage = () => {
                 >
                   <PrimeButton
                     label="Get Vehicle Details"
-                    @click="getVehicleDetails"
+                    @click="router.push({name:'bookJob'})"
                     class="w-full flex justify-content-end mt-2"
                     v-styleclass="{
                       selector: '.carDetailsForm',
@@ -156,3 +156,17 @@ const showHomePage = () => {
     </div>
   </div>
 </template>
+<style scoped>
+@keyframes my-fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.my-fadein {
+  animation: my-fadein 150ms linear;
+}
+</style>
