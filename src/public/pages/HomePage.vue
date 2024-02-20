@@ -84,7 +84,7 @@
     </div>
     <div v-else>
       <!-- Render the CarDetails component when showCarDetails is true -->
-      <CarDetails :vehData="vehData"/>
+      <CarDetails :vehData="vehData" @showHomePage="handleCarDetails"/>
     </div>
   </div>
 </template>
@@ -97,7 +97,9 @@ import CarDetails from '@/public/pages/CarDetails.vue';
 const showCarDetails = ref(false); // Reactive variable to control whether to show the car details section
 const vehData = ref(); // Reactive variable to store the vehicle details
 const registrationNumber = ref(''); // Reactive variable to store the registration number input
-
+const handleCarDetails = (isVisible: boolean) => {
+  showCarDetails.value = isVisible
+}
 // Method to make a request to the backend and display the details
 const getVehicleDetails = async () => {
   try {
