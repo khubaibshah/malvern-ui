@@ -93,23 +93,27 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import CarDetails from '@/public/pages/CarDetails.vue';
+import { useVehicleStore } from '@/stores/vehicleData';
+import VehicleService from '@/services/VehicleService'
+
 
 const showCarDetails = ref(false); // Reactive variable to control whether to show the car details section
 const vehData = ref(); // Reactive variable to store the vehicle details
 const registrationNumber = ref(''); // Reactive variable to store the registration number input
+const vehicleStore = useVehicleStore();
+
+
 const handleCarDetails = (isVisible: boolean) => {
   showCarDetails.value = isVisible
 }
 // Method to make a request to the backend and display the details
+
 const getVehicleDetails = async () => {
   try {
-    const response = await axios.post('http://127.0.0.1:8000/admin/get-vehicle-details', {
-      registrationNumber: registrationNumber.value, // Pass the registration number input
-    });
-
+    const response = await VehicleService.getVehicleDetails(registrationNumber.value)
     // Assuming the response contains the vehicle details
-    console.log(response.data); // Log the response data
-    vehData.value = response.data;
+    vehicleStore.setVehicleData(response)
+    vehData.value = response;
     showCarDetails.value = true; // Set showCarDetails to true to render the CarDetails component
     // Handle displaying the response data on the template
   } catch (error) {

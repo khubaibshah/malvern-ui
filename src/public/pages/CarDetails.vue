@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { defineProps, defineEmits } from "vue";
+import { useVehicleStore } from "@/stores/vehicleData";
+const vehicleData = useVehicleStore()
 
-const props = defineProps<{
-  vehData: any;
-}>();
-
+const getVehicleData = vehicleData.getVehicleData
 const emit = defineEmits(['showHomePage']); // Define the emit function to use event emitting
 
 const router = useRouter();
 
+vehicleData.setVehicleReg(getVehicleData.registrationNumber)
 const showHomePage = () => {
   emit('showHomePage'); // Emit the 'showHomePage' event
   router.push('/'); // Navigate to the main page
 };
 </script>
 <template>
+
   <div class="surface-section text-800 flex justify-content-center flex-wrap my-fadein">
     <div
       class="col-12 md:col-12 p-6 text-center flex align-items-center justify-content-center"
@@ -56,7 +56,7 @@ const showHomePage = () => {
                         GB
                       </InputGroupAddon>
                       <InputText
-                        v-model="vehData.registrationNumber"
+                        v-model="getVehicleData.registrationNumber"
                         style="background-color: #fbe90a; border-color: #00309a"
                         placeholder="REG"
                         inputClass="'bg-transparent text-900 border-400 border-blue-500'"
@@ -75,7 +75,7 @@ const showHomePage = () => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round"
                   >
-                    {{ vehData.make }}
+                    {{ getVehicleData.make }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -86,7 +86,7 @@ const showHomePage = () => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ vehData.colour }}
+                    {{ getVehicleData.colour }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -97,7 +97,7 @@ const showHomePage = () => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ vehData.engineCapacity }}
+                    {{ getVehicleData.engineCapacity }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -108,7 +108,7 @@ const showHomePage = () => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ vehData.fuelType }}
+                    {{ getVehicleData.fuelType }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -119,7 +119,7 @@ const showHomePage = () => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ vehData.yearOfManufacture }}
+                    {{ getVehicleData.yearOfManufacture }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                 </div>

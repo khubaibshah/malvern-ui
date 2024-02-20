@@ -1,7 +1,49 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { nodes } from "@/components/reusable/repairMenu";
+import { useVehicleStore } from "@/stores/vehicleData";
+import VehicleService from "@/services/VehicleService";
+
 import Ordersummary from "./Ordersummary.vue";
+import router from "@/router/router";
+
+const vehicleStore = useVehicleStore()
+
+const vehicleDataDb = ref()
+const getReg = vehicleStore.getVehicleReg
+
+
+const vehicleData = vehicleStore.getVehicleData;
+const registrationNumber = ref(vehicleData?.registrationNumber || "");
+
+
+const getVehData = async () => {
+  try {
+    // Fetch vehicle data using the last registration number
+    //if response i
+    const vehDbData = await VehicleService.getVehicleByReg(registrationNumber.value);
+    vehicleDataDb.value = vehDbData
+    vehicleStore.setVehicleData(vehDbData);
+  } catch (error) {
+    console.error("Error fetching vehicle data:", error);
+  }
+};
+
+const handleRegistrationNumberChange = async () => {
+  if (registrationNumber.value) {
+    try {
+      const vehDbData = await VehicleService.getVehicleDetails(registrationNumber.value);
+      vehicleDataDb.value = vehDbData;
+      vehicleStore.setVehicleData(vehDbData);
+    } catch (error) {
+      console.error("Error fetching vehicle data:", error);
+    }
+  }
+};
+onMounted(() => {
+  // Call getVehData when the component is mounted (page is refreshed)
+  getVehData();
+});
 </script>
 
 <template>
@@ -138,19 +180,103 @@ import Ordersummary from "./Ordersummary.vue";
                 GB
               </InputGroupAddon>
               <InputText
+                v-model="registrationNumber"
                 style="background-color: #fbe90a; border-color: #00309a"
                 placeholder="REG"
                 inputClass="'bg-transparent text-900 border-400 border-blue-500'"
-                class="text-900 font-bold"
+                class="text-2xl w-10 text-100 font-bold"
+                
               />
             </InputGroup>
           </div>
           <!-- extra data to add here about users car -->
+          <div class="font-medium text-500 mb-3" v-if="vehicleDataDb">
+            <div class="flex justify-content-between flex-wrap mt-3">
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round mb-2"
+                  >
+                    Vehicle Make
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round"
+                  >
+                    {{ vehicleDataDb.make }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round mb-2"
+                  >
+                    Vehicle Colour
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round "
+                  >
+                    {{ vehicleDataDb.colour }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round "
+                  >
+                    Vehicle Engine
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round "
+                  >
+                    {{ vehicleDataDb.engineCapacity }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round "
+                  >
+                    Vehicle Fuel Type
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round "
+                  >
+                    {{ vehicleDataDb.fuelType }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round "
+                  >
+                    Manufacture Date
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round "
+                  >
+                    {{ vehicleDataDb.yearOfManufacture }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                </div>
+          </div> 
           <div class="font-medium text-500 mb-3">
-            Vivamus id nisl interdum, blandit augue sit amet, eleifend mi.
-          </div>
-          <div class="font-medium text-500 mb-3">
-            Vivamus id nisl interdum, blandit augue sit amet, eleifend mi.
+            Not your car? Click here to change your vehicle.
+            <div class="flex justify-content-between flex-wrap">
+                <div
+                  class="flex align-items-center justify-content-center font-bold border-round"
+                >
+                  <PrimeButton
+                    label="Not my car"
+                    text
+                    class="ml-0"
+                    icon="pi pi-refresh"
+                    @click="handleRegistrationNumberChange()"
+                  />
+                </div>
+                <div
+                  class="flex align-items-center justify-content-center font-bold border-round"
+                >
+                  <!-- <PrimeButton
+                    label="Get Vehicle Details"
+                    @click="router.push({name:'bookJob'})"
+                    class="w-full flex justify-content-end mt-2"
+                    v-styleclass="{
+                      selector: '.carDetailsForm',
+                      enterActiveClass: 'my-fadein',
+                    }"
+                  /> -->
+                </div>
+              </div>
           </div>
         </div>
         <div class="surface-card border-round">
