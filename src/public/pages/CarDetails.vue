@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-const router = useRouter();
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 
 const props = defineProps<{
   vehData: any;
 }>();
 
-const emit = defineEmits(['showHomePage'])
-const showHomePage = () => {
-  emit('showHomePage', false)
-}
+const emit = defineEmits(['showHomePage']); // Define the emit function to use event emitting
 
+const router = useRouter();
+
+const showHomePage = () => {
+  emit('showHomePage'); // Emit the 'showHomePage' event
+  router.push('/'); // Navigate to the main page
+};
 </script>
 <template>
   <div class="surface-section text-800 flex justify-content-center flex-wrap my-fadein">
