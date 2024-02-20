@@ -47,7 +47,7 @@
               <PrimeFieldset legend="What is your car registration? *">
                 <div class="flex justify-content-center flex-wrap">
                   <div
-                    class="flex align-items-center justify-content-center h-4rem font-bold border-round m-2"
+                    class="flex align-items-center justify-content-center h-4rem font-bold border-round"
                   >
                     <div class="flex flex-column gap-2 justify-center">
                       <InputText
@@ -62,16 +62,14 @@
                   </div>
                 </div>
               </PrimeFieldset>
-            </div>
-            <div class="col-12 md:col-12 lg:col-12">
               <div class="flex justify-content-end flex-wrap">
                 <div
-                  class="flex align-items-center justify-content-center h-4rem font-bold border-round"
+                  class="flex align-items-center justify-content-center font-bold border-round"
                 >
                   <PrimeButton
                     label="Get Vehicle Details"
                     @click="getVehicleDetails"
-                    class="w-full"
+                    class="w-full flex justify-content-end mt-2"
                     v-styleclass="{
                       selector: '.carDetailsForm',
                       enterActiveClass: 'my-fadein',
@@ -88,14 +86,6 @@
       <!-- Render the CarDetails component when showCarDetails is true -->
       <CarDetails :vehData="vehData" @showHomePage="handleCarDetails"/>
     </div>
-    <!-- <div class="col-12 md:col-6 overflow-hidden" style="height: 60vh">
-      <img
-        src="../../assets/img/hero-bg.jpg"
-        alt="Image"
-        class="md:ml-auto block md:h-full"
-        style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)"
-      />
-    </div> -->
   </div>
 </template>
 

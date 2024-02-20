@@ -71,7 +71,7 @@ const showHomePage = () => {
                     Vehicle Make
                   </div>
                   <div
-                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                    class="flex align-items-center justify-content-center font-bold border-round"
                   >
                     {{ vehData.make }}
                   </div>
@@ -82,7 +82,7 @@ const showHomePage = () => {
                     Vehicle Colour
                   </div>
                   <div
-                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                    class="flex align-items-center justify-content-center font-bold border-round "
                   >
                     {{ vehData.colour }}
                   </div>
@@ -93,7 +93,7 @@ const showHomePage = () => {
                     Vehicle Engine
                   </div>
                   <div
-                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                    class="flex align-items-center justify-content-center font-bold border-round "
                   >
                     {{ vehData.engineCapacity }}
                   </div>
@@ -104,7 +104,7 @@ const showHomePage = () => {
                     Vehicle Fuel Type
                   </div>
                   <div
-                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                    class="flex align-items-center justify-content-center font-bold border-round "
                   >
                     {{ vehData.fuelType }}
                   </div>
@@ -115,7 +115,7 @@ const showHomePage = () => {
                     Manufacture Date
                   </div>
                   <div
-                    class="flex align-items-center justify-content-center font-bold border-round m-2"
+                    class="flex align-items-center justify-content-center font-bold border-round "
                   >
                     {{ vehData.yearOfManufacture }}
                   </div>
@@ -127,7 +127,7 @@ const showHomePage = () => {
                   class="flex align-items-center justify-content-center font-bold border-round"
                 >
                   <PrimeButton
-                    label="Back"
+                    label="Not my car"
                     text
                     class="mt-2"
                     icon="pi pi-arrow-left"
