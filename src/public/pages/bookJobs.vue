@@ -199,9 +199,10 @@ onMounted(() => {
                   <PrimeButton
                     label="and click me"
                     text
-                    class="ml-0"
+
                     @click="handleRegistrationNumberChange()"
                   />
+                  
                 </div>
               </div>
           </div>
