@@ -15,6 +15,7 @@ const getVehicleDataStore = vehicleStore.getVehicleData;
 const GetStoreData = () => {
   if (getVehicleDataStore) {
     vehicleData.value = getVehicleDataStore;
+    registrationNumber.value = getVehicleDataStore.registrationNumber || "";
   }
 }
 const handleRegistrationNumberChange = async () => {
