@@ -7,27 +7,31 @@ import VehicleService from "@/services/VehicleService";
 import Ordersummary from "./Ordersummary.vue";
 import router from "@/router/router";
 
-const vehicleStore = useVehicleStore()
-const getVehicleDataStore = vehicleStore.getVehicleData
-const vehicleDataDb = ref();
+const vehicleStore = useVehicleStore();
 const registrationNumber = ref("");
+const vehicleData = ref();
+const getVehicleDataStore = vehicleStore.getVehicleData;
 
-
-
-const handleRegistrationNumberChange = async () => {
-  try {
-    const vehDbData = await VehicleService.getVehicleDetails(registrationNumber.value);
-    vehicleDataDb.value = vehDbData;
-    vehicleStore.setVehicleData(vehDbData);
-  } catch (error) {
-    console.error("Error fetching vehicle data:", error);
+const GetStoreData = () => {
+  if (getVehicleDataStore) {
+    vehicleData.value = getVehicleDataStore;
   }
+}
+const handleRegistrationNumberChange = async () => {
+    try {
+      const vesApiCall = await VehicleService.getVehicleDetails(
+        registrationNumber.value
+      );
+      vehicleData.value = vesApiCall;
+      vehicleStore.setVehicleData(vesApiCall);
+    } catch (error) {
+      console.error("Error fetching vehicle data:", error);
+    }
 };
-onMounted(() => {
-  // registrationNumber.value = vehicleStore.getVehicleReg ?? "";
-  // vehicleDataDb.value = vehicleStore.getVehicleData();
-});
 
+onMounted(() => {
+  GetStoreData();
+});
 </script>
 
 <template>
@@ -35,7 +39,6 @@ onMounted(() => {
     <div
       class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border mb-3"
     >
-    {{ getVehicleDataStore }}
       <div class="mb-3 lg:mb-0">
         <div class="text-3xl font-medium text-900 mb-3">Book Repairs</div>
         <div class="text-500 mr-0 md:mr-3">
@@ -63,112 +66,102 @@ onMounted(() => {
                 GB
               </InputGroupAddon>
               <InputText
-                v-model="getVehicleDataStore.registrationNumber"
-                style="background-color: #fbe90a; border-color: #00309a"
-                placeholder="REG"
-                inputClass="'bg-transparent text-900 border-400 border-blue-500'"
-                class="text-2xl w-10 text-100 font-bold"
-                v-if="getVehicleDataStore"
-              />
-              <InputText
                 v-model="registrationNumber"
                 style="background-color: #fbe90a; border-color: #00309a"
                 placeholder="REG"
                 inputClass="'bg-transparent text-900 border-400 border-blue-500'"
                 class="text-2xl w-10 text-100 font-bold"
-                v-else
               />
             </InputGroup>
           </div>
           <div class="font-medium text-500 mb-3">
-
             <div class="flex justify-content-between flex-wrap">
-                <div
-                  class="flex align-items-center justify-content-center font-bold border-round"
-                >
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round"
+              >
                 Not your car? Type in your Reg
-                  <PrimeButton
-                    label="and click me"
-                    text
-
-                    @click="handleRegistrationNumberChange()"
-                  />
-                  
-                </div>
+                <PrimeButton
+                  label="and click me"
+                  text
+                  @click="handleRegistrationNumberChange"
+                />
               </div>
+            </div>
           </div>
-          <!-- extra data to add here about users car -->
-          <div class="font-medium text-500 mb-3" v-if="vehicleDataDb">
-            <div class="flex justify-content-between flex-wrap mt-3">
-                  <div
-                    class="flex align-items-center justify-content-center font-bold border-round mb-2"
-                  >
-                    Vehicle Make
-                  </div>
-                  <div
-                    class="flex align-items-center justify-content-center font-bold border-round"
-                  >
-                    {{ vehicleDataDb.make }}
-                  </div>
-                  <PrimeDivider></PrimeDivider>
-                  <div
-                    class="flex align-items-center justify-content-center font-bold border-round mb-2"
-                  >
-                    Vehicle Colour
-                  </div>
-                  <div
-                    class="flex align-items-center justify-content-center font-bold border-round "
-                  >
-                    {{ vehicleDataDb.colour }}
-                  </div>
-                  <PrimeDivider></PrimeDivider>
-                  <div
-                    class="flex align-items-center justify-content-center font-bold border-round "
-                  >
-                    Vehicle Engine
-                  </div>
-                  <div
-                    class="flex align-items-center justify-content-center font-bold border-round "
-                  >
-                    {{ vehicleDataDb.engineCapacity }}
-                  </div>
-                  <PrimeDivider></PrimeDivider>
-                  <div
-                    class="flex align-items-center justify-content-center font-bold border-round "
-                  >
-                    Vehicle Fuel Type
-                  </div>
-                  <div
-                    class="flex align-items-center justify-content-center font-bold border-round "
-                  >
-                    {{ vehicleDataDb.fuelType }}
-                  </div>
-                  <PrimeDivider></PrimeDivider>
-                  <div
-                    class="flex align-items-center justify-content-center font-bold border-round "
-                  >
-                    Manufacture Date
-                  </div>
-                  <div
-                    class="flex align-items-center justify-content-center font-bold border-round "
-                  >
-                    {{ vehicleDataDb.yearOfManufacture }}
-                  </div>
-                  <PrimeDivider></PrimeDivider>
-                </div>
-          </div> 
-          
+
+          <div class="font-medium text-500 mb-3">
+            <div
+              class="flex justify-content-between flex-wrap mt-3"
+              v-if="vehicleData"
+            >
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round mb-2"
+              >
+                Vehicle Make
+              </div>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round"
+              >
+                {{ vehicleData.make }}
+              </div>
+              <PrimeDivider></PrimeDivider>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round mb-2"
+              >
+                Vehicle Colour
+              </div>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round"
+              >
+                {{ vehicleData.colour }}
+              </div>
+              <PrimeDivider></PrimeDivider>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round"
+              >
+                Vehicle Engine
+              </div>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round"
+              >
+                {{ vehicleData.engineCapacity }}
+              </div>
+              <PrimeDivider></PrimeDivider>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round"
+              >
+                Vehicle Fuel Type
+              </div>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round"
+              >
+                {{ vehicleData.fuelType }}
+              </div>
+              <PrimeDivider></PrimeDivider>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round"
+              >
+                Manufacture Date
+              </div>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round"
+              >
+                {{ vehicleData.yearOfManufacture }}
+              </div>
+              <PrimeDivider></PrimeDivider>
+            </div>
+          </div>
         </div>
         <div class="surface-card border-round">
           <div class="text-2xl text-500 mb-3">Search for repairs below.</div>
         </div>
-          <PrimeTree
-            class="w-full"
-            :value="nodes"
-            :filter="true"
-            filterMode="lenient"
-            style="padding-left: 0;"
-          ></PrimeTree>
+        <PrimeTree
+          class="w-full"
+          :value="nodes"
+          :filter="true"
+          filterMode="lenient"
+          style="padding-left: 0"
+        ></PrimeTree>
       </div>
       <div class="col-12 md:col-12 lg:col-6">
         <div class="px-0 py-4 md:px-4">
