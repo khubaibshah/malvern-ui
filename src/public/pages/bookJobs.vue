@@ -8,42 +8,26 @@ import Ordersummary from "./Ordersummary.vue";
 import router from "@/router/router";
 
 const vehicleStore = useVehicleStore()
-
-const vehicleDataDb = ref()
-const getReg = vehicleStore.getVehicleReg
-
-
-const vehicleData = vehicleStore.getVehicleData;
-const registrationNumber = ref(vehicleData?.registrationNumber || "");
+const getVehicleDataStore = vehicleStore.getVehicleData
+const vehicleDataDb = ref();
+const registrationNumber = ref("");
 
 
-const getVehData = async () => {
+
+const handleRegistrationNumberChange = async () => {
   try {
-    // Fetch vehicle data using the last registration number
-    //if response i
-    const vehDbData = await VehicleService.getVehicleByReg(registrationNumber.value);
-    vehicleDataDb.value = vehDbData
+    const vehDbData = await VehicleService.getVehicleDetails(registrationNumber.value);
+    vehicleDataDb.value = vehDbData;
     vehicleStore.setVehicleData(vehDbData);
   } catch (error) {
     console.error("Error fetching vehicle data:", error);
   }
 };
-
-const handleRegistrationNumberChange = async () => {
-  if (registrationNumber.value) {
-    try {
-      const vehDbData = await VehicleService.getVehicleDetails(registrationNumber.value);
-      vehicleDataDb.value = vehDbData;
-      vehicleStore.setVehicleData(vehDbData);
-    } catch (error) {
-      console.error("Error fetching vehicle data:", error);
-    }
-  }
-};
 onMounted(() => {
-  // Call getVehData when the component is mounted (page is refreshed)
-  getVehData();
+  // registrationNumber.value = vehicleStore.getVehicleReg ?? "";
+  // vehicleDataDb.value = vehicleStore.getVehicleData();
 });
+
 </script>
 
 <template>
@@ -51,6 +35,7 @@ onMounted(() => {
     <div
       class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border mb-3"
     >
+    {{ getVehicleDataStore }}
       <div class="mb-3 lg:mb-0">
         <div class="text-3xl font-medium text-900 mb-3">Book Repairs</div>
         <div class="text-500 mr-0 md:mr-3">
@@ -63,108 +48,6 @@ onMounted(() => {
       </span>
     </div>
     <!-- align-items-center justify-content-center -->
-
-    <!-- could be a option -->
-    <!-- <ul
-      class="surface-card p-2 m-0 list-none flex justify-content-center overflow-x-auto select-none"
-    >
-      <li class="pr-3">
-        <a
-          v-ripple
-          class="cursor-pointer px-4 py-3 flex align-items-center hover:surface-100 border-round transition-colors transition-duration-150 p-ripple"
-          :class="{
-            'bg-primary hover:bg-primary': active4 === 0,
-            'text-700': active4 !== 0,
-          }"
-          @click="active4 = 0"
-        >
-          <i class="pi pi-home mr-2"></i>
-          <span class="font-medium">Engine</span>
-        </a>
-      </li>
-      <li class="flex align-items-center">
-        <div
-          style="width: 1px; height: 50%"
-          class="border-right-1 surface-border"
-        ></div>
-      </li>
-      <li class="px-3">
-        <a
-          v-ripple
-          class="cursor-pointer px-4 py-3 flex align-items-center hover:surface-100 border-round transition-colors transition-duration-150 p-ripple"
-          :class="{
-            'bg-primary hover:bg-primary': active4 === 1,
-            'text-700': active4 !== 2,
-          }"
-          @click="active4 = 1"
-        >
-          <i class="pi pi-users mr-2"></i>
-          <span class="font-medium">Clutch</span>
-        </a>
-      </li>
-      <li class="flex align-items-center">
-        <div
-          style="width: 1px; height: 50%"
-          class="border-right-1 surface-border"
-        ></div>
-      </li>
-      <li class="px-3">
-        <a
-          v-ripple
-          class="cursor-pointer px-4 py-3 flex align-items-center hover:surface-100 border-round transition-colors transition-duration-150 p-ripple"
-          :class="{
-            'bg-primary hover:bg-primary': active4 === 2,
-            'text-700': active4 !== 2,
-          }"
-          @click="active4 = 2"
-        >
-          <i class="pi pi-shopping-cart mr-2"></i>
-          <span class="font-medium">Breaks</span>
-        </a>
-      </li>
-      <li class="flex align-items-center">
-        <div
-          style="width: 1px; height: 50%"
-          class="border-right-1 surface-border"
-        ></div>
-      </li>
-      <li class="px-3">
-        <a
-          v-ripple
-          class="cursor-pointer px-4 py-3 flex align-items-center hover:surface-100 border-round transition-colors transition-duration-150 p-ripple"
-          :class="{
-            'bg-primary hover:bg-primary': active4 === 3,
-            'text-700': active4 !== 3,
-          }"
-          @click="active4 = 3"
-        >
-          <i class="pi pi-user mr-2"></i>
-          <span class="font-medium">Disks</span>
-        </a>
-      </li>
-      <li class="flex align-items-center">
-        <div
-          style="width: 1px; height: 50%"
-          class="border-right-1 surface-border"
-        ></div>
-      </li>
-      <li class="px-3">
-        <a
-          v-ripple
-          class="cursor-pointer px-4 py-3 flex align-items-center hover:surface-100 border-round transition-colors transition-duration-150v"
-          :class="{
-            'bg-primary hover:bg-primary': active4 === 4,
-            'text-700': active4 !== 4,
-          }"
-          @click="active4 = 4"
-        >
-          <i class="pi pi-cog mr-2"></i>
-          <span class="font-medium">Exhaust</span>
-        </a>
-      </li>
-    </ul>
-     -->
-
     <div class="grid">
       <div class="col-12 md:col-12 lg:col-3">
         <div class="surface-card border-round">
@@ -180,12 +63,20 @@ onMounted(() => {
                 GB
               </InputGroupAddon>
               <InputText
+                v-model="getVehicleDataStore.registrationNumber"
+                style="background-color: #fbe90a; border-color: #00309a"
+                placeholder="REG"
+                inputClass="'bg-transparent text-900 border-400 border-blue-500'"
+                class="text-2xl w-10 text-100 font-bold"
+                v-if="getVehicleDataStore"
+              />
+              <InputText
                 v-model="registrationNumber"
                 style="background-color: #fbe90a; border-color: #00309a"
                 placeholder="REG"
                 inputClass="'bg-transparent text-900 border-400 border-blue-500'"
                 class="text-2xl w-10 text-100 font-bold"
-                
+                v-else
               />
             </InputGroup>
           </div>
