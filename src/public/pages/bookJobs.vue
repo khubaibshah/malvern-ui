@@ -11,6 +11,7 @@ const vehicleStore = useVehicleStore();
 const registrationNumber = ref("");
 const vehicleData = ref();
 const JobCatergories = ref();
+const JobSubCatergories = ref();
 const getVehicleDataStore = vehicleStore.getVehicleData;
 const jobNodes = ref([]);
 
@@ -46,9 +47,23 @@ const getJobCategories = async () => {
     console.error("Error fetching job categories:", error);
   }
 };
+const getJobSubCategories = async () => {
+  try {
+    const jobSubCategories = await JobCategoryService.getJobSubCat();
+    JobSubCatergories.value = jobSubCategories;
+    // const nodes = jobCategories.map(category => ({
+    //   label: category.job_category,
+    //   icon: "pi pi-wrench"
+    // }));
+    // jobNodes.value = nodes;
+  } catch (error) {
+    console.error("Error fetching job categories:", error);
+  }
+};
 
 onMounted(() => {
   getJobCategories();
+  getJobSubCategories()
   GetStoreData();
 });
 </script>
@@ -172,7 +187,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="surface-card border-round">
-          <div class="text-2xl text-500 mb-3">Search for repairs below.</div>
+          <div class="text-1xl text-500 mb-3 font-bold">Select a Category below or Search for repairs below.</div>
         </div>
         <PrimeTree
           class="w-full"
@@ -181,6 +196,7 @@ onMounted(() => {
           filterMode="lenient"
           style="padding-left: 0"
         ></PrimeTree>
+        <!-- {{ JobSubCatergories }} -->
       </div>
       <div class="col-12 md:col-12 lg:col-6">
         <div class="px-0 py-4 md:px-4">
