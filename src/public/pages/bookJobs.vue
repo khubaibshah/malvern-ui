@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import { nodes } from "@/components/reusable/repairMenu";
 import { useVehicleStore } from "@/stores/vehicleData";
 import VehicleService from "@/services/VehicleService";
+import JobCategoryService from "@/services/JobCategoryService";
 
 import Ordersummary from "./Ordersummary.vue";
 import router from "@/router/router";
@@ -10,6 +11,7 @@ import router from "@/router/router";
 const vehicleStore = useVehicleStore();
 const registrationNumber = ref("");
 const vehicleData = ref();
+const JobCatergories = ref();
 const getVehicleDataStore = vehicleStore.getVehicleData;
 
 const GetStoreData = () => {
@@ -30,7 +32,13 @@ const handleRegistrationNumberChange = async () => {
     }
 };
 
+const getJobCatergories = async () => {
+
+ const jobCat = await JobCategoryService.getJobCat();
+ JobCatergories.value = jobCat;
+}
 onMounted(() => {
+  getJobCatergories()
   GetStoreData();
 });
 </script>
@@ -156,6 +164,7 @@ onMounted(() => {
         <div class="surface-card border-round">
           <div class="text-2xl text-500 mb-3">Search for repairs below.</div>
         </div>
+        {{ JobCatergories }}
         <PrimeTree
           class="w-full"
           :value="nodes"
