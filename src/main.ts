@@ -40,6 +40,8 @@ import AccordionTab from 'primevue/accordiontab';
 import FloatLabel from 'primevue/floatlabel';
 import Panel from 'primevue/panel';
 
+import Dropdown from 'primevue/dropdown';
+
 
 
 import Toast from 'primevue/toast';
@@ -66,6 +68,7 @@ app.directive('styleclass', StyleClass);
 app.component('AccordionTab', AccordionTab);
 app.component('Accordion', Accordion);
 app.component('InputText', InputText);
+app.component('Dropdown', Dropdown);
 app.component('PrimeButton', Button);
 app.component('DataTable', DataTable);
 app.component('PrimeColumn', Column);

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { nodes } from "@/components/reusable/repairMenu";
 import { useVehicleStore } from "@/stores/vehicleData";
 import VehicleService from "@/services/VehicleService";
 import JobCategoryService from "@/services/JobCategoryService";
@@ -13,6 +12,8 @@ const registrationNumber = ref("");
 const vehicleData = ref();
 const JobCatergories = ref();
 const getVehicleDataStore = vehicleStore.getVehicleData;
+const jobNodes = ref([]);
+
 
 const GetStoreData = () => {
   if (getVehicleDataStore) {
@@ -32,13 +33,22 @@ const handleRegistrationNumberChange = async () => {
     }
 };
 
-const getJobCatergories = async () => {
+const getJobCategories = async () => {
+  try {
+    const jobCategories = await JobCategoryService.getJobCat();
+    JobCatergories.value = jobCategories;
+    const nodes = jobCategories.map(category => ({
+      label: category.job_category,
+      icon: "pi pi-wrench"
+    }));
+    jobNodes.value = nodes;
+  } catch (error) {
+    console.error("Error fetching job categories:", error);
+  }
+};
 
- const jobCat = await JobCategoryService.getJobCat();
- JobCatergories.value = jobCat;
-}
 onMounted(() => {
-  getJobCatergories()
+  getJobCategories();
   GetStoreData();
 });
 </script>
@@ -164,10 +174,9 @@ onMounted(() => {
         <div class="surface-card border-round">
           <div class="text-2xl text-500 mb-3">Search for repairs below.</div>
         </div>
-        {{ JobCatergories }}
         <PrimeTree
           class="w-full"
-          :value="nodes"
+          :value="jobNodes"
           :filter="true"
           filterMode="lenient"
           style="padding-left: 0"
