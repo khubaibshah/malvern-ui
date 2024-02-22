@@ -44,7 +44,7 @@
               </PrimeFieldset>
             </div>
             <div class="col-12 md:col-12 lg:col-12">
-              <PrimeFieldset legend="What is your car registration? *">
+              <PrimeFieldset legend="What is your postcode? *">
                 <div class="flex justify-content-center flex-wrap">
                   <div
                     class="flex align-items-center justify-content-center h-4rem font-bold border-round"
