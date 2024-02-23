@@ -81,7 +81,7 @@ const props = defineProps({
             class="flex flex-column lg:flex-row flex-wrap lg:align-items-center py-3 my-3 border-bottom-1 surface-border"
           >
           <!-- {{ props.selectedRepairs }} -->
-          <span class="text-900 font-medium">Your Selected Repairs</span>
+          <span class="text-900 font-medium mb-2">Your Selected Repairs</span>
             <div class="flex-auto lg:ml-3" v-if="props.mainCat">
               <div
                 class="flex align-items-center justify-content-between mb-3"
@@ -94,21 +94,9 @@ const props = defineProps({
                 <div class="text-600 text-sm mb-3" v-for="repair in props.selectedRepairs" :key="repair.job_subcategory_id">{{ repair.job_subcategory_job }}</div>
               </div>
               <div
-                class="flex flex-auto justify-content-between align-items-center"
+                class="flex flex-auto justify-content-end align-items-center"
               >
-                <InputNumber
-                  :showButtons="true"
-                  buttonLayout="horizontal"
-                  spinnerMode="horizontal"
-                  :min="0"
-                  inputClass="w-2rem text-center py-2 px-1 border-transparent"
-                  v-model="quantities1"
-                  class="border-1 surface-border border-round"
-                  decrementButtonClass="p-button-text text-600 hover:text-primary py-1 px-1"
-                  incrementButtonClass="p-button-text text-600 hover:text-primary py-1 px-1"
-                  incrementButtonIcon="pi pi-plus"
-                  decrementButtonIcon="pi pi-minus"
-                ></InputNumber>
+                
                 <PrimeButton
                   icon="pi pi-trash"
                   class="text-600 p-button-text p-button-rounded"
