@@ -111,7 +111,10 @@ const getJobSubCategories = async (node: any) => {
 const onNodeUnselect = (node: any) => {
     toast.add({ severity: 'warn', summary: 'Node Unselected', detail: node.label, life: 3000 });
 };
-
+const handlePrimeCardClick = (subcategory: any) => {
+  console.log("Clicked PrimeCard:", subcategory);
+  // You can perform additional actions here based on the clicked PrimeCard
+};
 onMounted(() => {
 
   GetStoreData();
@@ -251,19 +254,18 @@ onMounted(() => {
             <PrimeDivider></PrimeDivider>
             <div class="grid">
               <div class="col-12 md:col-12 lg:col-4" v-for="subcategory in Subcategories" :key="subcategory.id">
-
                 <PrimeCard
                   style="
                     border-style: solid;
-                    border-color: darkgoldenrod !important;
-                  "
+                    border-color: darkgoldenrod !important;"
+                    @click="handlePrimeCardClick(subcategory)"
                   v-ripple
                   class="p-ripple flex select-none border-round font-bold"
                 >
-                  <template #title>Repairs 1</template>
+                  <template #title>{{subcategory.job_subcategory_job}}</template>
                   <template #content>
                     <p class="m-0">
-                      {{ subcategory.job_subcategory_job }}
+                      {{ subcategory.job_subcategory_price }}
                     </p>
                   </template>
                 </PrimeCard>
