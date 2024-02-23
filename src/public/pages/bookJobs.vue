@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineProps } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import { useVehicleStore } from "@/stores/vehicleData";
@@ -7,18 +7,25 @@ import VehicleService from "@/services/VehicleService";
 import JobCategoryService from "@/services/JobCategoryService";
 
 import Ordersummary from "./Ordersummary.vue";
-import router from "@/router/router";
 
 const vehicleStore = useVehicleStore();
 const registrationNumber = ref("");
 const vehicleData = ref();
-const JobCatergories = ref();
+
 const JobSubCatergories = ref();
 const getVehicleDataStore = vehicleStore.getVehicleData;
-const matchedSubCategory = ref();
+
 const Subcategories = ref();
+const selectedSubcategory = ref()
+const mainCat = ref()
 
 
+const selectedRepairs = ref([]); // Array to store selected repairs
+
+
+const props = defineProps<{
+  selectedSubcategory: any;
+}>();
 
 const selectedKey = ref();
 const toast = useToast();
@@ -88,16 +95,14 @@ const handleRegistrationNumberChange = async () => {
 const getJobSubCategories = async (node: any) => {
   try {
     toast.add({ severity: 'success', summary: 'Node Selected', detail: node.label +' '+ node.key, life: 3000 });
-    console.log('here is selection', node);
     const jobSubCategories = await JobCategoryService.getjobsAndSubJobs();
-    
     // Find the category that matches the selected node.key
     const selectedCategory = jobSubCategories.find(category => category.job_subcategory_id === node.key);
+    mainCat.value = selectedCategory
 
     if (selectedCategory) {
-      console.log('Category:', selectedCategory);
-      console.log('Subcategories:', selectedCategory.subcategories);
-      Subcategories.value =selectedCategory.subcategories
+      
+      Subcategories.value = selectedCategory.subcategories
     } else {
       console.log('No matching category found for node key:', node.key);
     }
@@ -111,9 +116,19 @@ const getJobSubCategories = async (node: any) => {
 const onNodeUnselect = (node: any) => {
     toast.add({ severity: 'warn', summary: 'Node Unselected', detail: node.label, life: 3000 });
 };
-const handlePrimeCardClick = (subcategory: any) => {
-  console.log("Clicked PrimeCard:", subcategory);
-  // You can perform additional actions here based on the clicked PrimeCard
+
+const handlePrimeCardClick = (category: any, subcategory: any) => {
+  console.log("Clicked PrimeCard cat and sub cat : ", category, subcategory);
+  selectedSubcategory.value = subcategory;
+  const index = selectedRepairs.value.findIndex(rep => rep.id === subcategory.id);
+  if (index !== -1) {
+    // If already selected, replace it
+    selectedRepairs.value.splice(index, 1, subcategory);
+    toast.add({ severity: 'warn', summary: 'Already Selected', detail: 'This repair was already selected.' });
+  } else {
+    // If not selected, add it
+    selectedRepairs.value.push({category}, subcategory);
+  }
 };
 onMounted(() => {
 
@@ -254,11 +269,12 @@ onMounted(() => {
             <PrimeDivider></PrimeDivider>
             <div class="grid">
               <div class="col-12 md:col-12 lg:col-4" v-for="subcategory in Subcategories" :key="subcategory.id">
+                <!-- {{ mainCat.job_category }} -->
                 <PrimeCard
                   style="
                     border-style: solid;
                     border-color: darkgoldenrod !important;"
-                    @click="handlePrimeCardClick(subcategory)"
+                    @click="handlePrimeCardClick(mainCat.job_category, subcategory)"
                   v-ripple
                   class="p-ripple flex select-none border-round font-bold"
                 >
@@ -275,8 +291,11 @@ onMounted(() => {
         </div>
       </div>
       <div class="col-12 md:col-12 lg:col-3">
-        <Ordersummary />
+        <Ordersummary :selectedSubcategory="selectedSubcategory" :mainCat="mainCat" :selectedRepairs="selectedRepairs" />
+
       </div>
     </div>
   </div>
 </template>
+
+
