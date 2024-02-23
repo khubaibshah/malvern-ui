@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { VehicleData } from '../interfaces/VehicleData';
+import type { DVSAVehicleData } from '../interfaces/DvsaVehicleData';
 
 interface MappedVehicleData {
   registration_number: string;
@@ -74,6 +75,17 @@ class VehicleService {
     try {
       const response = await axios.get(`http://127.0.0.1:8000/admin/vehicle-details/${registrationNumber}`);
       console.log('Fetched vehicle data by Registration from db:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+  getDvsaVehicleByReg = async (registrationNumber: any): Promise<DVSAVehicleData> => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/admin/dvsa-vehicle-details/${registrationNumber}`);
+
+      console.log('Fetched vehicle data by Registration from dvsa data:', response.data);
       return response.data;
     } catch (error) {
       console.error(error);

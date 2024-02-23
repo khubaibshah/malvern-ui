@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { useVehicleStore } from "@/stores/vehicleData";
+import VehicleService from "@/services/VehicleService";
+import { onMounted, ref } from "vue";
 const vehicleData = useVehicleStore()
-
+const dvsadata = ref(null)
 const getVehicleData = vehicleData.getVehicleData
 const emit = defineEmits(['showHomePage']); // Define the emit function to use event emitting
 
@@ -13,6 +15,20 @@ const showHomePage = () => {
   emit('showHomePage'); // Emit the 'showHomePage' event
   router.push('/'); // Navigate to the main page
 };
+
+
+const getDvsa = async () => {
+  try {
+    const response = await VehicleService.getDvsaVehicleByReg('wd15afv');
+    dvsadata.value = response; // Assign the response data
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+onMounted(() => {
+  getDvsa()
+});
 </script>
 <template>
 
@@ -22,6 +38,7 @@ const showHomePage = () => {
     >
       <section>
         <div>
+          {{ dvsadata }}
           <span class="block text-6xl font-bold mb-1">Welcome to</span>
           <div
             class="text-6xl text-primary font-bold mb-3"

@@ -5,6 +5,7 @@ import { useToast } from "primevue/usetoast";
 import { useVehicleStore } from "@/stores/vehicleData";
 import VehicleService from "@/services/VehicleService";
 import JobCategoryService from "@/services/JobCategoryService";
+import toUpperCase from '@/components/reusable/toUpperCase'
 
 import Ordersummary from "./Ordersummary.vue";
 
@@ -57,6 +58,10 @@ const toast = useToast();
         icon: 'pi pi-wrench',
     }
 ]);
+
+const transformToUpperCase = () => {
+  toUpperCase(registrationNumber)
+};
 
 const GetStoreData = () => {
   if (getVehicleDataStore) {
@@ -180,6 +185,7 @@ onMounted(() => {
                 placeholder="REG"
                 inputClass="'bg-transparent text-900 border-400 border-blue-500'"
                 class="text-2xl w-10 text-100 font-bold"
+                @input="transformToUpperCase"
               />
             </InputGroup>
           </div>

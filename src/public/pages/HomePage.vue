@@ -1,3 +1,44 @@
+<script setup lang="ts">
+import { ref, mixins  } from 'vue';
+import axios from 'axios';
+import CarDetails from '@/public/pages/CarDetails.vue';
+import { useVehicleStore } from '@/stores/vehicleData';
+import VehicleService from '@/services/VehicleService'
+import toUpperCase from '@/components/reusable/toUpperCase'
+import { useUpperCase } from '@/composable/toUpperCase.ts'; 
+// const { transformToUpperCase } = useUpperCase();
+const showCarDetails = ref(false); // Reactive variable to control whether to show the car details section
+const vehData = ref(); // Reactive variable to store the vehicle details
+const registrationNumber = ref(''); // Reactive variable to store the registration number input
+const vehicleStore = useVehicleStore();
+
+
+const handleCarDetails = (isVisible: boolean) => {
+  showCarDetails.value = isVisible
+}
+// Method to make a request to the backend and display the details
+
+const getVehicleDetails = async () => {
+  try {
+    const response = await VehicleService.getVehicleDetails(registrationNumber.value)
+    // Assuming the response contains the vehicle details
+    vehicleStore.setVehicleData(response)
+    vehData.value = response;
+    showCarDetails.value = true; // Set showCarDetails to true to render the CarDetails component
+    // Handle displaying the response data on the template
+  } catch (error) {
+    console.error(error); // Log any errors
+    // Handle displaying error messages on the template
+  }
+};
+
+// toUpperCase(registrationNumber)
+const transformToUpperCase = () => {
+  toUpperCase(registrationNumber)
+};
+
+</script>
+
 <template>
   <div class="surface-section text-800 flex justify-content-center flex-wrap">
     <div
@@ -90,44 +131,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue';
-import axios from 'axios';
-import CarDetails from '@/public/pages/CarDetails.vue';
-import { useVehicleStore } from '@/stores/vehicleData';
-import VehicleService from '@/services/VehicleService'
 
-
-const showCarDetails = ref(false); // Reactive variable to control whether to show the car details section
-const vehData = ref(); // Reactive variable to store the vehicle details
-const registrationNumber = ref(''); // Reactive variable to store the registration number input
-const vehicleStore = useVehicleStore();
-
-
-const handleCarDetails = (isVisible: boolean) => {
-  showCarDetails.value = isVisible
-}
-// Method to make a request to the backend and display the details
-
-const getVehicleDetails = async () => {
-  try {
-    const response = await VehicleService.getVehicleDetails(registrationNumber.value)
-    // Assuming the response contains the vehicle details
-    vehicleStore.setVehicleData(response)
-    vehData.value = response;
-    showCarDetails.value = true; // Set showCarDetails to true to render the CarDetails component
-    // Handle displaying the response data on the template
-  } catch (error) {
-    console.error(error); // Log any errors
-    // Handle displaying error messages on the template
-  }
-};
-
-const transformToUpperCase = () => {
-  registrationNumber.value = registrationNumber.value.toUpperCase();
-};
-
-</script>
 
 
 <style scoped>
