@@ -15,23 +15,21 @@ const JobSubCatergories = ref();
 const getVehicleDataStore = vehicleStore.getVehicleData;
 const jobNodes = ref([]);
 
-
 const GetStoreData = () => {
   if (getVehicleDataStore) {
     vehicleData.value = getVehicleDataStore;
     registrationNumber.value = getVehicleDataStore.registrationNumber || "";
   }
 }
+
 const handleRegistrationNumberChange = async () => {
-    try {
-      const vesApiCall = await VehicleService.getVehicleDetails(
-        registrationNumber.value
-      );
-      vehicleData.value = vesApiCall;
-      vehicleStore.setVehicleData(vesApiCall);
-    } catch (error) {
-      console.error("Error fetching vehicle data:", error);
-    }
+  try {
+    const vesApiCall = await VehicleService.getVehicleDetails(registrationNumber.value);
+    vehicleData.value = vesApiCall;
+    vehicleStore.setVehicleData(vesApiCall);
+  } catch (error) {
+    console.error("Error fetching vehicle data:", error);
+  }
 };
 
 const getJobCategories = async () => {
@@ -42,28 +40,38 @@ const getJobCategories = async () => {
       label: category.job_category,
       icon: "pi pi-wrench"
     }));
+    
     jobNodes.value = nodes;
-  } catch (error) {
-    console.error("Error fetching job categories:", error);
-  }
-};
-const getJobSubCategories = async () => {
-  try {
-    const jobSubCategories = await JobCategoryService.getJobSubCat();
-    JobSubCatergories.value = jobSubCategories;
-    // const nodes = jobCategories.map(category => ({
-    //   label: category.job_category,
-    //   icon: "pi pi-wrench"
-    // }));
-    // jobNodes.value = nodes;
+    console.log(jobNodes)
   } catch (error) {
     console.error("Error fetching job categories:", error);
   }
 };
 
+const getJobSubCategories = async (event: any) => {
+  try {
+    const jobSubCategories = await JobCategoryService.getjobsAndSubJobs();
+    JobSubCatergories.value = jobSubCategories;
+    handleNodeSelect(event)
+  } catch (error) {
+    console.error("Error fetching job subcategories:", error);
+  }
+};
+
+const handleNodeSelect = async (event: any) => {
+  try {
+    const selectedCategory = event.node.label;
+    
+    // Filter JobSubCatergories based on the selected category's label
+    const subcategories = JobSubCatergories.value.filter(subcategory => subcategory.job_category === selectedCategory);
+    JobSubCatergories.value = subcategories;
+  } catch (error) {
+    console.error("Error fetching subcategories for selected category:", error);
+  }
+};
+
 onMounted(() => {
   getJobCategories();
-  getJobSubCategories()
   GetStoreData();
 });
 </script>
@@ -190,13 +198,13 @@ onMounted(() => {
           <div class="text-1xl text-500 mb-3 font-bold">Select a Category below or Search for repairs below.</div>
         </div>
         <PrimeTree
-          class="w-full"
-          :value="jobNodes"
-          :filter="true"
-          filterMode="lenient"
-          style="padding-left: 0"
-        ></PrimeTree>
-        <!-- {{ JobSubCatergories }} -->
+        class="w-full"
+        :value="jobNodes"
+        :filter="true"
+        filterMode="lenient"
+        style="padding-left: 0"
+        @click="getJobSubCategories"
+      ></PrimeTree>
       </div>
       <div class="col-12 md:col-12 lg:col-6">
         <div class="px-0 py-4 md:px-4">
@@ -204,7 +212,8 @@ onMounted(() => {
             <div class="text-2xl text-500 mb-3">Avaliable Repairs</div>
             <PrimeDivider></PrimeDivider>
             <div class="grid">
-              <div class="col-12 md:col-12 lg:col-4">
+              <div class="col-12 md:col-12 lg:col-4" v-for="subcategory in JobSubCatergories" :key="subcategory.id">
+
                 <PrimeCard
                   style="
                     border-style: solid;
@@ -216,11 +225,24 @@ onMounted(() => {
                   <template #title>Repairs 1</template>
                   <template #content>
                     <p class="m-0">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Inventore sed consequuntur error repudiandae numquam
-                      deserunt quisquam repellat libero asperiores earum nam
-                      nobis, culpa ratione quam perferendis esse, cupiditate
-                      neque quas!
+                      {{ subcategory.subcategories }}
+                    </p>
+                  </template>
+                </PrimeCard>
+              </div>
+              <!-- <div class="col-12 md:col-12 lg:col-4" >
+                <PrimeCard
+                  style="
+                    border-style: solid;
+                    border-color: darkgoldenrod !important;
+                  "
+                  v-ripple
+                  class="p-ripple flex select-none border-round font-bold"
+                >
+                  <template #title>Repairs 1</template>
+                  <template #content>
+                    <p class="m-0">
+                      {{ subcategory.job_subcategory_job }}
                     </p>
                   </template>
                 </PrimeCard>
@@ -245,28 +267,7 @@ onMounted(() => {
                     </p>
                   </template>
                 </PrimeCard>
-              </div>
-              <div class="col-12 md:col-12 lg:col-4">
-                <PrimeCard
-                  style="
-                    border-style: solid;
-                    border-color: darkgoldenrod !important;
-                  "
-                  v-ripple
-                  class="p-ripple flex select-none border-round font-bold"
-                >
-                  <template #title>Repairs 1</template>
-                  <template #content>
-                    <p class="m-0">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Inventore sed consequuntur error repudiandae numquam
-                      deserunt quisquam repellat libero asperiores earum nam
-                      nobis, culpa ratione quam perferendis esse, cupiditate
-                      neque quas!
-                    </p>
-                  </template>
-                </PrimeCard>
-              </div>
+              </div> -->
             </div>
             <!-- <PrimeCard>
     <template #title>Simple Card</template>
