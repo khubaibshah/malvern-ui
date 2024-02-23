@@ -36,7 +36,7 @@ const getJobCategories = async () => {
   try {
     const jobCategories = await JobCategoryService.getJobCat();
     JobCatergories.value = jobCategories;
-    const nodes = jobCategories.map(category => ({
+    const nodes = jobCategories.map((category: { job_category: any; }) => ({
       label: category.job_category,
       icon: "pi pi-wrench"
     }));
@@ -63,7 +63,7 @@ const handleNodeSelect = async (event: any) => {
     const selectedCategory = event.node.label;
     
     // Filter JobSubCatergories based on the selected category's label
-    const subcategories = JobSubCatergories.value.filter(subcategory => subcategory.job_category === selectedCategory);
+    const subcategories = JobSubCatergories.value.filter((subcategory: { job_category: any; }) => subcategory.job_category === selectedCategory);
     JobSubCatergories.value = subcategories;
   } catch (error) {
     console.error("Error fetching subcategories for selected category:", error);
