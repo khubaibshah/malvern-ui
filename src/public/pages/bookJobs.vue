@@ -94,7 +94,7 @@ const handleRegistrationNumberChange = async () => {
 
 const getJobSubCategories = async (node: any) => {
   try {
-    toast.add({ severity: 'success', summary: 'Node Selected', detail: node.label +' '+ node.key, life: 3000 });
+    // toast.add({ severity: 'success', summary: 'Node Selected', detail: node.label +' '+ node.key, life: 3000 });
     const jobSubCategories = await JobCategoryService.getjobsAndSubJobs();
     // Find the category that matches the selected node.key
     const selectedCategory = jobSubCategories.find(category => category.job_subcategory_id === node.key);
@@ -113,10 +113,9 @@ const getJobSubCategories = async (node: any) => {
 };
 
 
-const onNodeUnselect = (node: any) => {
-    toast.add({ severity: 'warn', summary: 'Node Unselected', detail: node.label, life: 3000 });
-};
-
+// const onNodeUnselect = (node: any) => {
+//     toast.add({ severity: 'warn', summary: 'Node Unselected', detail: node.label, life: 3000 });
+// };
 const handlePrimeCardClick = (category: any, subcategory: any) => {
   console.log("Clicked PrimeCard cat and sub cat : ", category, subcategory);
   selectedSubcategory.value = subcategory;
@@ -130,9 +129,17 @@ const handlePrimeCardClick = (category: any, subcategory: any) => {
     selectedRepairs.value.push({category}, subcategory);
   }
 };
-onMounted(() => {
+// onMounted(() => {
 
+//   GetStoreData();
+// });
+
+onMounted(() => {
   GetStoreData();
+  if (nodes.value.length > 0) {
+    selectedKey.value = nodes.value[0].key;
+    getJobSubCategories(nodes.value[0]); // Automatically select the first category
+  }
 });
 </script>
 
@@ -259,7 +266,7 @@ onMounted(() => {
       <PrimeToast />
         <PrimeTree v-model:selectionKeys="selectedKey" :filter="true"
         filterMode="lenient" :value="nodes" selectionMode="single"
-            @nodeSelect="getJobSubCategories" @nodeUnselect="onNodeUnselect" class="w-full"
+            @nodeSelect="getJobSubCategories" class="w-full"
             style="padding-left: 0"></PrimeTree>
       </div>
       <div class="col-12 md:col-12 lg:col-6">

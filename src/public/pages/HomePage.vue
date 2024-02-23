@@ -37,6 +37,7 @@
                         placeholder="REG"
                         inputClass="'bg-transparent text-900 border-400 border-blue-500'"
                         class="text-7xl w-10 text-100 font-bold"
+                        @input="transformToUpperCase"
                       />
                     </InputGroup>
                   </div>
@@ -121,6 +122,11 @@ const getVehicleDetails = async () => {
     // Handle displaying error messages on the template
   }
 };
+
+const transformToUpperCase = () => {
+  registrationNumber.value = registrationNumber.value.toUpperCase();
+};
+
 </script>
 
 

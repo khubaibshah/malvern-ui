@@ -4,7 +4,7 @@ import { ref, type PropType } from 'vue';
 const date = ref<Date | null>(null); // Define date property
 const quantities1 = ref<number>(0); // Define quantities1 property
 const value3 = ref<string>(''); // Define value3 property
-
+const removeJobDialog = ref(false);
 // Define $filters object with formatDate method
 const $filters = {
   formatDate(date: Date): string {
@@ -44,6 +44,16 @@ const props = defineProps({
 </script>
 
 <template>
+  <PrimeDialog v-model:visible="removeJobDialog" maximizable modal header="Remove Jobs" :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+            <p class="m-0" v-for="deleteRepairs in selectedRepairs">
+
+              {{ deleteRepairs.job_subcategory_job }} <PrimeButton
+                  icon="pi pi-trash"
+                  class="text-600 p-button-text p-button-rounded"
+                  @click="removeJobDialog = true"
+                ></PrimeButton>
+                </p>
+        </PrimeDialog>
   <div class="px-0 py-4 md:px-4">
     <div class="border-round surface-card">
       <div class="text-2xl text-500 mb-3">Summary</div>
@@ -72,19 +82,19 @@ const props = defineProps({
         </template>
         <template #content>
           <span class="text-900 font-medium text-lg lg:text-xl"
-            ><i class="pi pi-calendar text-xl mr-2"></i>Pick Date</span
+            ><i class="pi pi-calendar text-xl mt-2"></i>Pick Date</span
             >
-          <div class="py-2 mt-3 border-bottom-1 surface-border">
+          <div class="py-2 mt-3 border-bottom-1 surface-border mb-4">
               <PrimeCalendar v-model="date" inline showTime hourFormat="12" />
           </div>
+          <span class="text-900 font-medium">Your Selected Repairs</span>
           <div
-            class="flex flex-column lg:flex-row flex-wrap lg:align-items-center py-3 my-3 border-bottom-1 surface-border"
+            class="flex flex-column lg:flex-row flex-wrap lg:align-items-center border-bottom-1 surface-border"
           >
           <!-- {{ props.selectedRepairs }} -->
-          <span class="text-900 font-medium mb-2">Your Selected Repairs</span>
             <div class="flex-auto lg:ml-3" v-if="props.mainCat">
               <div
-                class="flex align-items-center justify-content-between mb-3"
+                class="flex align-items-center justify-content-between "
               >
               </div>
               <!-- <div class="text-600 text-md mb-3">{{ props.mainCat.job_category }}</div> -->
@@ -100,6 +110,7 @@ const props = defineProps({
                 <PrimeButton
                   icon="pi pi-trash"
                   class="text-600 p-button-text p-button-rounded"
+                  @click="removeJobDialog = true"
                 ></PrimeButton>
                     </div>
                   </div>

@@ -39,6 +39,8 @@ import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import FloatLabel from 'primevue/floatlabel';
 import Panel from 'primevue/panel';
+import Dialog from 'primevue/dialog';
+
 
 import Dropdown from 'primevue/dropdown';
 
@@ -93,6 +95,7 @@ app.component('PrimeTree', Tree);
 app.component('PrimeSteps', Steps);
 app.component('PrimeFloatLabel', FloatLabel);
 app.component('PrimePanel', Panel);
+app.component('PrimeDialog', Dialog);
 
 
 app.config.globalProperties.$filters = {
