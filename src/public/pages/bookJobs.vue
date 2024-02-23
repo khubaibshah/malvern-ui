@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useToast } from "primevue/usetoast";
+
 import { useVehicleStore } from "@/stores/vehicleData";
 import VehicleService from "@/services/VehicleService";
 import JobCategoryService from "@/services/JobCategoryService";
@@ -13,7 +15,41 @@ const vehicleData = ref();
 const JobCatergories = ref();
 const JobSubCatergories = ref();
 const getVehicleDataStore = vehicleStore.getVehicleData;
-const jobNodes = ref([]);
+const matchedSubCategory = ref();
+const Subcategories = ref();
+
+
+
+const selectedKey = ref();
+const toast = useToast();
+
+
+
+  const nodes = ref([
+    {
+        key: 1,
+        label: 'Transmission',
+        icon: 'pi pi-wrench',
+      
+    },
+    {
+        key: 2,
+        label: 'Electrical',
+        icon: 'pi pi-wrench',
+      
+    },
+    {
+        key: 3,
+        label: 'Engine',
+        icon: 'pi pi-wrench',
+      
+    },
+    {
+        key: 4,
+        label: 'Brakes',
+        icon: 'pi pi-wrench',
+    }
+]);
 
 const GetStoreData = () => {
   if (getVehicleDataStore) {
@@ -32,46 +68,52 @@ const handleRegistrationNumberChange = async () => {
   }
 };
 
-const getJobCategories = async () => {
-  try {
-    const jobCategories = await JobCategoryService.getJobCat();
-    JobCatergories.value = jobCategories;
-    const nodes = jobCategories.map((category: { job_category: any; }) => ({
-      label: category.job_category,
-      icon: "pi pi-wrench"
-    }));
+// const getJobCategories = async () => {
+//   try {
+//     const jobCategories = await JobCategoryService.getJobCat();
+//     JobCatergories.value = jobCategories;
+//     // const nodes = jobCategories.map((category, index) => ref({
+//     //   key: index, // Incrementing index starting from 0
+//     //   label: category.job_category,
+//     //   icon: "pi pi-wrench"
+//     // }));
     
-    jobNodes.value = nodes;
-    console.log(jobNodes)
-  } catch (error) {
-    console.error("Error fetching job categories:", error);
-  }
-};
+//     // jobNodes.value = nodes;
+//     // console.log(jobNodes)
+//   } catch (error) {
+//     console.error("Error fetching job categories:", error);
+//   }
+// };
 
-const getJobSubCategories = async (event: any) => {
+const getJobSubCategories = async (node: any) => {
   try {
+    toast.add({ severity: 'success', summary: 'Node Selected', detail: node.label +' '+ node.key, life: 3000 });
+    console.log('here is selection', node);
     const jobSubCategories = await JobCategoryService.getjobsAndSubJobs();
+    
+    // Find the category that matches the selected node.key
+    const selectedCategory = jobSubCategories.find(category => category.job_subcategory_id === node.key);
+
+    if (selectedCategory) {
+      console.log('Category:', selectedCategory);
+      console.log('Subcategories:', selectedCategory.subcategories);
+      Subcategories.value =selectedCategory.subcategories
+    } else {
+      console.log('No matching category found for node key:', node.key);
+    }
     JobSubCatergories.value = jobSubCategories;
-    handleNodeSelect(event)
   } catch (error) {
     console.error("Error fetching job subcategories:", error);
   }
 };
 
-const handleNodeSelect = async (event: any) => {
-  try {
-    const selectedCategory = event.node.label;
-    
-    // Filter JobSubCatergories based on the selected category's label
-    const subcategories = JobSubCatergories.value.filter((subcategory: { job_category: any; }) => subcategory.job_category === selectedCategory);
-    JobSubCatergories.value = subcategories;
-  } catch (error) {
-    console.error("Error fetching subcategories for selected category:", error);
-  }
+
+const onNodeUnselect = (node: any) => {
+    toast.add({ severity: 'warn', summary: 'Node Unselected', detail: node.label, life: 3000 });
 };
 
 onMounted(() => {
-  getJobCategories();
+
   GetStoreData();
 });
 </script>
@@ -130,7 +172,6 @@ onMounted(() => {
               </div>
             </div>
           </div>
-
           <div class="font-medium text-500 mb-3">
             <div
               class="flex justify-content-between flex-wrap mt-3"
@@ -197,14 +238,11 @@ onMounted(() => {
         <div class="surface-card border-round">
           <div class="text-1xl text-500 mb-3 font-bold">Select a Category below or Search for repairs below.</div>
         </div>
-        <PrimeTree
-        class="w-full"
-        :value="jobNodes"
-        :filter="true"
-        filterMode="lenient"
-        style="padding-left: 0"
-        @click="getJobSubCategories"
-      ></PrimeTree>
+      <PrimeToast />
+        <PrimeTree v-model:selectionKeys="selectedKey" :filter="true"
+        filterMode="lenient" :value="nodes" selectionMode="single"
+            @nodeSelect="getJobSubCategories" @nodeUnselect="onNodeUnselect" class="w-full"
+            style="padding-left: 0"></PrimeTree>
       </div>
       <div class="col-12 md:col-12 lg:col-6">
         <div class="px-0 py-4 md:px-4">
@@ -212,25 +250,8 @@ onMounted(() => {
             <div class="text-2xl text-500 mb-3">Avaliable Repairs</div>
             <PrimeDivider></PrimeDivider>
             <div class="grid">
-              <div class="col-12 md:col-12 lg:col-4" v-for="subcategory in JobSubCatergories" :key="subcategory.id">
+              <div class="col-12 md:col-12 lg:col-4" v-for="subcategory in Subcategories" :key="subcategory.id">
 
-                <PrimeCard
-                  style="
-                    border-style: solid;
-                    border-color: darkgoldenrod !important;
-                  "
-                  v-ripple
-                  class="p-ripple flex select-none border-round font-bold"
-                >
-                  <template #title>Repairs 1</template>
-                  <template #content>
-                    <p class="m-0">
-                      {{ subcategory.subcategories }}
-                    </p>
-                  </template>
-                </PrimeCard>
-              </div>
-              <!-- <div class="col-12 md:col-12 lg:col-4" >
                 <PrimeCard
                   style="
                     border-style: solid;
@@ -247,37 +268,7 @@ onMounted(() => {
                   </template>
                 </PrimeCard>
               </div>
-              <div class="col-12 md:col-12 lg:col-4">
-                <PrimeCard
-                  style="
-                    border-style: solid;
-                    border-color: darkgoldenrod !important;
-                  "
-                  v-ripple
-                  class="p-ripple flex select-none border-round font-bold"
-                >
-                  <template #title>Repairs 1</template>
-                  <template #content>
-                    <p class="m-0">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Inventore sed consequuntur error repudiandae numquam
-                      deserunt quisquam repellat libero asperiores earum nam
-                      nobis, culpa ratione quam perferendis esse, cupiditate
-                      neque quas!
-                    </p>
-                  </template>
-                </PrimeCard>
-              </div> -->
             </div>
-            <!-- <PrimeCard>
-    <template #title>Simple Card</template>
-    <template #content>
-        <p class="m-0">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque
-            quas!
-        </p>
-    </template>
-</PrimeCard> -->
           </div>
         </div>
       </div>

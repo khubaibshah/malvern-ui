@@ -9,7 +9,6 @@ class JobCategoryService {
         const response = await axios.get('http://127.0.0.1:8000/admin/customer-job-category');
         
         // Assuming the response contains the job cet details
-        console.log(response.data);
         return response.data;
       } catch (error) {
         console.error(error);
@@ -23,7 +22,6 @@ class JobCategoryService {
         const response = await axios.get('http://127.0.0.1:8000/admin/customer-job-sub-categories');
         
         // Assuming the response contains the job cet details
-        console.log(response.data);
         return response.data;
       } catch (error) {
         console.error(error);
@@ -37,7 +35,6 @@ class JobCategoryService {
         const response = await axios.get('http://127.0.0.1:8000/admin/customer-allCategories');
         
         // Assuming the response contains the job cet details
-        console.log(response.data);
         return response.data;
       } catch (error) {
         console.error(error);
