@@ -72,7 +72,7 @@ const GetStoreData = () => {
 
 const handleRegistrationNumberChange = async () => {
   try {
-    const vesApiCall = await VehicleService.getVehicleDetails(registrationNumber.value);
+    const vesApiCall = await VehicleService.getDvsaVehicleByReg(registrationNumber.value);
     vehicleData.value = vesApiCall;
     vehicleStore.setVehicleData(vesApiCall);
   } catch (error) {
@@ -206,7 +206,7 @@ onMounted(() => {
           <div class="font-medium text-500 mb-3">
             <div
               class="flex justify-content-between flex-wrap mt-3"
-              v-if="vehicleData"
+              v-if="vehicleData" v-for="VehData in vehicleData"
             >
               <div
                 class="flex align-items-center justify-content-center font-bold border-round mb-2"
@@ -216,7 +216,18 @@ onMounted(() => {
               <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
-                {{ vehicleData.make }}
+                {{ VehData.make }}
+              </div>
+              <PrimeDivider></PrimeDivider>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round mb-2"
+              >
+                Vehicle Model
+              </div>
+              <div
+                class="flex align-items-center justify-content-center font-bold border-round"
+              >
+                {{ VehData.model }}
               </div>
               <PrimeDivider></PrimeDivider>
               <div
@@ -227,7 +238,7 @@ onMounted(() => {
               <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
-                {{ vehicleData.colour }}
+                {{ VehData.primaryColour }}
               </div>
               <PrimeDivider></PrimeDivider>
               <div
@@ -238,7 +249,7 @@ onMounted(() => {
               <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
-                {{ vehicleData.engineCapacity }}
+                {{ VehData.engineSize }}
               </div>
               <PrimeDivider></PrimeDivider>
               <div
@@ -249,10 +260,10 @@ onMounted(() => {
               <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
-                {{ vehicleData.fuelType }}
+                {{ VehData.fuelType }}
               </div>
               <PrimeDivider></PrimeDivider>
-              <div
+              <!-- <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
                 Manufacture Date
@@ -260,9 +271,9 @@ onMounted(() => {
               <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
-                {{ vehicleData.yearOfManufacture }}
+                {{ VehData.yearOfManufacture }}
               </div>
-              <PrimeDivider></PrimeDivider>
+              <PrimeDivider></PrimeDivider> -->
             </div>
           </div>
         </div>

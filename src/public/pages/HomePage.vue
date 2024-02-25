@@ -1,29 +1,40 @@
 <script setup lang="ts">
-import { ref, mixins  } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import CarDetails from '@/public/pages/CarDetails.vue';
 import { useVehicleStore } from '@/stores/vehicleData';
 import VehicleService from '@/services/VehicleService'
 import toUpperCase from '@/components/reusable/toUpperCase'
-import { useUpperCase } from '@/composable/toUpperCase.ts'; 
 // const { transformToUpperCase } = useUpperCase();
 const showCarDetails = ref(false); // Reactive variable to control whether to show the car details section
 const vehData = ref(); // Reactive variable to store the vehicle details
 const registrationNumber = ref(''); // Reactive variable to store the registration number input
 const vehicleStore = useVehicleStore();
 
+const dvsadata = ref(null)
 
 const handleCarDetails = (isVisible: boolean) => {
   showCarDetails.value = isVisible
 }
 // Method to make a request to the backend and display the details
 
+const getDvsa = async () => {
+  try {
+    const response = await VehicleService.getDvsaVehicleByReg('wd15afv');
+    vehData.value = response; // Assign the response data
+    showCarDetails.value = true;
+    vehicleStore.setVehicleData(response)
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const getVehicleDetails = async () => {
   try {
     const response = await VehicleService.getVehicleDetails(registrationNumber.value)
     // Assuming the response contains the vehicle details
-    vehicleStore.setVehicleData(response)
-    vehData.value = response;
+    // vehicleStore.setVehicleData(response)
+    // vehData.value = response;
     showCarDetails.value = true; // Set showCarDetails to true to render the CarDetails component
     // Handle displaying the response data on the template
   } catch (error) {
@@ -37,6 +48,9 @@ const transformToUpperCase = () => {
   toUpperCase(registrationNumber)
 };
 
+onMounted(() => {
+  // getDvsa();
+});
 </script>
 
 <template>
@@ -110,7 +124,7 @@ const transformToUpperCase = () => {
                 >
                   <PrimeButton
                     label="Get Vehicle Details"
-                    @click="getVehicleDetails"
+                    @click="getDvsa"
                     class="w-full flex justify-content-end mt-2"
                     v-styleclass="{
                       selector: '.carDetailsForm',

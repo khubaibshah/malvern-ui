@@ -19,7 +19,7 @@ const showHomePage = () => {
 
 const getDvsa = async () => {
   try {
-    const response = await VehicleService.getDvsaVehicleByReg('wd15afv');
+    const response = await VehicleService.getDvsaVehicleByReg(getVehicleData.registrationNumber);
     dvsadata.value = response; // Assign the response data
   } catch (error) {
     console.error(error);
@@ -27,7 +27,7 @@ const getDvsa = async () => {
 };
 
 onMounted(() => {
-  getDvsa()
+  // getDvsa();
 });
 </script>
 <template>
@@ -38,7 +38,7 @@ onMounted(() => {
     >
       <section>
         <div>
-          {{ dvsadata }}
+          <!-- {{ getVehicleData }} -->
           <span class="block text-6xl font-bold mb-1">Welcome to</span>
           <div
             class="text-6xl text-primary font-bold mb-3"
@@ -73,7 +73,7 @@ onMounted(() => {
                         GB
                       </InputGroupAddon>
                       <InputText
-                        v-model="getVehicleData.registrationNumber"
+                        v-model="getVehicleData[0].registration"
                         style="background-color: #fbe90a; border-color: #00309a"
                         placeholder="REG"
                         inputClass="'bg-transparent text-900 border-400 border-blue-500'"
@@ -83,7 +83,7 @@ onMounted(() => {
                     </InputGroup>
                   </div>
                 </div>
-                <div class="flex justify-content-between flex-wrap mt-3">
+                <div class="flex justify-content-between flex-wrap mt-3" v-for="vehicleData in getVehicleData">
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round mb-2"
                   >
@@ -92,7 +92,18 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round"
                   >
-                    {{ getVehicleData.make }}
+                    {{ vehicleData.make }}
+                  </div>
+                  <PrimeDivider></PrimeDivider>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round mb-2"
+                  >
+                    Vehicle Model
+                  </div>
+                  <div
+                    class="flex align-items-center justify-content-center font-bold border-round"
+                  >
+                    {{ vehicleData.model }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -103,7 +114,7 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ getVehicleData.colour }}
+                    {{ vehicleData.primaryColour }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -114,7 +125,7 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ getVehicleData.engineCapacity }}
+                    {{ vehicleData.engineSize }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -125,10 +136,10 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ getVehicleData.fuelType }}
+                    {{ vehicleData.fuelType }}
                   </div>
                   <PrimeDivider></PrimeDivider>
-                  <div
+                  <!-- <div
                     class="flex align-items-center justify-content-center font-bold border-round mb-2"
                   >
                     Manufacture Date
@@ -136,9 +147,9 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ getVehicleData.yearOfManufacture }}
+                    {{ vehicleData.yearOfManufacture }}
                   </div>
-                  <PrimeDivider></PrimeDivider>
+                  <PrimeDivider></PrimeDivider> -->
                 </div>
               </PrimeFieldset>
               <div class="flex justify-content-between flex-wrap">
