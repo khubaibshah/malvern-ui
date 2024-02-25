@@ -131,7 +131,8 @@ const handlePrimeCardClick = (category: any, subcategory: any) => {
     toast.add({ severity: 'warn', summary: 'Already Selected', detail: 'This repair was already selected.' });
   } else {
     // If not selected, add it
-    selectedRepairs.value.push({category}, subcategory);
+    selectedRepairs.value.push(subcategory);
+    toast.add({ severity: 'success', summary: 'Reapir Selected', detail:  subcategory.job_subcategory_job +' was selected.' });
   }
 };
 // onMounted(() => {
@@ -278,7 +279,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="surface-card border-round">
-          <div class="text-1xl text-500 mb-3 font-bold">Select a Category below or Search for repairs below.</div>
+          <div class="text-1xl text-500 mb-3 font-bold">Select a Category or Search for repairs below.</div>
         </div>
       <PrimeToast />
         <PrimeTree v-model:selectionKeys="selectedKey" :filter="true"
@@ -293,7 +294,7 @@ onMounted(() => {
             <PrimeDivider></PrimeDivider>
             <div class="grid">
               <div class="col-12 md:col-12 lg:col-4" v-for="subcategory in Subcategories" :key="subcategory.id">
-                <!-- {{ mainCat.job_category }} -->
+
                 <PrimeCard
                   style="
                     border-style: solid;
