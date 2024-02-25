@@ -135,6 +135,15 @@ const handlePrimeCardClick = (category: any, subcategory: any) => {
     toast.add({ severity: 'success', summary: 'Reapir Selected', detail:  subcategory.job_subcategory_job +' was selected.' });
   }
 };
+const removeSelectedRepair = (repairId: any) => {
+  const index = selectedRepairs.value.findIndex(rep => rep.id === repairId);
+  if (index !== -1) {
+    toast.add({ severity: 'success', summary: 'Removed', detail:  'Repair was removed.' });
+    selectedRepairs.value.splice(index, 1);
+    console.log('removed repair item', selectedRepairs);
+  
+}
+};
 // onMounted(() => {
 
 //   GetStoreData();
@@ -316,7 +325,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="col-12 md:col-12 lg:col-3">
-        <Ordersummary :selectedSubcategory="selectedSubcategory" :mainCat="mainCat" :selectedRepairs="selectedRepairs" />
+        <Ordersummary :selectedSubcategory="selectedSubcategory" :mainCat="mainCat" :selectedRepairs="selectedRepairs"  @repairRemoved="removeSelectedRepair"/>
 
       </div>
     </div>

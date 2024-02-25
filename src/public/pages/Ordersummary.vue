@@ -5,6 +5,8 @@ const date = ref<Date | null>(null); // Define date property
 const quantities1 = ref<number>(0); // Define quantities1 property
 const value3 = ref<string>(""); // Define value3 property
 const removeJobDialog = ref(false);
+const localSelectedRepairs = ref<SelectedRepairs[]>([]); // Define selectedRepairs property
+
 // Define $filters object with formatDate method
 const $filters = {
   formatDate(date: Date): string {
@@ -23,8 +25,9 @@ interface MainCategory {
   // Define the structure of your main category object here
 }
 interface SelectedRepairs {
-  name: string;
-  // Define the structure of your main category object here
+  id: any;
+  job_subcategory_job: string; // Assuming this is a property of SelectedRepairs
+  // Add any other properties if needed
 }
 const props = defineProps({
   selectedSubcategory: {
@@ -40,6 +43,18 @@ const props = defineProps({
     required: true,
   },
 });
+const emits = defineEmits(["repairRemoved"]);
+
+const removeSelectedRepair = (repairId: any) => {
+  emits("repairRemoved", repairId);
+};
+// const removeSelectedRepair = (repairId: any) => {
+//   const index = localSelectedRepairs.value.findIndex(repair => repair.id === repairId);
+//   if (index > -1) {
+//     localSelectedRepairs.value.splice(index, 1);
+//     console.log('removed repair item', localSelectedRepairs.value);
+//   }
+// };
 </script>
 
 <template>
@@ -63,24 +78,16 @@ const props = defineProps({
             <PrimeButton
               icon="pi pi-trash"
               class="text-600 p-button-text p-button-rounded"
-              @click="removeJobDialog = true"
+              @click="removeSelectedRepair(deleteRepairs.id)"
             ></PrimeButton>
           </div>
         </div>
       </div>
-
-      <!-- {{ deleteRepairs.job_subcategory_job }} 
-              <PrimeButton
-                  icon="pi pi-trash"
-                  class="text-600 p-button-text p-button-rounded"
-                  @click="removeJobDialog = true"
-                ></PrimeButton> -->
     </div>
   </PrimeDialog>
   <div class="px-0 py-4 md:px-4">
     <div class="border-round surface-card">
       <div class="text-2xl text-500 mb-3">Summary</div>
-
       <PrimeDivider></PrimeDivider>
       <PrimeCard
         style="border-style: solid; border-color: darkgoldenrod !important"
@@ -119,12 +126,23 @@ const props = defineProps({
               <!-- <div class="text-600 text-md mb-3">{{ props.mainCat.job_category }}</div> -->
               <div v-if="props.selectedRepairs && props.selectedRepairs.length">
                 <!-- <div class="text-600 text-md mb-3" v-for="repair in props.selectedRepairs" :key="repair.job_subcategory_id" >{{ repair.category }}</div> -->
-                <div
-                  class="text-600 text-sm mb-3"
-                  v-for="repair in props.selectedRepairs"
-                  :key="repair.job_subcategory_id"
-                >
-                  {{ repair.job_subcategory_job }}
+                <div v-for="deleteRepairs in selectedRepairs">
+                  <div class="grid">
+                    <div class="col-9">
+                      <div class="text-left border-round-sm font-bold">
+                        {{ deleteRepairs.job_subcategory_job }}
+                      </div>
+                    </div>
+                    <div class="col-3">
+                      <div class="text-right border-round-sm font-bold">
+                        <PrimeButton
+                          icon="pi pi-trash"
+                          class="text-600 p-button-text p-button-rounded"
+                          @click="removeSelectedRepair(deleteRepairs.id)"
+                        ></PrimeButton>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div
