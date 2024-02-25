@@ -23,6 +23,7 @@ const mainCat = ref()
 
 const selectedRepairs = ref([]); // Array to store selected repairs
 
+const registrationSuccess = ref(false); // Flag to track registration success
 
 const props = defineProps<{
   selectedSubcategory: any;
@@ -31,32 +32,27 @@ const props = defineProps<{
 const selectedKey = ref();
 const toast = useToast();
 
-
-
-  const nodes = ref([
-    {
-        key: 1,
-        label: 'Transmission',
-        icon: 'pi pi-wrench',
-      
-    },
-    {
-        key: 2,
-        label: 'Electrical',
-        icon: 'pi pi-wrench',
-      
-    },
-    {
-        key: 3,
-        label: 'Engine',
-        icon: 'pi pi-wrench',
-      
-    },
-    {
-        key: 4,
-        label: 'Brakes',
-        icon: 'pi pi-wrench',
-    }
+const nodes = ref([
+  {
+      key: 1,
+      label: 'Transmission',
+      icon: 'pi pi-wrench',  
+  },
+  {
+      key: 2,
+      label: 'Electrical',
+      icon: 'pi pi-wrench',  
+  },
+  {
+      key: 3,
+      label: 'Engine',
+      icon: 'pi pi-wrench',  
+  },
+  {
+      key: 4,
+      label: 'Brakes',
+      icon: 'pi pi-wrench',
+  }
 ]);
 
 const transformToUpperCase = () => {
@@ -66,7 +62,9 @@ const transformToUpperCase = () => {
 const GetStoreData = () => {
   if (getVehicleDataStore) {
     vehicleData.value = getVehicleDataStore;
-    registrationNumber.value = getVehicleDataStore.registrationNumber || "";
+    console.log('storeData', getVehicleDataStore[0].registration)
+    registrationNumber.value = getVehicleDataStore[0].registration || "";
+    registrationSuccess.value = !!registrationNumber.value; // Set registrationSuccess to true if registrationNumber is present
   }
 }
 
@@ -75,38 +73,25 @@ const handleRegistrationNumberChange = async () => {
     const vesApiCall = await VehicleService.getDvsaVehicleByReg(registrationNumber.value);
     vehicleData.value = vesApiCall;
     vehicleStore.setVehicleData(vesApiCall);
+    registrationSuccess.value = true; // Set registrationSuccess to true upon successful registration
   } catch (error) {
     console.error("Error fetching vehicle data:", error);
+    registrationSuccess.value = false; // Set registrationSuccess to false if there's an error
   }
 };
 
-// const getJobCategories = async () => {
-//   try {
-//     const jobCategories = await JobCategoryService.getJobCat();
-//     JobCatergories.value = jobCategories;
-//     // const nodes = jobCategories.map((category, index) => ref({
-//     //   key: index, // Incrementing index starting from 0
-//     //   label: category.job_category,
-//     //   icon: "pi pi-wrench"
-//     // }));
-    
-//     // jobNodes.value = nodes;
-//     // console.log(jobNodes)
-//   } catch (error) {
-//     console.error("Error fetching job categories:", error);
-//   }
-// };
-
 const getJobSubCategories = async (node: any) => {
-  try {
-    // toast.add({ severity: 'success', summary: 'Node Selected', detail: node.label +' '+ node.key, life: 3000 });
+  if (!registrationNumber.value) {
+    // Display error toast if registration number is empty
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Please enter a registration number.' });
+    return;
+  }else{
+     try {
     const jobSubCategories = await JobCategoryService.getjobsAndSubJobs();
-    // Find the category that matches the selected node.key
     const selectedCategory = jobSubCategories.find(category => category.job_subcategory_id === node.key);
     mainCat.value = selectedCategory
 
     if (selectedCategory) {
-      
       Subcategories.value = selectedCategory.subcategories
     } else {
       console.log('No matching category found for node key:', node.key);
@@ -115,49 +100,40 @@ const getJobSubCategories = async (node: any) => {
   } catch (error) {
     console.error("Error fetching job subcategories:", error);
   }
+  }
+ 
 };
 
-
-// const onNodeUnselect = (node: any) => {
-//     toast.add({ severity: 'warn', summary: 'Node Unselected', detail: node.label, life: 3000 });
-// };
 const handlePrimeCardClick = (category: any, subcategory: any) => {
   console.log("Clicked PrimeCard cat and sub cat : ", category, subcategory);
   selectedSubcategory.value = subcategory;
   const index = selectedRepairs.value.findIndex(rep => rep.id === subcategory.id);
   if (index !== -1) {
-    // If already selected, replace it
     selectedRepairs.value.splice(index, 1, subcategory);
     toast.add({ severity: 'warn', summary: 'Already Selected', detail: 'This repair was already selected.' });
   } else {
-    // If not selected, add it
     selectedRepairs.value.push(subcategory);
-    toast.add({ severity: 'success', summary: 'Reapir Selected', detail:  subcategory.job_subcategory_job +' was selected.' });
+    toast.add({ severity: 'success', summary: 'Repair Selected', detail:  subcategory.job_subcategory_job +' was selected.' });
   }
 };
+
 const removeSelectedRepair = (repairId: any) => {
   const index = selectedRepairs.value.findIndex(rep => rep.id === repairId);
   if (index !== -1) {
     toast.add({ severity: 'success', summary: 'Removed', detail:  'Repair was removed.' });
     selectedRepairs.value.splice(index, 1);
     console.log('removed repair item', selectedRepairs);
-  
-}
+  }
 };
-// onMounted(() => {
-
-//   GetStoreData();
-// });
 
 onMounted(() => {
   GetStoreData();
   if (nodes.value.length > 0) {
     selectedKey.value = nodes.value[0].key;
-    getJobSubCategories(nodes.value[0]); // Automatically select the first category
+    getJobSubCategories(nodes.value[0]);
   }
 });
 </script>
-
 <template>
   <div class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container">
     <div
@@ -189,6 +165,7 @@ onMounted(() => {
               >
                 GB
               </InputGroupAddon>
+              
               <InputText
                 v-model="registrationNumber"
                 style="background-color: #fbe90a; border-color: #00309a"
@@ -301,7 +278,7 @@ onMounted(() => {
           <div class="border-round surface-card">
             <div class="text-2xl text-500 mb-3">Avaliable Repairs</div>
             <PrimeDivider></PrimeDivider>
-            <div class="grid">
+            <div class="grid" v-if="registrationSuccess && (registrationNumber || vehicleData)">
               <div class="col-12 md:col-12 lg:col-4" v-for="subcategory in Subcategories" :key="subcategory.id">
 
                 <PrimeCard
@@ -325,11 +302,19 @@ onMounted(() => {
         </div>
       </div>
       <div class="col-12 md:col-12 lg:col-3">
-        <Ordersummary :selectedSubcategory="selectedSubcategory" :mainCat="mainCat" :selectedRepairs="selectedRepairs"  @repairRemoved="removeSelectedRepair"/>
+        <Ordersummary :selectedSubcategory="selectedSubcategory" 
+        :mainCat="mainCat" 
+        :selectedRepairs="selectedRepairs" 
+        :vehicleData="vehicleData"
+         @repairRemoved="removeSelectedRepair"/>
 
       </div>
     </div>
   </div>
 </template>
-
+<style scoped>
+  .grey-background {
+    background-color: #f0f0f0; /* Apply grey background color */
+  }
+</style>
 

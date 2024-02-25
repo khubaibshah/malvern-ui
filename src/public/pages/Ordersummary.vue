@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import router from "@/router/router";
-import { ref, type PropType } from "vue";
+import { ref, type PropType, computed, onMounted } from "vue";
 const date = ref<Date | null>(null); // Define date property
-const quantities1 = ref<number>(0); // Define quantities1 property
 const value3 = ref<string>(""); // Define value3 property
 const removeJobDialog = ref(false);
-const localSelectedRepairs = ref<SelectedRepairs[]>([]); // Define selectedRepairs property
+
 
 // Define $filters object with formatDate method
 const $filters = {
@@ -18,16 +17,25 @@ interface Subcategory {
   id: number;
   name: string;
   price: number;
-  // any other properties needed to be added here
 }
 interface MainCategory {
   name: string;
-  // Define the structure of your main category object here
 }
 interface SelectedRepairs {
   id: any;
   job_subcategory_job: string; // Assuming this is a property of SelectedRepairs
-  // Add any other properties if needed
+}
+interface VehicleData {
+  registration: string;
+  make: string;
+  model: string;
+  firstUsedDate: string;
+  fuelType: string;
+  primaryColour: string;
+  vehicleId: string;
+  registrationDate: string;
+  manufactureDate: string;
+  engineSize: string;
 }
 const props = defineProps({
   selectedSubcategory: {
@@ -42,19 +50,34 @@ const props = defineProps({
     type: Object as PropType<SelectedRepairs>,
     required: true,
   },
+  registrationNumber: {
+    type: String,
+    required: true
+  },
+  vehicleData: {
+    type: Object as PropType<VehicleData>,
+    required: true
+  }
 });
 const emits = defineEmits(["repairRemoved"]);
 
 const removeSelectedRepair = (repairId: any) => {
   emits("repairRemoved", repairId);
 };
-// const removeSelectedRepair = (repairId: any) => {
-//   const index = localSelectedRepairs.value.findIndex(repair => repair.id === repairId);
-//   if (index > -1) {
-//     localSelectedRepairs.value.splice(index, 1);
-//     console.log('removed repair item', localSelectedRepairs.value);
-//   }
-// };
+const isButtonDisabled = computed(() => {
+  // Check if vehicleData exists and is not empty
+  return (
+    !props.vehicleData ||
+    props.vehicleData.length === 0 ||
+    !props.vehicleData[0]?.registration ||
+    // Check if selectedRepairs is empty
+    props.selectedRepairs.length === 0
+  );
+});
+
+onMounted(() => {
+  // isButtonDisabled
+});
 </script>
 
 <template>
@@ -88,6 +111,7 @@ const removeSelectedRepair = (repairId: any) => {
   <div class="px-0 py-4 md:px-4">
     <div class="border-round surface-card">
       <div class="text-2xl text-500 mb-3">Summary</div>
+      <!-- {{ vehicleData[0].registration }} -->
       <PrimeDivider></PrimeDivider>
       <PrimeCard
         style="border-style: solid; border-color: darkgoldenrod !important"
@@ -126,11 +150,11 @@ const removeSelectedRepair = (repairId: any) => {
               <!-- <div class="text-600 text-md mb-3">{{ props.mainCat.job_category }}</div> -->
               <div v-if="props.selectedRepairs && props.selectedRepairs.length">
                 <!-- <div class="text-600 text-md mb-3" v-for="repair in props.selectedRepairs" :key="repair.job_subcategory_id" >{{ repair.category }}</div> -->
-                <div v-for="deleteRepairs in selectedRepairs">
+                <div v-for="repairs in selectedRepairs">
                   <div class="grid">
                     <div class="col-9">
                       <div class="text-left border-round-sm font-bold">
-                        {{ deleteRepairs.job_subcategory_job }}
+                        {{ repairs.job_subcategory_job }}
                       </div>
                     </div>
                     <div class="col-3">
@@ -138,7 +162,7 @@ const removeSelectedRepair = (repairId: any) => {
                         <PrimeButton
                           icon="pi pi-trash"
                           class="text-600 p-button-text p-button-rounded"
-                          @click="removeSelectedRepair(deleteRepairs.id)"
+                          @click="removeSelectedRepair(repairs.id)"
                         ></PrimeButton>
                       </div>
                     </div>
@@ -190,12 +214,19 @@ const removeSelectedRepair = (repairId: any) => {
             ></Password>
           </div>
           <PrimeButton
-            class="p-button-primary w-full mt-3"
-            label="Confirm Booking"
-            @click="router.push({ name: 'payment' })"
-          ></PrimeButton>
+    class="p-button-primary w-full mt-3"
+    label="Confirm Booking"
+    @click="router.push({ name: 'payment' })"
+    :disabled="isButtonDisabled"
+  ></PrimeButton>
         </template>
       </PrimeCard>
     </div>
   </div>
 </template>
+<style scoped>
+.disabled {
+  opacity: 0.5; /* Adjust opacity to your preference */
+  pointer-events: none;
+}
+</style>
