@@ -20,7 +20,7 @@ const handleCarDetails = (isVisible: boolean) => {
 
 const getDvsa = async () => {
   try {
-    const response = await VehicleService.getDvsaVehicleByReg('wd15afv');
+    const response = await VehicleService.getDvsaVehicleByReg(registrationNumber.value);
     vehData.value = response; // Assign the response data
     showCarDetails.value = true;
     vehicleStore.setVehicleData(response)
