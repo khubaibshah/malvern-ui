@@ -59,7 +59,7 @@ const transformToUpperCase = () => {
   <div class="surface-section text-800 flex justify-content-center flex-wrap">
     <div
       v-if="!showCarDetails"
-      class="col-12 md:col-12 p-6 text-center md:text-left flex align-items-center justify-content-center carDetailsForm"
+      class="col-12 md:col-12 pt-6 pr-3 pl-3 text-center md:text-left flex align-items-center justify-content-center carDetailsForm"
     >
       <section>
         <div>
@@ -93,7 +93,7 @@ const transformToUpperCase = () => {
                         style="background-color: #fbe90a; border-color: #00309a"
                         placeholder="REG"
                         inputClass="'bg-transparent text-900 border-400 border-blue-500'"
-                        class="text-7xl w-10 text-100 font-bold"
+                        class="text-5xl w-10 text-100 font-bold"
                         @input="transformToUpperCase"
                       />
                     </InputGroup>
@@ -102,7 +102,7 @@ const transformToUpperCase = () => {
               </PrimeFieldset>
             </div>
             <div class="col-12 md:col-12 lg:col-12">
-              <PrimeFieldset legend="What is your postcode? *">
+              <!-- <PrimeFieldset legend="What is your postcode? *">
                 <div class="flex justify-content-center flex-wrap">
                   <div
                     class="flex align-items-center justify-content-center h-4rem font-bold border-round"
@@ -119,7 +119,7 @@ const transformToUpperCase = () => {
                     </div>
                   </div>
                 </div>
-              </PrimeFieldset>
+              </PrimeFieldset> -->
               <div class="flex justify-content-end flex-wrap">
                 <div
                   class="flex align-items-center justify-content-center font-bold border-round"

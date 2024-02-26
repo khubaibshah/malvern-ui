@@ -34,7 +34,7 @@ onMounted(() => {
 
   <div class="surface-section text-800 flex justify-content-center flex-wrap my-fadein">
     <div
-      class="col-12 md:col-12 p-6 text-center flex align-items-center justify-content-center"
+      class="col-12 md:col-12 pt-4 pr-3 pl-3 text-center flex align-items-center justify-content-center"
     >
       <section>
         <div>
@@ -152,7 +152,7 @@ onMounted(() => {
                   <PrimeDivider></PrimeDivider> -->
                 </div>
               </PrimeFieldset>
-              <div class="flex justify-content-between flex-wrap">
+              <div class="flex justify-content-between flex-wrap mt-2">
                 <div
                   class="flex align-items-center justify-content-center font-bold border-round"
                 >
