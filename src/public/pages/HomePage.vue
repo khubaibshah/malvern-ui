@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import CarDetails from '@/public/pages/CarDetails.vue';
+
+import { ref, onMounted } from 'vue';
+
 import { useVehicleStore } from '@/stores/vehicleData';
+
+import CarDetails from '@/public/pages/CarDetails.vue';
 import VehicleService from '@/services/VehicleService'
 import toUpperCase from '@/components/reusable/toUpperCase'
-// const { transformToUpperCase } = useUpperCase();
+
+
 const showCarDetails = ref(false); // Reactive variable to control whether to show the car details section
 const vehData = ref(); // Reactive variable to store the vehicle details
 const registrationNumber = ref(''); // Reactive variable to store the registration number input
@@ -16,8 +20,9 @@ const dvsadata = ref(null)
 const handleCarDetails = (isVisible: boolean) => {
   showCarDetails.value = isVisible
 }
-// Method to make a request to the backend and display the details
 
+
+// Method to make a request to the backend and display the details
 const getDvsa = async () => {
   try {
     const response = await VehicleService.getDvsaVehicleByReg(registrationNumber.value);
@@ -43,14 +48,11 @@ const getVehicleDetails = async () => {
   }
 };
 
-// toUpperCase(registrationNumber)
+
 const transformToUpperCase = () => {
   toUpperCase(registrationNumber)
 };
 
-onMounted(() => {
-  // getDvsa();
-});
 </script>
 
 <template>

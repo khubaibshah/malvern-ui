@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import type { Nullable } from 'primevue/ts-helpers';
-import { ref } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+
+import { useBookingStore } from '@/stores/BookingStore';
+import router from '@/router/router';
+
+const bookingStore = useBookingStore(); // Accessing the Pinia store
+
+const fullBookingDetails = computed(() => bookingStore.fullBookingDetails);
+
+// console.log('full booking', Object.keys(fullBookingDetails.value).length)
+
 
 // Define reactive properties
 const selectedAddress = ref<string>(''); // Assuming selectedAddress is a string
@@ -18,14 +28,15 @@ const card2 = ref<string>(''); // Assuming card2 is a string
     minute: '2-digit',
 };
 
-// You can initialize these properties with appropriate values if needed
-// For example:
-// selectedAddress.value = 'Some default value';
-// address1.value = 'Some default value';
-// address2.value = 'Some default value';
-// quantities1.value = ['test'];
+const reload = () => {
+  if (!fullBookingDetails.value || Object.keys(fullBookingDetails.value).length === 0) {
+    router.push({ name: 'bookJob' });
+  }
+};
 
-// Define methods or computed properties if needed
+onMounted(() => {
+  reload(); // Call reload whenever fullBookingDetails changes
+});
 
 </script>
 <template>
@@ -35,6 +46,7 @@ const card2 = ref<string>(''); // Assuming card2 is a string
       <div class="text-500 mr-0 md:mr-3">Payment for repairs</div>
     </div>
     <PrimeDivider></PrimeDivider>
+
     <!-- <span class="p-input-icon-left w-full md:w-auto">
         <i class="pi pi-search"></i>
         <InputText type="text" placeholder="Search" class="w-full md:w-auto" />
@@ -54,83 +66,6 @@ const card2 = ref<string>(''); // Assuming card2 is a string
                 class="bg-green-500 text-0 flex align-items-center justify-content-center border-circle"
                 style="min-width: 3rem; min-height: 3rem"
               >
-                <i class="pi pi-directions text-xl"></i>
-              </span>
-              <div
-                class="h-full border-dashed border-1 border-green-500"
-                style="min-height: 12rem"
-              ></div>
-            </div>
-            <div class="ml-0 lg:ml-5 p-2 flex-auto">
-              <div class="mb-3">
-                <span class="text-900 text-xl block ml-2">Address</span>
-              </div>
-              <div class="grid flex-column lg:flex-row">
-                <div class="col p-3">
-                  <div
-                    class="flex flex-column border-round border-1 surface-border p-4 cursor-pointer hover:border-primary transition-duration-150"
-                    @click="selectedAddress = address1"
-                    :class="{ 'border-primary': selectedAddress === address1 }"
-                  >
-                    <div class="flex justify-content-between mb-3">
-                      <span class="text-900 text-xl font-medium">Home</span>
-                      <span class="text-600 font-medium"
-                        ><i class="pi pi-pencil mr-2"></i>Edit</span
-                      >
-                    </div>
-                    <span class="inline-block text-600 mb-3"
-                      >Jacob Obrechtstraat 5, 1071 KC Amsterdam The
-                      Netherlands</span
-                    >
-                    <span class="inline-block text-600"
-                      ><i class="pi pi-mobile mr-2"></i>+123456789</span
-                    >
-                  </div>
-                </div>
-                <div class="col p-3">
-                  <div
-                    class="flex flex-column border-round border-1 surface-border p-4 cursor-pointer hover:border-primary transition-duration-150"
-                    @click="selectedAddress = address2"
-                    :class="{ 'border-primary': selectedAddress === address2 }"
-                  >
-                    <div class="flex justify-content-between mb-3">
-                      <span class="text-900 text-xl font-medium">Office</span>
-                      <span class="text-600 font-medium"
-                        ><i class="pi pi-pencil mr-2"></i>Edit</span
-                      >
-                    </div>
-                    <span class="inline-block text-600 mb-3"
-                      >Jacob Obrechtstraat 5, 1072 KC Amsterdam The
-                      Netherlands</span
-                    >
-                    <span class="inline-block text-600"
-                      ><i class="pi pi-mobile mr-2"></i>+123456789</span
-                    >
-                  </div>
-                </div>
-                <div class="col-12 lg:col-3 p-3">
-                  <div
-                    class="flex h-full flex-column justify-content-center align-items-center text-center py-5 border-round border-1 surface-border surface-100 cursor-pointer hover:border-primary transition-duration-150"
-                  >
-                    <span
-                      class="text-600 border-circle border-2 w-2rem h-2rem flex align-items-center justify-content-center"
-                      ><i class="pi pi-fw pi-plus"></i
-                    ></span>
-                    <span class="text-600 mt-3">Add New Address</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex">
-            <div
-              class="flex flex-column align-items-center ml-3"
-              style="width: 2rem"
-            >
-              <span
-                class="bg-green-500 text-0 flex align-items-center justify-content-center border-circle"
-                style="min-width: 3rem; min-height: 3rem"
-              >
                 <i class="pi pi-image text-xl"></i>
               </span>
               <div
@@ -140,27 +75,25 @@ const card2 = ref<string>(''); // Assuming card2 is a string
             </div>
             <div class="ml-0 lg:ml-5 p-2 flex-auto">
               <div class="mb-3">
-                <span class="text-900 text-xl block ml-2">Cart</span>
+                <span class="text-900 text-xl block ml-2">Your Cart</span>
               </div>
-              <div
-                class="p-2 flex flex-column lg:flex-row flex-wrap lg:align-items-center"
-              >
-                <img
-                  src="../../assets/img/clutchimage.jpg"
-                  class="w-8rem h-8rem mb-3 lg:mb-0 flex-shrink-0"
-                  alt="product"
-                />
+              <div class="p-2 flex flex-column lg:flex-row flex-wrap lg:align-items-center">
                 <div class="flex-auto lg:ml-3">
-                  <div
-                    class="flex align-items-center justify-content-between mb-3"
-                  >
-                    <span class="text-900 font-medium">Repairs choosen</span>
-                    <span class="text-900 font-medium">$123.00</span>
+                  
+                  <div class="flex align-items-center justify-content-between mb-3" v-if="fullBookingDetails">
+                    <span class="text-900 font-medium">Choosen Repairs</span>
                   </div>
-                  <div class="text-600 text-sm mb-3">Clutch Replace</div>
-                  <div
-                    class="flex flex-auto justify-content-between align-items-center"
-                  >
+                  
+                  <div v-for="repairs in fullBookingDetails">
+                    <div class="text-600 text-lg mb-3" v-for="jobs in repairs">{{ jobs.job_subcategory_job }}</div>
+                  </div>
+                  <!-- <div class="text-600 text-sm mb-3">Clutch Replace</div> -->
+                  <div class="flex flex-auto justify-content-between align-items-center  mb-4">
+                    <span class="text-900 font-bold">Total Amount</span>
+                    <span class="text-900 font-bold">£{{ fullBookingDetails.totalAmount }}</span>
+                  </div>
+                  <!-- <div
+                    class="flex flex-auto justify-content-between align-items-center">
                     <InputNumber
                       :showButtons="true"
                       buttonLayout="horizontal"
@@ -176,7 +109,7 @@ const card2 = ref<string>(''); // Assuming card2 is a string
                     <span class="text-600 cursor-pointer"
                       ><i class="pi pi-trash mr-2"></i>Delete</span
                     >
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -292,21 +225,13 @@ const card2 = ref<string>(''); // Assuming card2 is a string
           <div class="border-bottom-1 surface-border my-3 py-2">
             <div class="flex justify-content-between mb-3">
               <span class="text-900">Price</span>
-              <span class="text-900">$123.00</span>
-            </div>
-            <div class="flex justify-content-between mb-3">
-              <span class="text-900">Delivery</span>
-              <span class="text-green-500">Free</span>
-            </div>
-            <div class="flex justify-content-between mb-3">
-              <span class="text-900">Discount</span>
-              <span class="text-900">$12.00</span>
+              <span class="text-900">£{{ fullBookingDetails.totalAmount }}</span>
             </div>
           </div>
           <div class="border-bottom-1 surface-border my-3 py-2">
             <div class="flex justify-content-between mb-3">
               <span class="text-900 font-medium">Total</span>
-              <span class="text-900 font-bold">$111.00</span>
+              <span class="text-900 font-bold">£{{ fullBookingDetails.totalAmount }}</span>
             </div>
           </div>
           <PrimeButton

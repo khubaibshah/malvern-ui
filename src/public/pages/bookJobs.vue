@@ -3,27 +3,31 @@ import { onMounted, ref, defineProps } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import { useVehicleStore } from "@/stores/vehicleData";
+
+
 import VehicleService from "@/services/VehicleService";
 import JobCategoryService from "@/services/JobCategoryService";
-import toUpperCase from '@/components/reusable/toUpperCase'
 
 import Ordersummary from "./Ordersummary.vue";
 
-const vehicleStore = useVehicleStore();
+import toUpperCase from '@/components/reusable/toUpperCase'
+import useNodes from '@/composable/jobNodes';
+
+
 const registrationNumber = ref("");
 const vehicleData = ref();
-
 const JobSubCatergories = ref();
-const getVehicleDataStore = vehicleStore.getVehicleData;
-
 const Subcategories = ref();
 const selectedSubcategory = ref()
 const mainCat = ref()
-
-
 const selectedRepairs = ref([]); // Array to store selected repairs
-
 const registrationSuccess = ref(false); // Flag to track registration success
+
+const vehicleStore = useVehicleStore();
+const { nodes } = useNodes();
+
+const getVehicleDataStore = vehicleStore.getVehicleData;
+
 
 const props = defineProps<{
   selectedSubcategory: any;
@@ -32,28 +36,7 @@ const props = defineProps<{
 const selectedKey = ref();
 const toast = useToast();
 
-const nodes = ref([
-  {
-      key: 1,
-      label: 'Transmission',
-      icon: 'pi pi-wrench',  
-  },
-  {
-      key: 2,
-      label: 'Electrical',
-      icon: 'pi pi-wrench',  
-  },
-  {
-      key: 3,
-      label: 'Engine',
-      icon: 'pi pi-wrench',  
-  },
-  {
-      key: 4,
-      label: 'Brakes',
-      icon: 'pi pi-wrench',
-  }
-]);
+
 
 const transformToUpperCase = () => {
   toUpperCase(registrationNumber)
@@ -83,7 +66,7 @@ const handleRegistrationNumberChange = async () => {
 const getJobSubCategories = async (node: any) => {
   if (!registrationNumber.value) {
     // Display error toast if registration number is empty
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Please enter a registration number.' });
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Please enter a registration number.', life: 4000});
     return;
   }else{
      try {
@@ -110,17 +93,17 @@ const handlePrimeCardClick = (category: any, subcategory: any) => {
   const index = selectedRepairs.value.findIndex(rep => rep.id === subcategory.id);
   if (index !== -1) {
     selectedRepairs.value.splice(index, 1, subcategory);
-    toast.add({ severity: 'warn', summary: 'Already Selected', detail: 'This repair was already selected.' });
+    toast.add({ severity: 'warn', summary: 'Already Selected', detail: 'This repair was already selected.', life: 4000 });
   } else {
     selectedRepairs.value.push(subcategory);
-    toast.add({ severity: 'success', summary: 'Repair Selected', detail:  subcategory.job_subcategory_job +' was selected.' });
+    toast.add({ severity: 'success', summary: 'Repair Selected', detail:  subcategory.job_subcategory_job +' was selected.', life: 4000 });
   }
 };
 
 const removeSelectedRepair = (repairId: any) => {
   const index = selectedRepairs.value.findIndex(rep => rep.id === repairId);
   if (index !== -1) {
-    toast.add({ severity: 'success', summary: 'Removed', detail:  'Repair was removed.' });
+    toast.add({ severity: 'success', summary: 'Removed', detail:  'Repair was removed.', life: 4000 });
     selectedRepairs.value.splice(index, 1);
     console.log('removed repair item', selectedRepairs);
   }
@@ -252,17 +235,6 @@ onMounted(() => {
                 {{ VehData.fuelType }}
               </div>
               <PrimeDivider></PrimeDivider>
-              <!-- <div
-                class="flex align-items-center justify-content-center font-bold border-round"
-              >
-                Manufacture Date
-              </div>
-              <div
-                class="flex align-items-center justify-content-center font-bold border-round"
-              >
-                {{ VehData.yearOfManufacture }}
-              </div>
-              <PrimeDivider></PrimeDivider> -->
             </div>
           </div>
         </div>
