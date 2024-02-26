@@ -128,7 +128,7 @@ onMounted(() => {
       </div>
     </div>
   </PrimeDialog>
-  <div class="px-0 py-4 md:px-4">
+  <div class="px-0 py-4">
     <div class="border-round surface-card">
       <div class="text-2xl text-500 mb-3">Summary</div>
       <!-- {{ props.vehicleData }} -->

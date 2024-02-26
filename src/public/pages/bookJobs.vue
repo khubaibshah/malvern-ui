@@ -136,9 +136,11 @@ onMounted(() => {
 </script>
 <template>
   <div class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container">
+    
     <div
       class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border mb-3"
     >
+    <PrimeToast />
       <div class="mb-3 lg:mb-0">
         <div class="text-3xl font-medium text-900 mb-3">Book Repairs</div>
         <div class="text-500 mr-0 md:mr-3">
@@ -267,14 +269,14 @@ onMounted(() => {
         <div class="surface-card border-round">
           <div class="text-1xl text-500 mb-3 font-bold">Select a Category or Search for repairs below.</div>
         </div>
-      <PrimeToast />
+      
         <PrimeTree v-model:selectionKeys="selectedKey" :filter="true"
         filterMode="lenient" :value="nodes" selectionMode="single"
             @nodeSelect="getJobSubCategories" class="w-full"
             style="padding-left: 0"></PrimeTree>
       </div>
       <div class="col-12 md:col-12 lg:col-6">
-        <div class="px-0 py-4 md:px-4">
+        <div class=" py-4">
           <div class="border-round surface-card">
             <div class="text-2xl text-500 mb-3">Avaliable Repairs</div>
             <PrimeDivider></PrimeDivider>
