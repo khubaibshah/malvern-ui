@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import router from "@/router/router";
-import { ref, type PropType, computed, onMounted } from "vue";
+import { ref, type PropType, computed, onMounted, watch } from "vue";
 const date = ref<Date | null>(null); // Define date property
 const value3 = ref<string>(""); // Define value3 property
 const removeJobDialog = ref(false);
-
+const fullBookingDetails = ref<any>({});
 
 // Define $filters object with formatDate method
 const $filters = {
   formatDate(date: Date): string {
     // Implement your date formatting logic here
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
   },
 };
 interface Subcategory {
@@ -74,6 +74,25 @@ const isButtonDisabled = computed(() => {
     props.selectedRepairs.length === 0
   );
 });
+watch([date, () => props.vehicleData, props.selectedRepairs], ([newDate, newVehicleData, newSelectedRepairs]) => {
+  fullBookingDetails.value.date = newDate;
+
+  if (newVehicleData && newVehicleData.length > 0) {
+    const { registration, make, model } = newVehicleData[0];
+    fullBookingDetails.value.registration = registration;
+    fullBookingDetails.value.make = make;
+    fullBookingDetails.value.model = model;
+  }
+  // Check if there are selected repairs
+  if (newSelectedRepairs && newSelectedRepairs.length > 0) {
+    const selectedRepairsDetails = newSelectedRepairs.map(repair => ({
+      job_subcategory_job: repair.job_subcategory_job,
+      job_subcategory_price: repair.job_subcategory_price
+    }));
+    // Only add selectedRepairsDetails if there are selected repairs
+    fullBookingDetails.value.selectedRepairs = selectedRepairsDetails;
+  }
+});
 
 onMounted(() => {
   // isButtonDisabled
@@ -112,6 +131,7 @@ onMounted(() => {
     <div class="border-round surface-card">
       <div class="text-2xl text-500 mb-3">Summary</div>
       <!-- {{ vehicleData[0].registration }} -->
+      {{ props.vehicleData }}
       <PrimeDivider></PrimeDivider>
       <PrimeCard
         style="border-style: solid; border-color: darkgoldenrod !important"
@@ -133,10 +153,12 @@ onMounted(() => {
         </template>
         <template #content>
           <span class="text-900 font-medium text-lg lg:text-xl"
-            ><i class="pi pi-calendar text-xl mt-2"></i>Pick Date</span
+            ><i class="pi pi-calendar text-xl mt-2"></i> Pick A Date & Time</span
           >
           <div class="py-2 mt-3 border-bottom-1 surface-border mb-4">
-            <PrimeCalendar v-model="date" inline showTime hourFormat="12" />
+            <!-- <PrimeCalendar v-model="date" inline showTime hourFormat="12" dateFormat="dd/mm/yy"/> -->
+            <PrimeCalendar v-model="date" dateFormat="dd/mm/yy" showTime hourFormat="12" touchUI class="w-full"/>
+            {{ date }}
           </div>
           <span class="text-900 font-medium">Your Selected Repairs</span>
           <div
@@ -200,26 +222,22 @@ onMounted(() => {
               <span class="text-900 font-bold">$12.00</span>
             </div>
           </div>
-          <div class="py-2 mt-3 border-bottom-1 surface-border">
-            <div class="text-900 font-medium mb-2">Save Your Account</div>
-            <div class="text-600 text-sm line-height-3 mb-2">
-              Create an exclusive account for easy shopping and experience for
-              your upcoming visits.
-            </div>
-            <Password
-              v-model="value3"
-              :toggleMask="true"
-              inputClass="w-full"
-              class="w-full mb-2"
-            ></Password>
-          </div>
           <PrimeButton
-    class="p-button-primary w-full mt-3"
-    label="Confirm Booking"
-    @click="router.push({ name: 'payment' })"
-    :disabled="isButtonDisabled"
-  ></PrimeButton>
+            class="p-button-primary w-full mt-3"
+            label="Confirm Booking"
+            @click="router.push({ name: 'payment' })"
+            :disabled="isButtonDisabled"
+          ></PrimeButton>
+
+
+          <div v-if="fullBookingDetails">
+            <span class="text-900 font-medium">Full Booking Details:</span>
+            <div>{{ fullBookingDetails }}</div>
+          </div>
+
+          
         </template>
+        
       </PrimeCard>
     </div>
   </div>
