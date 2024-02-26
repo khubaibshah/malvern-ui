@@ -67,6 +67,7 @@ const removeSelectedRepair = (repairId: any) => {
 const isButtonDisabled = computed(() => {
   // Check if vehicleData exists and is not empty
   return (
+    !date.value ||
     !props.vehicleData ||
     props.vehicleData.length === 0 ||
     !props.vehicleData[0]?.registration ||
@@ -130,8 +131,7 @@ onMounted(() => {
   <div class="px-0 py-4 md:px-4">
     <div class="border-round surface-card">
       <div class="text-2xl text-500 mb-3">Summary</div>
-      <!-- {{ vehicleData[0].registration }} -->
-      {{ props.vehicleData }}
+      <!-- {{ props.vehicleData }} -->
       <PrimeDivider></PrimeDivider>
       <PrimeCard
         style="border-style: solid; border-color: darkgoldenrod !important"
@@ -142,7 +142,7 @@ onMounted(() => {
           >
             <span class="text-900 font-medium text-lg lg:text-xl"
               ><i class="pi pi-shopping-cart text-xl mr-2"></i>Your Order
-              (1)</span
+              </span
             >
             <a
               tabindex="0"
@@ -158,7 +158,6 @@ onMounted(() => {
           <div class="py-2 mt-3 border-bottom-1 surface-border mb-4">
             <!-- <PrimeCalendar v-model="date" inline showTime hourFormat="12" dateFormat="dd/mm/yy"/> -->
             <PrimeCalendar v-model="date" dateFormat="dd/mm/yy" showTime hourFormat="12" touchUI class="w-full"/>
-            {{ date }}
           </div>
           <span class="text-900 font-medium">Your Selected Repairs</span>
           <div
