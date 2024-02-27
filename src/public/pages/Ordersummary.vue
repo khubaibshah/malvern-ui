@@ -214,6 +214,7 @@ watch(date, (newDate, oldDate) => {
               hourFormat="12"
               touchUI
               class="w-full"
+              placeholder="dd/mm/yy"
             />
           </div>
           <span class="text-900 font-medium">Your Selected Repairs</span>
