@@ -73,7 +73,7 @@ class VehicleService {
   // Function to fetch a single vehicle by ID
   getVehicleByReg = async (registrationNumber: any): Promise<VehicleData> => {
     try {
-      const response = await axios.get(`https://malvern-api-production.up.railway.app//admin/vehicle-details/${registrationNumber}`);
+      const response = await axios.get(`https://malvern-api-production.up.railway.app/admin/vehicle-details/${registrationNumber}`);
       console.log('Fetched vehicle data by Registration from db:', response.data);
       return response.data;
     } catch (error) {
@@ -83,7 +83,7 @@ class VehicleService {
   };
   getDvsaVehicleByReg = async (registrationNumber: any): Promise<DVSAVehicleData> => {
     try {
-      const response = await axios.get(`https://malvern-api-production.up.railway.app//admin/dvsa-vehicle-details/${registrationNumber}`);
+      const response = await axios.get(`https://malvern-api-production.up.railway.app/admin/dvsa-vehicle-details/${registrationNumber}`);
 
       console.log('Fetched vehicle data by Registration from dvsa data:', response.data);
       return response.data;
