@@ -29,7 +29,7 @@ const createBooking = async () => {
     };
 
     // Call the createBooking method from BookingService
-          const response = await axios.post('http://127.0.0.1:8000/admin/customerbookings', userBooking, {
+          const response = await axios.post('https://malvern-api-production.up.railway.app//admin/customerbooking', userBooking, {
             headers: {
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*'

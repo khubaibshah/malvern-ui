@@ -1,16 +1,21 @@
 <script setup lang="ts">
+
+import Stripe from 'stripe';
+// Create a new Stripe instance with your test secret API key
+const stripe = new Stripe('sk_test_KUgd5hcMpYmUloBmiJ2W4h6S');
+
 import type { Nullable } from 'primevue/ts-helpers';
 import { ref, computed, onMounted, watch } from 'vue';
 
 import { useBookingStore } from '@/stores/BookingStore';
 import router from '@/router/router';
+import axios from 'axios';
 
 const bookingStore = useBookingStore(); // Accessing the Pinia store
 
 const fullBookingDetails = computed(() => bookingStore.fullBookingDetails);
 
 // console.log('full booking', Object.keys(fullBookingDetails.value).length)
-
 
 // Define reactive properties
 const selectedAddress = ref<string>(''); // Assuming selectedAddress is a string
@@ -236,8 +241,8 @@ onMounted(() => {
           </div>
           <PrimeButton
             class="surface-400 border-none hover:bg-primary w-full mt-3"
-            :disabled="!selectedCard"
             label="Place Order"
+            @click="createCheckoutSession"
           ></PrimeButton>
         </div>
       </div>
