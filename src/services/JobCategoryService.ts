@@ -6,7 +6,7 @@ class JobCategoryService {
     // Function to fetch job cetgories details from malvern API
     getJobCat = async () => {
       try {
-        const response = await axios.get('https://malvern-api-production.up.railway.app//admin/customer-job-category');
+        const response = await axios.get('https://malvern-api-production.up.railway.app/admin/customer-job-category');
         
         // Assuming the response contains the job cet details
         return response.data;
@@ -19,7 +19,7 @@ class JobCategoryService {
     // Function to fetch vehicle details from DVLA API
     getJobSubCat = async () => {
       try {
-        const response = await axios.get('https://malvern-api-production.up.railway.app//admin/customer-job-sub-categories');
+        const response = await axios.get('https://malvern-api-production.up.railway.app/admin/customer-job-sub-categories');
         
         // Assuming the response contains the job cet details
         return response.data;
@@ -32,7 +32,7 @@ class JobCategoryService {
     // Function to fetch vehicle details from DVLA API
     getjobsAndSubJobs = async () => {
       try {
-        const response = await axios.get('https://malvern-api-production.up.railway.app//admin/customer-allCategories');
+        const response = await axios.get('https://malvern-api-production.up.railway.app/admin/customer-allCategories');
         
         // Assuming the response contains the job cet details
         return response.data;
