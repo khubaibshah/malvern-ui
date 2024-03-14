@@ -25,7 +25,7 @@ class VehicleService {
   // Function to fetch vehicle details from DVLA API
   getVehicleDetails = async (registrationNumber: string): Promise<VehicleData> => {
     try {
-      const response = await axios.post('https://malvern-api-production.up.railway.app//admin/get-vehicle-details', {
+      const response = await axios.post('https://malvern-api-production.up.railway.app/admin/get-vehicle-details', {
         registrationNumber: registrationNumber,
       });
       
