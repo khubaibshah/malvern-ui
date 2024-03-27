@@ -11,9 +11,9 @@ const vehicle_make = ref('')
 const vehicle_model = ref('')
 const notes = ref('')
 const Booking_reference = ref('')
-const deposit_paid = ref<string|null>('false'); // Assuming it's a boolean field
-const job_repair_id = ref<string|null>('false'); // Initialize as a number
-const repair_price = ref(0) // Initialize as a number
+const deposit_paid = ref(''); // Assuming it's a boolean field
+const job_repair_id = ref(''); // Initialize as a number
+const repair_price = ref('') // Initialize as a number
 
 const date = ref()
 const bookings = ref()
