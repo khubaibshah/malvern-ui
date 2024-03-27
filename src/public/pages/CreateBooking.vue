@@ -7,8 +7,12 @@ import axios from 'axios'
 const name = ref('')
 const email = ref('')
 const phoneNumber = ref('')
-const vehicleMakeModel = ref('')
+const vehicle_make = ref('')
+const vehicle_model = ref('')
 const notes = ref('')
+const Booking_reference = ref('')
+const deposit_paid = ref()
+const job_repair_id = ref()
 
 const date = ref()
 const bookings = ref()
@@ -23,9 +27,12 @@ const createBooking = async () => {
       name: name.value,
       email: email.value,
       phone_number: phoneNumber.value,
-      vehicle_make_model: vehicleMakeModel.value,
+      vehicle_make: vehicle_make.value,
+      vehicle_model: vehicle_model.value,
       booking_datetime: formatDate(date.value), // Format the date before sending
-      notes: notes.value // Format the date before sending
+      notes: notes.value,
+      Booking_reference: Booking_reference.value,
+      deposit_paid: deposit_paid.value // Format the date before sending
     };
 
     // Call the createBooking method from BookingService
@@ -40,7 +47,8 @@ const createBooking = async () => {
     name.value = '';
     email.value = '';
     phoneNumber.value = '';
-    vehicleMakeModel.value = '';
+    vehicle_make.value = '';
+    vehicle_model.value = '';
     date.value = null;
     notes.value = '';
     // Set success message
@@ -107,6 +115,18 @@ onMounted(async () => {})
               <InputText v-model="name" id="name" type="text" class="py-3 px-2 text-lg" />
             </div>
             <div class="field">
+              <label for="Booking_reference" class="font-medium">Booking reference</label>
+              <InputText v-model="Booking_reference" id="Booking_reference" type="text" class="py-3 px-2 text-lg" />
+            </div>
+            <div class="field">
+              <label for="deposit_paid" class="font-medium">deposit_paid</label>
+              <InputText v-model="deposit_paid" id="deposit_paid" type="deposit_paid" class="py-3 px-2 text-lg" />
+            </div>
+            <div class="field">
+              <label for="job_repair_id" class="font-medium">job_repair_id</label>
+              <InputText v-model="job_repair_id" id="job_repair_id" type="job_repair_id" class="py-3 px-2 text-lg" />
+            </div>
+            <div class="field">
               <label for="company" class="font-medium">Phone number</label>
               <InputText v-model="phoneNumber" id="company" type="text" class="py-3 px-2 text-lg" />
             </div>
@@ -115,9 +135,18 @@ onMounted(async () => {})
               <InputText v-model="email" id="email" type="text" class="py-3 px-2 text-lg" />
             </div>
             <div class="field">
-              <label for="message" class="font-medium">Vehicle make & model</label>
+              <label for="message" class="font-medium">Vehicle make</label>
               <InputText
-                v-model="vehicleMakeModel"
+                v-model="vehicle_make"
+                id="message"
+                :rows="6"
+                class="py-3 px-2 text-lg"
+              ></InputText>
+            </div>
+            <div class="field">
+              <label for="message" class="font-medium">Vehicle model</label>
+              <InputText
+                v-model="vehicle_model"
                 id="message"
                 :rows="6"
                 class="py-3 px-2 text-lg"
