@@ -11,8 +11,9 @@ const vehicle_make = ref('')
 const vehicle_model = ref('')
 const notes = ref('')
 const Booking_reference = ref('')
-const deposit_paid = ref(0)
-const job_repair_id = ref(0)
+const deposit_paid = ref(false) // Assuming it's a boolean field
+const job_repair_id = ref(0) // Initialize as a number
+const repair_price = ref(0) // Initialize as a number
 
 const date = ref()
 const bookings = ref()
@@ -32,17 +33,25 @@ const createBooking = async () => {
       booking_datetime: formatDate(date.value), // Format the date before sending
       notes: notes.value,
       Booking_reference: Booking_reference.value,
-      deposit_paid: deposit_paid.value // Format the date before sending
+      deposit_paid: 1, // Format the date before sending
+      job_repair_id: 1, // Use the numeric ref
+      repair_price: repair_price.value // Use the numeric ref
     };
 
+    // Check if required fields are populated
+    if (!userBooking.booking_datetime || !userBooking.job_repair_id || !userBooking.repair_price) {
+      throw new Error('Please fill in all required fields.');
+    }
+
     // Call the createBooking method from BookingService
-          const response = await axios.post(`https://malvern-api-production.up.railway.app/admin/customer-booking`, userBooking, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*'
-            }
-          })
-          bookings.value = response.data
+    const response = await axios.post(`https://malvern-api-production.up.railway.app/admin/customer-booking`, userBooking, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    })
+    bookings.value = response.data
+
     // Optionally, you can reset the form fields after successful submission
     name.value = '';
     email.value = '';
@@ -88,6 +97,7 @@ const formatDate = (date: any) => {
 
 onMounted(async () => {})
 </script>
+
 <template>
   <div>
     <PrimeToast />
