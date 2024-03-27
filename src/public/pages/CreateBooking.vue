@@ -11,8 +11,8 @@ const vehicle_make = ref('')
 const vehicle_model = ref('')
 const notes = ref('')
 const Booking_reference = ref('')
-const deposit_paid = ref(false) // Assuming it's a boolean field
-const job_repair_id = ref(0) // Initialize as a number
+const deposit_paid = ref<string|null>('false'); // Assuming it's a boolean field
+const job_repair_id = ref<string|null>('false'); // Initialize as a number
 const repair_price = ref(0) // Initialize as a number
 
 const date = ref()
@@ -33,8 +33,8 @@ const createBooking = async () => {
       booking_datetime: formatDate(date.value), // Format the date before sending
       notes: notes.value,
       Booking_reference: Booking_reference.value,
-      deposit_paid: 1, // Format the date before sending
-      job_repair_id: 1, // Use the numeric ref
+      deposit_paid: deposit_paid.value.toString(), // Convert boolean to string // Format the date before sending
+      job_repair_id: job_repair_id.value.toString(), // Use the numeric ref
       repair_price: repair_price.value // Use the numeric ref
     };
 
