@@ -20,14 +20,12 @@ const toast = useToast()
 const createBooking = async () => {
   try {
     const userBooking = {
-      "Booking_reference": 1,
-      "vehicle_make": "audi",
-      "vehicle_model": "a3",
-      "job_repair_id": 1,
-      "bookings_datetime": "2024-02-16 02:14:10",
-      "customer_notes": "postman test for admin side",
-      "deposit_paid": 1,
-      "repair_price": 150 // Format the date before sending
+      name: name.value,
+      email: email.value,
+      phone_number: phoneNumber.value,
+      vehicle_make_model: vehicleMakeModel.value,
+      booking_datetime: formatDate(date.value), // Format the date before sending
+      notes: notes.value // Format the date before sending
     };
 
     // Call the createBooking method from BookingService
