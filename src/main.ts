@@ -110,7 +110,7 @@ app.config.globalProperties.$filters = {
         return new Intl.DateTimeFormat('en-GB').format(new Date(value));
     },
     formatDateTime: (value: string) => {
-        const options = {
+        const options: Intl.DateTimeFormatOptions = {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
@@ -119,6 +119,7 @@ app.config.globalProperties.$filters = {
         };
         return new Intl.DateTimeFormat('en-GB', options).format(new Date(value));
     },
+    
 };
 
 

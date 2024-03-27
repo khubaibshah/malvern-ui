@@ -242,7 +242,6 @@ onMounted(() => {
           <PrimeButton
             class="surface-400 border-none hover:bg-primary w-full mt-3"
             label="Place Order"
-            @click="createCheckoutSession"
           ></PrimeButton>
         </div>
       </div>

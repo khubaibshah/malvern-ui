@@ -32,6 +32,7 @@ interface MainCategory {
 interface SelectedRepairs {
   id: any;
   job_subcategory_job: string;
+  job_subcategory_price: string;
 }
 interface VehicleData {
   registration: string;
@@ -55,7 +56,7 @@ const props = defineProps({
     required: true,
   },
   selectedRepairs: {
-    type: Object as PropType<SelectedRepairs>,
+    type: Array as PropType<SelectedRepairs[]>,
     required: true,
   },
   registrationNumber: {
@@ -78,8 +79,7 @@ const isButtonDisabled = computed(() => {
   return (
     !date.value ||
     !props.vehicleData ||
-    props.vehicleData.length === 0 ||
-    !props.vehicleData[0]?.registration ||
+    !props.vehicleData || !Array.isArray(props.vehicleData) || props.vehicleData.length === 0 || !props.vehicleData[0]?.registration ||
     // Check if selectedRepairs is empty
     props.selectedRepairs.length === 0
   );
@@ -91,7 +91,7 @@ const calculateTotalAmount = computed(() => {
   // Check if fullBookingDetails and selectedRepairs exist
   if (fullBookingDetails.value && fullBookingDetails.value.selectedRepairs) {
     // Iterate over selectedRepairs and sum up the job_subcategory_price values
-    fullBookingDetails.value.selectedRepairs.forEach((repair) => {
+    fullBookingDetails.value.selectedRepairs.forEach((repair : any) => {
       total += parseFloat(repair.job_subcategory_price);
     });
   }
@@ -104,10 +104,10 @@ watch(
   ([newDate, newVehicleData, newSelectedRepairs]) => {
     bookingStore.setFullBookingDetails({
       date: newDate,
-      registration: newVehicleData[0]?.registration || "",
-      make: newVehicleData[0]?.make || "",
-      model: newVehicleData[0]?.model || "",
-      totalAmount: calculateTotalAmount._value, // Add the totalAmount property
+      registration: newVehicleData?.registration || "",
+      make: newVehicleData?.make || "",
+      model: newVehicleData?.model || "",
+      totalAmount: calculateTotalAmount.value, // Add the totalAmount property
       selectedRepairs: newSelectedRepairs.map((repair: any) => ({
         job_subcategory_job: repair.job_subcategory_job,
         job_subcategory_price: repair.job_subcategory_price,
@@ -117,12 +117,13 @@ watch(
     // console.log('full amount for object ',calculateTotalAmount._value)
     fullBookingDetails.value.date = newDate;
 
-    if (newVehicleData && newVehicleData.length > 0) {
-      const { registration, make, model } = newVehicleData[0];
-      fullBookingDetails.value.registration = registration;
-      fullBookingDetails.value.make = make;
-      fullBookingDetails.value.model = model;
-    }
+    if (newVehicleData) {
+  const { registration, make, model } = newVehicleData;
+  fullBookingDetails.value.registration = registration || "";
+  fullBookingDetails.value.make = make || "";
+  fullBookingDetails.value.model = model || "";
+}
+
     // Check if there are selected repairs
     if (newSelectedRepairs && newSelectedRepairs.length > 0) {
       const selectedRepairsDetails = newSelectedRepairs.map((repair) => ({
@@ -134,6 +135,7 @@ watch(
     }
   }
 );
+
 
 watch(date, (newDate, oldDate) => {
   if (newDate && newDate < new Date()) {
@@ -236,6 +238,7 @@ watch(date, (newDate, oldDate) => {
                     v-for="repairs in props.selectedRepairs"
                     :key="repairs.id"
                   >
+                  <!-- {{ console.log('selected repairs', props.selectedRepair) }} -->
                     <div class="grid">
                       <div class="col-9 p-0">
                         <div class="text-left border-round-sm font-bold">
@@ -288,7 +291,7 @@ watch(date, (newDate, oldDate) => {
             </div>
             <div class="flex justify-content-between align-items-center mb-3">
               <span class="text-900">Total</span>
-              
+              {{ console.log('full amount',calculateTotalAmount) }}
               <span class="text-900 font-bold">{{ calculateTotalAmount }}</span>
             </div>
           </div>
