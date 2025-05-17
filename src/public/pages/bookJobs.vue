@@ -73,6 +73,12 @@ const handleRegistrationNumberChange = async () => {
     vehicleStore.setVehicleData(vesApiCall);
     registrationSuccess.value = true; // Set registrationSuccess to true upon successful registration
   } catch (error) {
+    toast.add({
+      severity: "warn",
+      summary: "Please Check Registration Entered",
+      detail: "Error fetching vehicle data",
+      life: 4000,
+    });
     console.error("Error fetching vehicle data:", error);
     registrationSuccess.value = false; // Set registrationSuccess to false if there's an error
   }
