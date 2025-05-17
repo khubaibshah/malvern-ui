@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PartSnap</string>
+    <string name="title_activity_main">PartSnap</string>
+    <string name="package_name">com.autotech.partsnap</string>
+    <string name="custom_url_scheme">com.autotech.partsnap</string>
+</resources>

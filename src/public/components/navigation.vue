@@ -19,9 +19,17 @@
                 </a>
             </li>
             <li>
+                <a v-ripple 
+                @click="router.push({name: 'scscars'})"
+                :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'">
+                    <i class="pi pi-car mr-2"></i>
+                    <span>SCS Cars</span>
+                </a>
+            </li>
+            <li>
                 <a v-ripple :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'"
                     v-styleclass="{ selector: '@next', enterClass: 'hidden', enterActiveClass: 'scalein', leaveToClass: 'hidden', leaveActiveClass: 'fadeout', hideOnOutsideClick: true }">
-                    <i class="pi pi-users mr-2"></i>
+                    <i class="pi pi-car mr-2"></i>
                     <span>Customers</span>
                     <i class="pi pi-angle-down ml-auto lg:ml-3"></i>
                 </a>

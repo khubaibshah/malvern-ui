@@ -18,11 +18,11 @@ const router = createRouter({
       name: 'createbooking',
       component: CreateBookingVue
     },
-    // {
-    //   path: '/carDetails',
-    //   name: 'cardetails',
-    //   component: CarDetails
-    // },
+    {
+      path: '/scscars',
+      name: 'cardetails',
+      component: CarDetails
+    },
     {
       path: '/bookJob',
       name: 'bookJob',
