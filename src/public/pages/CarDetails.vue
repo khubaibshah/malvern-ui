@@ -6,6 +6,7 @@ import { onMounted, ref } from "vue";
 const vehicleData = useVehicleStore()
 const dvsadata = ref(null)
 const getVehicleData = vehicleData.getVehicleData
+console.log('dsadfasdf',getVehicleData);
 const emit = defineEmits(['showHomePage']); // Define the emit function to use event emitting
 
 const router = useRouter();
@@ -20,6 +21,7 @@ const showHomePage = () => {
 const getDvsa = async () => {
   try {
     const response = await VehicleService.getDvsaVehicleByReg(getVehicleData.registrationNumber);
+    console.log('here response new api',response)
     dvsadata.value = response; // Assign the response data
   } catch (error) {
     console.error(error);
@@ -73,7 +75,7 @@ onMounted(() => {
                         GB
                       </InputGroupAddon>
                       <InputText
-                        v-model="getVehicleData[0].registration"
+                        v-model="getVehicleData.registration"
                         style="background-color: #fbe90a; border-color: #00309a"
                         placeholder="REG"
                         inputClass="'bg-transparent text-900 border-400 border-blue-500'"
@@ -83,7 +85,7 @@ onMounted(() => {
                     </InputGroup>
                   </div>
                 </div>
-                <div class="flex justify-content-between flex-wrap mt-3" v-for="vehicleData in getVehicleData">
+                <div class="flex justify-content-between flex-wrap mt-3">
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round mb-2"
                   >
@@ -92,7 +94,7 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round"
                   >
-                    {{ vehicleData.make }}
+                    {{ getVehicleData.make }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -103,7 +105,7 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round"
                   >
-                    {{ vehicleData.model }}
+                    {{ getVehicleData.model }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -114,7 +116,7 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ vehicleData.primaryColour }}
+                    {{ getVehicleData.primaryColour }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -125,7 +127,7 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ vehicleData.engineSize }}
+                    {{ getVehicleData.engineSize }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <div
@@ -136,7 +138,7 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ vehicleData.fuelType }}
+                    {{ getVehicleData.fuelType }}
                   </div>
                   <PrimeDivider></PrimeDivider>
                   <!-- <div
@@ -147,7 +149,7 @@ onMounted(() => {
                   <div
                     class="flex align-items-center justify-content-center font-bold border-round "
                   >
-                    {{ vehicleData.yearOfManufacture }}
+                    {{ getVehicleData.yearOfManufacture }}
                   </div>
                   <PrimeDivider></PrimeDivider> -->
                 </div>

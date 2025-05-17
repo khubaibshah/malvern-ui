@@ -26,6 +26,7 @@ const handleCarDetails = (isVisible: boolean) => {
 const getDvsa = async () => {
   try {
     const response = await VehicleService.getDvsaVehicleByReg(registrationNumber.value);
+    // console.log('sdvczxv',response)
     vehData.value = response; // Assign the response data
     showCarDetails.value = true;
     vehicleStore.setVehicleData(response)

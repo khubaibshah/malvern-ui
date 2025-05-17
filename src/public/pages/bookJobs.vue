@@ -58,8 +58,8 @@ const transformToUpperCase = () => {
 const GetStoreData = () => {
   if (getVehicleDataStore) {
     vehicleData.value = getVehicleDataStore;
-    console.log("storeData", getVehicleDataStore[0].registration);
-    registrationNumber.value = getVehicleDataStore[0].registration || "";
+    console.log("storeData", getVehicleDataStore.registration);
+    registrationNumber.value = getVehicleDataStore.registration || "";
     registrationSuccess.value = !!registrationNumber.value; // Set registrationSuccess to true if registrationNumber is present
   }
 };
@@ -217,7 +217,6 @@ onMounted(() => {
             <div
               class="flex justify-content-between flex-wrap mt-3"
               v-if="vehicleData"
-              v-for="VehData in vehicleData"
             >
               <div
                 class="flex align-items-center justify-content-center font-bold border-round mb-2"
@@ -227,7 +226,7 @@ onMounted(() => {
               <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
-                {{ VehData.make }}
+                {{ vehicleData.make }}
               </div>
               <PrimeDivider></PrimeDivider>
               <div
@@ -238,7 +237,7 @@ onMounted(() => {
               <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
-                {{ VehData.model }}
+                {{ vehicleData.model }}
               </div>
               <PrimeDivider></PrimeDivider>
               <div
@@ -249,7 +248,7 @@ onMounted(() => {
               <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
-                {{ VehData.primaryColour }}
+                {{ vehicleData.primaryColour }}
               </div>
               <PrimeDivider></PrimeDivider>
               <div
@@ -260,7 +259,7 @@ onMounted(() => {
               <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
-                {{ VehData.engineSize }}
+                {{ vehicleData.engineSize }}
               </div>
               <PrimeDivider></PrimeDivider>
               <div
@@ -271,7 +270,7 @@ onMounted(() => {
               <div
                 class="flex align-items-center justify-content-center font-bold border-round"
               >
-                {{ VehData.fuelType }}
+                {{ vehicleData.fuelType }}
               </div>
               <PrimeDivider></PrimeDivider>
             </div>
