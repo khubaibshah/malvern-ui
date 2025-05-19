@@ -40,6 +40,7 @@ import AccordionTab from 'primevue/accordiontab';
 import FloatLabel from 'primevue/floatlabel';
 import Panel from 'primevue/panel';
 import Dialog from 'primevue/dialog';
+import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
 
 
 import Dropdown from 'primevue/dropdown';
@@ -83,6 +84,8 @@ app.component('PrimeCheckbox', Checkbox);
 app.component('PrimeDivider', Divider);
 app.component('PrimeCarousel', Carousel);
 app.component('VirtualScroller', VirtualScroller);
+app.component('DataView', DataView)
+app.component('DataViewLayoutOptions', DataViewLayoutOptions)
 app.component('PrimeTag', Tag);
 app.component('PrimeFieldset', Fieldset);
 app.component('PrimeCard', Card);
@@ -96,6 +99,7 @@ app.component('PrimeSteps', Steps);
 app.component('PrimeFloatLabel', FloatLabel);
 app.component('PrimePanel', Panel);
 app.component('PrimeDialog', Dialog);
+app.component('PrimeToast', Toast)
 
 
 app.config.globalProperties.$filters = {
