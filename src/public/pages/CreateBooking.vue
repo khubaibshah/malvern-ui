@@ -1,281 +1,184 @@
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useToast } from "primevue/usetoast";
-import axios from "axios";
-
-const name = ref("");
-const email = ref("");
-const phoneNumber = ref("");
-const vehicle_make = ref("");
-const vehicle_model = ref("");
-const notes = ref("");
-const Booking_reference = ref("");
-const deposit_paid = ref(""); // Assuming it's a boolean field
-const job_repair_id = ref(""); // Initialize as a number
-const repair_price = ref(""); // Initialize as a number
-
-const date = ref();
-const bookings = ref();
-const datetime24h = ref();
-
-const toast = useToast();
-
-const createBooking = async () => {
-  try {
-    const userBooking = {
-      name: name.value,
-      email: email.value,
-      phone_number: phoneNumber.value,
-      vehicle_make: vehicle_make.value,
-      vehicle_model: vehicle_model.value,
-      booking_datetime: formatDate(date.value), // Format the date before sending
-      notes: notes.value,
-      Booking_reference: Booking_reference.value,
-      deposit_paid: deposit_paid.value.toString(), // Convert boolean to string // Format the date before sending
-      job_repair_id: job_repair_id.value.toString(), // Use the numeric ref
-      repair_price: repair_price.value, // Use the numeric ref
-    };
-
-    // Check if required fields are populated
-    if (
-      !userBooking.booking_datetime ||
-      !userBooking.job_repair_id ||
-      !userBooking.repair_price
-    ) {
-      throw new Error("Please fill in all required fields.");
-    }
-
-    // Call the createBooking method from BookingService
-    const response = await axios.post(
-      `http://127.0.0.1:8000/admin/customer-booking`,
-      userBooking,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
-    );
-    bookings.value = response.data;
-
-    // i can reset the form fields after successful submission
-    name.value = "";
-    email.value = "";
-    phoneNumber.value = "";
-    vehicle_make.value = "";
-    vehicle_model.value = "";
-    date.value = null;
-    notes.value = "";
-    // Set success message
-    toast.add({
-      severity: "success",
-      summary: "Info",
-      detail: "Booking created successfully",
-      life: 3000,
-    });
-  } catch (error) {
-    console.error("Error creating booking:", error);
-    // Set error message
-    toast.add({
-      severity: "error",
-      summary: "Info",
-      detail: "Booking couldn't be created. Please try again",
-      life: 3000,
-    });
-  }
-};
-
-const formatDate = (date: any) => {
-  if (date) {
-    const formattedDate = new Date(date);
-    const year = formattedDate.getFullYear();
-    const month = String(formattedDate.getMonth() + 1).padStart(2, "0");
-    const day = String(formattedDate.getDate()).padStart(2, "0");
-    const hours = String(formattedDate.getHours()).padStart(2, "0");
-    const minutes = String(formattedDate.getMinutes()).padStart(2, "0");
-    const seconds = String(formattedDate.getSeconds()).padStart(2, "0");
-
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  }
-  return "";
-};
-
-onMounted(async () => {});
-</script>
-
 <template>
   <div>
     <PrimeToast />
-    <!-- <Nav />  -->
-    <div class="surface-section px-4 py-5 md:px-6 lg:px-8 mt-3">
-      <div
-        class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border"
-      >
-        <div class="mb-3 lg:mb-0">
-          <div class="text-3xl font-medium text-900 mb-3">Create a booking</div>
-          <div class="text-500 mr-0 md:mr-3">
-            The garage is open between 9am and 5:30pm, Monday to Friday. Only 1
-            booking is allowed per slot.
+
+    <!-- Hero Section -->
+    <div class="hero-section surface-ground p-5">
+      <div class="grid grid-nogutter align-items-center justify-content-between">
+        <div class="col-12 md:col-6 text-white z-1">
+          <h1 class="text-4xl font-bold mb-3">Welcome to SCS Car Sales LTD</h1>
+          <p class="text-lg mb-4">In partnership with <span class="font-bold">Malvern Autos</span></p>
+          <div class="p-inputgroup w-full md:w-30rem">
+            <InputText placeholder="Keyword search" class="w-full p-3 border-round" />
+            <PrimeButton icon="pi pi-search" class="p-button-secondary" />
           </div>
         </div>
-        <span class="p-input-icon-left w-full md:w-auto">
-          <i class="pi pi-search"></i>
-          <InputText
-            type="text"
-            placeholder="Search"
-            class="w-full md:w-auto"
-          />
-        </span>
-      </div>
-      <div class="grid mt-5">
-        <div class="col-12 md:col-6">
-          <div class="p-fluid pr-0 md:pr-6">
-            <div class="field">
-              <label for="name" class="font-medium">Full name</label>
-              <InputText
-                v-model="name"
-                id="name"
-                type="text"
-                class="py-3 px-2 text-lg"
-              />
-            </div>
-            <div class="field">
-              <label for="Booking_reference" class="font-medium"
-                >Booking reference</label
-              >
-              <InputText
-                v-model="Booking_reference"
-                id="Booking_reference"
-                type="text"
-                class="py-3 px-2 text-lg"
-              />
-            </div>
-            <div class="field">
-              <label for="deposit_paid" class="font-medium">deposit_paid</label>
-              <InputText
-                v-model="deposit_paid"
-                id="deposit_paid"
-                type="deposit_paid"
-                class="py-3 px-2 text-lg"
-              />
-            </div>
-            <div class="field">
-              <label for="job_repair_id" class="font-medium"
-                >job_repair_id</label
-              >
-              <InputText
-                v-model="job_repair_id"
-                id="job_repair_id"
-                type="job_repair_id"
-                class="py-3 px-2 text-lg"
-              />
-            </div>
-            <div class="field">
-              <label for="company" class="font-medium">Phone number</label>
-              <InputText
-                v-model="phoneNumber"
-                id="company"
-                type="text"
-                class="py-3 px-2 text-lg"
-              />
-            </div>
-            <div class="field">
-              <label for="email" class="font-medium">Email</label>
-              <InputText
-                v-model="email"
-                id="email"
-                type="text"
-                class="py-3 px-2 text-lg"
-              />
-            </div>
-            <div class="field">
-              <label for="message" class="font-medium">Vehicle make</label>
-              <InputText
-                v-model="vehicle_make"
-                id="message"
-                :rows="6"
-                class="py-3 px-2 text-lg"
-              ></InputText>
-            </div>
-            <div class="field">
-              <label for="message" class="font-medium">Vehicle model</label>
-              <InputText
-                v-model="vehicle_model"
-                id="message"
-                :rows="6"
-                class="py-3 px-2 text-lg"
-              ></InputText>
-            </div>
-            <div class="field">
-              <label for="message" class="font-medium">Notes</label>
-              <PrimeTextarea
-                v-model="notes"
-                id="notes"
-                class="pb-3"
-              ></PrimeTextarea>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 md:col-6 bg-no-repeat bg-right-bottom">
-          <div class="text-900 text-2xl font-medium mb-3">
-            Please pick a date and Time
-          </div>
-          <PrimeCalendar v-model="date" inline showTime hourFormat="12" />
-        </div>
-        <div class="col-12 md:col-6">
-          <PrimeButton
-            label="Create Booking"
-            icon="pi pi-send"
-            class="w-auto"
-            @click="createBooking"
-          ></PrimeButton>
+        <div class="col-12 md:col-6 text-center mt-4 md:mt-0 hidden md:block">
+          <img src="../../assets/img/lambo.png" alt="car" class="hero-image" />
         </div>
       </div>
     </div>
 
-    <!-- <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
-      <div class="grid">
-        <div class="col-12 md:col-6">
-          <PrimeButton
-            label="Travel Update"
-            icon="pi pi-chevron-right"
-            iconPos="right"
-            class="p-button-success p-button-rounded mb-3 font-bold"
-          ></PrimeButton>
-          <div class="text-900 font-bold text-5xl mb-3">Book Flights</div>
-          <div class="text-600 text-2xl line-height-3">
-            Find cheap flights and airline tickets.
+    <!-- Content Section with Filter + Cars -->
+    <div class="grid pl-2 mt-3">
+      <!-- Filter Column -->
+      <div class="col-12 md:col-3">
+        <div class="p-4 border-1 surface-border surface-card border-round">
+          <h2 class="text-xl font-semibold mb-3">Filter Cars</h2>
+
+          <div class="mb-3">
+            <label class="block mb-2 font-medium">Make</label>
+            <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label" class="w-full" placeholder="Select Make" />
           </div>
-          <div class="text-600 text-2xl line-height-3">
-            Prime Flights helps you compare and track airfares.
+
+          <div class="mb-3">
+            <label class="block mb-2 font-medium">Model</label>
+            <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label" class="w-full" placeholder="Select Model" />
+          </div>
+
+          <div class="mb-3">
+            <label class="block mb-2 font-medium">Variant</label>
+            <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label" class="w-full" placeholder="Select Variant" />
+          </div>
+
+          <PrimeButton label="Apply Filters" icon="pi pi-filter" class="w-full mt-2" @click="applyFilters" />
+          <PrimeButton label="Clear Filters" icon="pi pi-times" severity="secondary" class="w-full mt-2" @click="clearFilters" />
+        </div>
+      </div>
+
+      <!-- Cars Column -->
+      <div class="col-12 md:col-9">
+        <div class="flex justify-content-between mb-4">
+          <div>
+            <div class="text-3xl font-medium text-900 mb-2">Cars Available</div>
+            <div class="text-500">Filtered cars based on your search criteria.</div>
           </div>
         </div>
-        <div
-          class="col-12 md:col-6 flex align-items-center md:justify-content-end"
-        >
-          <div>
-            <div class="text-900 font-medium justify-content-start mb-3">
-              Round Trip Dates
+
+        <div class="grid">
+          <div v-for="(item, index) in filteredVehicles" :key="index" class="col-12 sm:col-6 lg:col-4 p-2">
+            <div class="p-3 border-1 surface-border surface-card border-round">
+              <div class="relative">
+                <img
+                  v-if="item.images && item.images.length > 0"
+                  class="border-round w-full"
+                  :src="`data:image/jpeg;base64,${item.images[0].car_image}`"
+                  :alt="item.make"
+                  style="height: 200px; object-fit: cover;"
+                />
+                <!-- <span class="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-1 border-round z-1">{{ item.variant || 'Category' }}</span> -->
+                <!-- <i class="pi pi-heart absolute top-2 right-2 text-white bg-gray-900 p-2 border-circle cursor-pointer"></i> -->
+              </div>
+              <div class="mt-3">
+                <div class="text-lg font-bold text-900 mb-1">{{ item.make }}</div>
+                <div class="text-sm text-500 mb-2">{{ item.model }}</div>
+                <div class="text-green-600 font-semibold">£{{ item.price || 'N/A' }}</div>
+                <div class="text-500 text-sm line-through">£{{ item.was_price || '123.00' }}</div>
+              </div>
             </div>
-            <PrimeCalendar
-              id="calendar-24h"
-              v-model="datetime24h"
-              showTime
-              hourFormat="24"
-              :showIcon="true"
-              selectionMode="range"
-              :style="{ 'min-width': '240px' }"
-              inputClass="'bg-transparent text-900 border-400'"
-            />
-            <PrimeCalendar v-model="date1" dateFormat="dd/mm/yy" :showIcon="true" selectionMode="range" :style="{'min-width': '240px'}" inputClass="'bg-transparent text-900 border-400'"></PrimeCalendar>
-            <PrimeButton
-              label="Book Now"
-              icon="pi pi-check"
-              class="block mt-3 font-bold white-space-nowrap p-button-outlined w-full"
-            ></PrimeButton>
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
+import { useToast } from 'primevue/usetoast'
+
+const toast = useToast()
+const vehicles = ref([])
+const layout = ref('grid')
+const vehicle_make = ref()
+const vehicle_model = ref()
+const vehicle_variant = ref()
+
+const makeOptions = ref([])
+const modelOptions = ref([])
+const variantOptions = ref([])
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/api/scs-cars')
+    if (response.status === 200) {
+      vehicles.value = response.data
+
+      const makes = new Set()
+      const models = new Set()
+      const variants = new Set()
+
+      vehicles.value.forEach((v: any) => {
+        if (v.make) makes.add(v.make)
+        if (v.model) models.add(v.model)
+        if (v.variant) variants.add(v.variant)
+      })
+
+      makeOptions.value = [...makes].map(m => ({ label: m, value: m }))
+      modelOptions.value = [...models].map(m => ({ label: m, value: m }))
+      variantOptions.value = [...variants].map(v => ({ label: v, value: v }))
+
+      toast.add({ severity: 'success', summary: 'Success', detail: 'Car data loaded', life: 3000 })
+    }
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
+  }
+})
+
+const filteredModelOptions = computed(() => {
+  const models = new Set()
+  vehicles.value.forEach((v: any) => {
+    if (!vehicle_make.value || v.make === vehicle_make.value.value) {
+      if (v.model) models.add(v.model)
+    }
+  })
+  return [...models].map(m => ({ label: m, value: m }))
+})
+
+const filteredVariantOptions = computed(() => {
+  const variants = new Set()
+  vehicles.value.forEach((v: any) => {
+    if (!vehicle_make.value || v.make === vehicle_make.value.value) {
+      if (!vehicle_model.value || v.model === vehicle_model.value.value) {
+        if (v.variant) variants.add(v.variant)
+      }
+    }
+  })
+  return [...variants].map(v => ({ label: v, value: v }))
+})
+
+const filteredVehicles = computed(() => {
+  return vehicles.value.filter((v: any) => {
+    const makeMatch = vehicle_make.value ? v.make === vehicle_make.value.value : true
+    const modelMatch = vehicle_model.value ? v.model === vehicle_model.value.value : true
+    const variantMatch = vehicle_variant.value ? v.variant === vehicle_variant.value.value : true
+    return makeMatch && modelMatch && variantMatch
+  })
+})
+
+const applyFilters = () => {
+  toast.add({ severity: 'info', summary: 'Filters Applied', detail: 'Car list updated.', life: 2000 })
+}
+
+const clearFilters = () => {
+  vehicle_make.value = null
+  vehicle_model.value = null
+  vehicle_variant.value = null
+  toast.add({ severity: 'info', summary: 'Filters Cleared', detail: 'All filters have been reset.', life: 2000 })
+}
+
+</script>
+
+<style scoped>
+.hero-section {
+  background: linear-gradient(to right, #facc15, #f97316);
+  border-radius: 0 0 1.5rem 1.5rem;
+  position: relative;
+}
+
+.hero-image {
+  max-height: 230px;
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+}
+</style>

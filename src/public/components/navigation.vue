@@ -28,12 +28,12 @@
             </li>
             <li>
                 <a v-ripple :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'"
-                    v-styleclass="{ selector: '@next', enterClass: 'hidden', enterActiveClass: 'scalein', leaveToClass: 'hidden', leaveActiveClass: 'fadeout', hideOnOutsideClick: true }">
+                    v-styleclass="{ selector: '#customers-dropdown', enterClass: 'hidden', enterActiveClass: 'scalein', leaveToClass: 'hidden', leaveActiveClass: 'fadeout', hideOnOutsideClick: true }">
                     <i class="pi pi-car mr-2"></i>
                     <span>Customers</span>
                     <i class="pi pi-angle-down ml-auto lg:ml-3"></i>
                 </a>
-                <ul class="list-none py-3 px-6 m-0 lg:px-0 lg:py-0 border-round shadow-0 lg:shadow-2 lg:absolute lg:border-1 border-50 surface-overlay hidden origin-top w-full lg:w-15rem cursor-pointer">
+                <ul class="list-none py-3 px-6 m-0 lg:px-0 lg:py-0 border-round shadow-0 lg:shadow-2 lg:absolute lg:border-1 border-50 surface-overlay hidden origin-top w-full lg:w-15rem cursor-pointer" id="customers-dropdown">
                     <li>
                         <a v-ripple class="flex p-3 align-items-center text-600 hover:text-900 hover:surface-100 transition-colors transition-duration-150 p-ripple">
                             <i class="pi pi-user-plus mr-2"></i>

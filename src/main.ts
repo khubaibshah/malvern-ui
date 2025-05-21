@@ -84,8 +84,8 @@ app.component('PrimeCheckbox', Checkbox);
 app.component('PrimeDivider', Divider);
 app.component('PrimeCarousel', Carousel);
 app.component('VirtualScroller', VirtualScroller);
-app.component('DataView', DataView)
-app.component('DataViewLayoutOptions', DataViewLayoutOptions)
+app.component('PrimeDataView', DataView)
+app.component('PrimeDataViewLayoutOptions', DataViewLayoutOptions)
 app.component('PrimeTag', Tag);
 app.component('PrimeFieldset', Fieldset);
 app.component('PrimeCard', Card);
