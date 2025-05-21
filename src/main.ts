@@ -1,6 +1,7 @@
 import './assets/style.css'
 // import 'primevue/resources/themes/aura-light-indigo/theme.css';
-import 'primevue/resources/themes/aura-dark-amber/theme.css';
+//change colour theme here
+import 'primevue/resources/themes/aura-light-amber/theme.css';
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 const pinia = createPinia();

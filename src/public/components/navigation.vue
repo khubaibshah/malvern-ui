@@ -18,12 +18,20 @@
                     <span>Home</span>
                 </a>
             </li>
-            <li>
+            <!-- <li>
                 <a v-ripple 
                 @click="router.push({name: 'scscars'})"
                 :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'">
                     <i class="pi pi-car mr-2"></i>
                     <span>SCS Cars</span>
+                </a>
+            </li> -->
+            <li>
+                <a v-ripple 
+                @click="router.push({name: 'createbooking'})"
+                :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'">
+                    <i class="pi pi-booking mr-2"></i>
+                    <span>SCS Cars LTD</span>
                 </a>
             </li>
             <li>
@@ -64,20 +72,13 @@
                     </li>
                 </ul>
             </li>
-            <li>
-                <a v-ripple 
-                @click="router.push({name: 'createbooking'})"
-                :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'">
-                    <i class="pi pi-booking mr-2"></i>
-                    <span>Create Booking</span>
-                </a>
-            </li>
-            <li>
+            
+            <!-- <li>
                 <a v-ripple :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'">
                     <i class="pi pi-chart-line mr-2"></i>
                     <span>Stats</span>
                 </a>
-            </li>
+            </li> -->
         </ul>
         <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row">
             <li class="flex-order-2 lg:flex-order-0">

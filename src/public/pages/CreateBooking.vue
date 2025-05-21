@@ -20,7 +20,7 @@
     </div>
 
     <!-- Content Section with Filter + Cars -->
-    <div class="grid pl-2 mt-3">
+    <div class="grid pl-2 mt-3 mr-0">
       <!-- Filter Column -->
       <div class="col-12 md:col-3">
         <div class="p-4 border-1 surface-border surface-card border-round">
@@ -51,7 +51,7 @@
         <div class="flex justify-content-between mb-4">
           <div>
             <div class="text-3xl font-medium text-900 mb-2">Cars Available</div>
-            <div class="text-500">Filtered cars based on your search criteria.</div>
+            <div class="text-500">Filtered Vehicles based on your search criteria.</div>
           </div>
         </div>
 
