@@ -26,18 +26,18 @@
         <div class="p-4 border-1 surface-border surface-card border-round">
           <h2 class="text-xl font-semibold mb-3">Filter Cars</h2>
 
-          <div class="mb-3">
-            <label class="block mb-2 font-medium">Make</label>
+          <div class="mb-4">
+            <!-- <label class="block mb-2 font-medium">Make</label> -->
             <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label" class="w-full" placeholder="Select Make" />
           </div>
 
-          <div class="mb-3">
-            <label class="block mb-2 font-medium">Model</label>
+          <div class="mb-4">
+            <!-- <label class="block mb-2 font-medium">Model</label> -->
             <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label" class="w-full" placeholder="Select Model" />
           </div>
 
-          <div class="mb-3">
-            <label class="block mb-2 font-medium">Variant</label>
+          <div class="mb-4">
+            <!-- <label class="block mb-2 font-medium">Variant</label> -->
             <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label" class="w-full" placeholder="Select Variant" />
           </div>
 
