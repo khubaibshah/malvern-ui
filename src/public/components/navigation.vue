@@ -1,6 +1,6 @@
 <template>
     
-    <div :class="'bg-' + backgroundColor + '-500 py-3 px-6 shadow-2 flex align-items-center justify-content-between relative lg:static'" style="min-height: 84px">
+    <div :class="'bg-' + backgroundColor + '-500  px-6 shadow-2 flex align-items-center justify-content-between relative lg:static'" >
 
     <!-- <img src="images/blocks/logos/bastion-300.svg" alt="Image" height="40" class="mr-0 lg:mr-6"> -->
     <i class="pi pi-spin pi-cog" style="font-size: 2rem"></i>

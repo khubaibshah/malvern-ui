@@ -66,12 +66,11 @@
                   :alt="item.make"
                   style="height: 200px; object-fit: cover;"
                 />
-                <!-- <span class="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-1 border-round z-1">{{ item.variant || 'Category' }}</span> -->
-                <!-- <i class="pi pi-heart absolute top-2 right-2 text-white bg-gray-900 p-2 border-circle cursor-pointer"></i> -->
-              </div>
+                </div>
               <div class="mt-3">
                 <div class="text-lg font-bold text-900 mb-1">{{ item.make }}</div>
-                <div class="text-sm text-500 mb-2">{{ item.model }}</div>
+                <div class="text-md text-500 mb-2">{{ item.model }}</div>
+                <div class="text-sm text-500 mb-2">{{ item.variant || 'Category' }}</div>              
                 <div class="text-green-600 font-semibold">£{{ item.price || 'N/A' }}</div>
                 <div class="text-500 text-sm line-through">£{{ item.was_price || '123.00' }}</div>
               </div>
@@ -119,9 +118,10 @@ onMounted(async () => {
       modelOptions.value = [...models].map(m => ({ label: m, value: m }))
       variantOptions.value = [...variants].map(v => ({ label: v, value: v }))
 
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Car data loaded', life: 3000 })
+      // toast.add({ severity: 'success', summary: 'Success', detail: 'Car data loaded', life: 3000 })
     }
   } catch (error) {
+    
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
   }
 })
