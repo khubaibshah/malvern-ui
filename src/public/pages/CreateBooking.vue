@@ -1,7 +1,6 @@
 <template>
   <div>
     <PrimeToast />
-
     <!-- Hero Section -->
     <div class="hero-section surface-ground p-5">
       <div class="grid grid-nogutter align-items-center justify-content-between">
