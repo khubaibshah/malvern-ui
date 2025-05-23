@@ -26,17 +26,14 @@
           <h2 class="text-xl font-semibold mb-3">Filter Cars</h2>
 
           <div class="mb-4">
-            <!-- <label class="block mb-2 font-medium">Make</label> -->
             <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label" class="w-full" placeholder="Select Make" />
           </div>
 
           <div class="mb-4">
-            <!-- <label class="block mb-2 font-medium">Model</label> -->
             <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label" class="w-full" placeholder="Select Model" />
           </div>
 
           <div class="mb-4">
-            <!-- <label class="block mb-2 font-medium">Variant</label> -->
             <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label" class="w-full" placeholder="Select Variant" />
           </div>
 
@@ -61,15 +58,15 @@
                 <img
                   v-if="item.images && item.images.length > 0"
                   class="border-round w-full"
-                  :src="`data:image/jpeg;base64,${item.images[0].car_image}`"
+                  :src="item.images[0].car_image.startsWith('http') ? item.images[0].car_image : `data:image/jpeg;base64,${item.images[0].car_image}`"
                   :alt="item.make"
                   style="height: 200px; object-fit: cover;"
                 />
-                </div>
+              </div>
               <div class="mt-3">
                 <div class="text-lg font-bold text-900 mb-1">{{ item.make }}</div>
                 <div class="text-md text-500 mb-2">{{ item.model }}</div>
-                <div class="text-sm text-500 mb-2">{{ item.variant || 'Category' }}</div>              
+                <div class="text-sm text-500 mb-2">{{ item.variant || 'Category' }}</div>
                 <div class="text-green-600 font-semibold">£{{ item.price || 'N/A' }}</div>
                 <div class="text-500 text-sm line-through">£{{ item.was_price || '123.00' }}</div>
               </div>
@@ -99,7 +96,7 @@ const variantOptions = ref([])
 
 onMounted(async () => {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/api/scs-cars')
+    const response = await axios.get('env('VUE_APP_BACKEND_URL')/api/scs-cars')
     if (response.status === 200) {
       vehicles.value = response.data
 
@@ -116,11 +113,8 @@ onMounted(async () => {
       makeOptions.value = [...makes].map(m => ({ label: m, value: m }))
       modelOptions.value = [...models].map(m => ({ label: m, value: m }))
       variantOptions.value = [...variants].map(v => ({ label: v, value: v }))
-
-      // toast.add({ severity: 'success', summary: 'Success', detail: 'Car data loaded', life: 3000 })
     }
   } catch (error) {
-    
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
   }
 })
@@ -166,7 +160,6 @@ const clearFilters = () => {
   vehicle_variant.value = null
   toast.add({ severity: 'info', summary: 'Filters Cleared', detail: 'All filters have been reset.', life: 2000 })
 }
-
 </script>
 
 <style scoped>
