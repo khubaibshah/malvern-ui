@@ -96,7 +96,7 @@ const variantOptions = ref([])
 
 onMounted(async () => {
   try {
-    const response = await axios.get('env('VUE_APP_BACKEND_URL')/api/scs-cars')
+    const response = await axios.get('http://127.0.0.1:8000/api/scs-cars')
     if (response.status === 200) {
       vehicles.value = response.data
 
