@@ -171,6 +171,6 @@ const clearFilters = () => {
 
 .hero-image {
   max-height: 230px;
-  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+  filter: drop-shaWdow(0 10px 15px rgba(0, 0, 0, 0.2));
 }
 </style>
