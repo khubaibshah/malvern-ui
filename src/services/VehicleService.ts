@@ -73,7 +73,7 @@ class VehicleService {
   // Function to fetch a single vehicle by ID
   getVehicleByReg = async (registrationNumber: any): Promise<VehicleData> => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/${registrationNumber}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/vehicle-details/${registrationNumber}`);
       console.log('Fetched vehicle data by Registration from db:', response.data);
       return response.data;
     } catch (error) {
@@ -83,7 +83,7 @@ class VehicleService {
   };
   getDvsaVehicleByReg = async (registrationNumber: any) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/${registrationNumber}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/dvsa-vehicle-details/${registrationNumber}`);
 
       console.log('Fetched vehicle data by Registration from dvsa data:', response.data);
       return response.data;
