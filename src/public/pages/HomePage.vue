@@ -22,11 +22,10 @@ const handleCarDetails = (isVisible: boolean) => {
 }
 
 
-// Method to make a request to the backend and display the details
+// Method to make a request to the backend and display the details for vehicle details 
 const getDvsa = async () => {
   try {
     const response = await VehicleService.getDvsaVehicleByReg(registrationNumber.value);
-    console.log('sdvczxv',response)
     vehData.value = response; // Assign the response data
     showCarDetails.value = true;
     vehicleStore.setVehicleData(response)
@@ -35,21 +34,6 @@ const getDvsa = async () => {
     console.error(error);
   }
 };
-
-const getVehicleDetails = async () => {
-  try {
-    const response = await VehicleService.getVehicleDetails(registrationNumber.value)
-    // Assuming the response contains the vehicle details
-    // vehicleStore.setVehicleData(response)
-    // vehData.value = response;
-    showCarDetails.value = true; // Set showCarDetails to true to render the CarDetails component
-    // Handle displaying the response data on the template
-  } catch (error) {
-    console.error(error); // Log any errors
-    // Handle displaying error messages on the template
-  }
-};
-
 
 const transformToUpperCase = () => {
   toUpperCase(registrationNumber)
