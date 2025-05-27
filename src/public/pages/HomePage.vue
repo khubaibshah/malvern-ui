@@ -1,152 +1,186 @@
 <script setup lang="ts">
-import axios from 'axios';
+import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
+import { useToast } from 'primevue/usetoast'
 
-import { ref, onMounted } from 'vue';
+const toast = useToast()
+const vehicles = ref([])
+const layout = ref('grid')
+const vehicle_make = ref()
+const vehicle_model = ref()
+const vehicle_variant = ref()
 
-import { useVehicleStore } from '@/stores/vehicleData';
-
-import CarDetails from '@/public/pages/CarDetails.vue';
-import VehicleService from '@/services/VehicleService'
-import toUpperCase from '@/components/reusable/toUpperCase'
-
-
-const showCarDetails = ref(false); // Reactive variable to control whether to show the car details section
-const vehData = ref(); // Reactive variable to store the vehicle details
-const registrationNumber = ref(''); // Reactive variable to store the registration number input
-const vehicleStore = useVehicleStore();
-
-const dvsadata = ref(null)
-
-const handleCarDetails = (isVisible: boolean) => {
-  showCarDetails.value = isVisible
-}
-
-
-// Method to make a request to the backend and display the details for vehicle details 
-const getDvsa = async () => {
-  try {
-    const response = await VehicleService.getDvsaVehicleByReg(registrationNumber.value);
-    vehData.value = response; // Assign the response data
-    showCarDetails.value = true;
-    vehicleStore.setVehicleData(response)
-  } catch (error) {
-    console.log('sdvczxv',error)
-    console.error(error);
+const makeOptions = ref([])
+const modelOptions = ref([])
+const variantOptions = ref([])
+const responsiveOptions = ref([
+  {
+    breakpoint: '1024px',
+    numVisible: 2,
+    numScroll: 1
+  },
+  {
+    breakpoint: '768px',
+    numVisible: 1,
+    numScroll: 1
   }
-};
+])
 
-const transformToUpperCase = () => {
-  toUpperCase(registrationNumber)
-};
+onMounted(async () => {
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-all-vehicles`)
+    if (response.status === 200) {
+      vehicles.value = response.data.cars || []
 
+      const makes = new Set()
+      const models = new Set()
+      const variants = new Set()
+
+      vehicles.value.forEach((v: any) => {
+        if (v.make) makes.add(v.make)
+        if (v.model) models.add(v.model)
+        if (v.variant) variants.add(v.variant)
+      })
+
+      makeOptions.value = [...makes].map(m => ({ label: m, value: m }))
+      modelOptions.value = [...models].map(m => ({ label: m, value: m }))
+      variantOptions.value = [...variants].map(v => ({ label: v, value: v }))
+    }
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
+  }
+})
 </script>
 
+
 <template>
-  <div class="surface-section text-800 flex justify-content-center flex-wrap">
-    <div
-      v-if="!showCarDetails"
-      class="col-12 md:col-12 pt-6 pr-3 pl-3 text-center md:text-left flex align-items-center justify-content-center carDetailsForm"
-    >
-      <section>
-        <div>
-          <span class="block text-6xl font-bold mb-1">Welcome to</span>
-          <div
-            class="text-6xl text-primary font-bold mb-3"
-            style="color: #f97316 !important"
-          >
-            Malvern Autos
-          </div>
-          <p class="mt-0 mb-2 text-700 line-height-3">
-            To book an appointment with us, please fill in the fields below.
-          </p>
-          <div class="grid">
-            <div class="col-12 md:col-12 lg:col-12">
-              <PrimeFieldset legend="What is your car registration? *">
-                <div class="flex justify-content-center flex-wrap">
-                  <div
-                    class="flex align-items-center justify-content-center h-4rem bg-primary font-bold border-round m-2"
-                  >
-                    <InputGroup
-                      class="w-full md:w-30rem h-5rem flex justify-center"
-                    >
-                      <InputGroupAddon
-                        style="background-color: #00309a; color: #fbe90a"
-                      >
-                        GB
-                      </InputGroupAddon>
-                      <InputText
-                        v-model="registrationNumber"
-                        style="background-color: #fbe90a; border-color: #00309a"
-                        placeholder="REG"
-                        inputClass="'bg-transparent text-900 border-400 border-blue-500'"
-                        class="text-5xl w-10 text-100 font-bold"
-                        @input="transformToUpperCase"
-                      />
-                    </InputGroup>
-                  </div>
-                </div>
-              </PrimeFieldset>
-            </div>
-            <div class="col-12 md:col-12 lg:col-12">
-              <!-- <PrimeFieldset legend="What is your postcode? *">
-                <div class="flex justify-content-center flex-wrap">
-                  <div
-                    class="flex align-items-center justify-content-center h-4rem font-bold border-round"
-                  >
-                    <div class="flex flex-column gap-2 justify-center">
-                      <InputText
-                        class="w-full border-400 md:w-30rem"
-                        placeholder="Enter Postcode"
-                      />
-                      <small id="username-help"
-                        >We use this to find how far you are from our
-                        garage.</small
-                      >
-                    </div>
-                  </div>
-                </div>
-              </PrimeFieldset> -->
-              <div class="flex justify-content-end flex-wrap">
-                <div
-                  class="flex align-items-center justify-content-center font-bold border-round"
-                >
-                  <PrimeButton
-                    label="Get Vehicle Details"
-                    @click="getDvsa"
-                    class="w-full flex justify-content-end mt-2"
-                    v-styleclass="{
-                      selector: '.carDetailsForm',
-                      enterActiveClass: 'my-fadein',
-                    }"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+  <div class="hero-container">
+
+    <div class="overlay"></div>
+    <div class="content">
+      <h1 class="main-heading">STANLEY CAR SALES</h1>
+      <div class="button-row">
+
+        <PrimeButton label="Discover more" class="custom-button left-btn" />
+        <PrimeButton label="Find & Buy" class="custom-button right-btn" />
+      </div>
     </div>
-    <div v-else>
-      <!-- Render the CarDetails component when showCarDetails is true -->
-      <CarDetails :vehData="vehData" @showHomePage="handleCarDetails"/>
+  </div>
+<div class="card">
+
+  <PrimeCarousel :value="vehicles" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions" circular
+    :autoplayInterval="3000">
+    <template #item="slotProps">
+  <div class="carousel-card p-3 border-1 surface-border surface-card border-round shadow-1">
+    <div class="relative">
+      <img
+        v-if="slotProps.data.images?.[0]"
+        :src="slotProps.data.images[0]"
+        alt="car"
+        class="w-full border-round mb-3"
+        style="height: 140px; object-fit: cover;"
+      />
+      <div
+        class="absolute top-0 left-0 px-2 py-1 text-xs font-bold text-white bg-red-500 border-round-left"
+        v-if="slotProps.data.mileage && slotProps.data.mileage > 100000"
+      >
+        HIGH MILES
+      </div>
+    </div>
+
+    <div class="font-medium text-base mb-1">
+      {{ slotProps.data.make }} {{ slotProps.data.model }}
+    </div>
+    <div class="text-sm text-gray-600 mb-2">{{ slotProps.data.variant || 'No variant' }}</div>
+    <div class="text-lg font-bold text-green-600 mb-3">£{{ slotProps.data.price?.toLocaleString() }}</div>
+
+    <div class="flex justify-between items-center">
+      <PrimeButton icon="pi pi-heart" severity="secondary" outlined rounded />
+      <PrimeButton icon="pi pi-info-circle" rounded label="Details" />
     </div>
   </div>
 </template>
 
 
+  </PrimeCarousel>
 
 
+</div>
+
+</template>
 <style scoped>
-@keyframes my-fadein {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+.carousel-card {
+  width: 100%;
+  max-width: 240px;
+  min-height: 320px;
+  margin: auto;
+  text-align: center;
 }
 
-.my-fadein {
-  animation: my-fadein 200ms linear;
+.hero-container {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  background-image: url('/src/assets/img/lamb4.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  max-width: 90%;
+  margin-right: 75rem;
+  margin-top: 26rem;
+}
+
+.main-heading {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: white;
+  margin: 0.5rem 0 2rem 0;
+}
+
+.button-row {
+  display: flex;
+  gap: 0.5rem;
+  /* slight gap */
+}
+
+/* Override PrimeButton deeply */
+:deep(.custom-button) {
+  border-radius: 0 !important;
+  height: 3.5rem !important;
+  padding: 0 2rem !important;
+  font-size: 1rem !important;
+  border-width: 1px !important;
+  box-shadow: none !important;
+}
+
+/* Left (white background, black text) */
+:deep(.left-btn) {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  font-weight: 500;
+}
+
+/* Right (black background, white text) */
+:deep(.right-btn) {
+  background-color: black;
+  color: white;
+  border: 1px solid white;
+  font-weight: 500;
 }
 </style>

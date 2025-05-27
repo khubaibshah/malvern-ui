@@ -45,6 +45,7 @@ import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
 import Image from 'primevue/image';
 import Menubar from 'primevue/menubar';
 import MegaMenu from 'primevue/megamenu';
+// import ButtonGroup from 'primevue/buttongroup';
 
 import Dropdown from 'primevue/dropdown';
 
@@ -106,6 +107,7 @@ app.component('PrimeDialog', Dialog);
 app.component('PrimeToast', Toast)
 app.component('PrimeMenubar', Menubar)
 app.component('PrimeMegaMenu', MegaMenu)
+// app.component('PrimeButtonGroup', ButtonGroup)
 
 
 app.config.globalProperties.$filters = {

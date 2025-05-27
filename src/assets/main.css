@@ -1,10 +1,43 @@
 @import './base.css';
 
+:root {
+  --font-primary: 'Inter', -apple-system, sans-serif;
+  --font-heading: 'Hanuman', serif;
+}
+
 #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
+}
+
+/* PrimeVue components */
+.p-component {
+  font-family: var(--font-primary) !important;
+}
+
+/* Form elements */
+.p-inputtext, .p-button, .p-dropdown {
+  font-family: var(--font-primary) !important;
+}
+
+/* Special styling for Hanuman in buttons */
+.p-button .p-button-label {
+  font-family: var(--font-heading) !important;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+
+/* Headings in PrimeVue */
+.p-component h1, 
+.p-component h2, 
+.p-component h3, 
+.p-component h4, 
+.p-component h5, 
+.p-component h6 {
+  font-family: var(--font-heading) !important;
 }
 
 a,

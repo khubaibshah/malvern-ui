@@ -5,6 +5,7 @@ import CarDetails from '@/public/pages/CarDetails.vue'
 import bookJob from '@/public/pages/bookJobs.vue'
 import payment from '@/public/pages/Payment.vue'
 import SCSCarsVue from '@/public/pages/SCSCars.vue'
+import vehicleSearch from '@/public/pages/vehicleSearch.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,6 +14,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomePage
+    },
+    {
+      path: '/vehicle-search',
+      name: 'vehicle-search',
+      component: vehicleSearch
     },
     {
       path: '/car-search',
