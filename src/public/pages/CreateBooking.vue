@@ -191,6 +191,57 @@ const clearFilters = () => {
 </script>
 
 <style scoped>
+.filter-bar {
+  font-size: 0.95rem;
+  font-weight: 500;
+  background-color: #000; /* Default for desktop */
+  color: #fff;
+}
+
+/* Invert colors for mobile */
+@media (max-width: 768px) {
+  .filter-bar {
+    background-color: #fff !important;
+    color: #000 !important;
+    /* border: 2px solid #ddd !important;
+    border-radius: 1rem; */
+
+  }
+
+  ::v-deep(.p-dropdown) {
+    background-color: #fff !important;
+    color: #000 !important;
+    border: 1px solid #ccc !important;
+  }
+
+  ::v-deep(.p-dropdown .p-dropdown-label) {
+    color: #000 !important;
+  }
+
+  ::v-deep(.p-dropdown-panel) {
+    background-color: #fff !important;
+  }
+
+  ::v-deep(.p-dropdown-item) {
+    color: #000 !important;
+  }
+
+  ::v-deep(.p-dropdown-item.p-highlight) {
+    background-color: #ddd !important;
+    color: #000 !important;
+  }
+
+  .white-btn {
+    color: #000 !important;
+    border-color: #000 !important;
+  }
+
+  .white-btn:hover {
+    background-color: #eee !important;
+    border-color: #aaa !important;
+  }
+}
+
 @media (max-width: 768px) {
   .p-megamenu-start {
     flex-direction: column;
