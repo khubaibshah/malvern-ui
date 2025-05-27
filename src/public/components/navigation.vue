@@ -1,6 +1,6 @@
 <template>
   <div
-  :class="'bg-' + backgroundColor + '-500 px-6 shadow-2 flex align-items-center justify-content-between relative lg:static mb-5'"
+  :class="'bg-' + backgroundColor + '-500 px-6  flex align-items-center justify-content-between relative lg:static mb-5'"
   style="z-index: 1000;"
 >
     <img :src="newLogo" alt="Logo" class="logo-img mr-0 lg:mr-6" />
@@ -26,7 +26,7 @@
           </a>
         </li>
         <li>
-          <a v-ripple @click="router.push({ name: 'createbooking' })"
+          <a v-ripple @click="router.push({ name: 'car-search' })"
             :class="'flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-' + backgroundColor + '-100 hover:text-' + backgroundColor + '-50 hover:bg-' + backgroundColor + '-600 font-medium border-round cursor-pointer transition-colors transition-duration-150 p-ripple'">
             <i class="pi pi-booking mr-2"></i>
             <span>SCS Cars LTD</span>

@@ -14,7 +14,7 @@
       class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container md:align-items-center md:justify-content-between">
       <!-- Filter Bar -->
       <div
-        class="filter-bar  text-white px-2 py-3 flex flex-wrap gap-3 align-items-center justify-content-start">
+        class="filter-bar  text-white px-2 py-1 flex flex-wrap gap-3 align-items-center justify-content-start">
         <div
           class=" text-white px-2 py-3 flex flex-wrap gap-3 justify-content-start desktop-margin-left">
 

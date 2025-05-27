@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import CreateBookingVue from '@/public/pages/CreateBooking.vue'
+import carSearch from '@/public/pages/carSearch.vue'
 import HomePage from '@/public/pages/HomePage.vue'
 import CarDetails from '@/public/pages/CarDetails.vue'
 import bookJob from '@/public/pages/bookJobs.vue'
@@ -15,9 +15,9 @@ const router = createRouter({
       component: HomePage
     },
     {
-      path: '/createbooking',
-      name: 'createbooking',
-      component: CreateBookingVue
+      path: '/car-search',
+      name: 'car-search',
+      component: carSearch
     },
     {
       path: '/scscars',
