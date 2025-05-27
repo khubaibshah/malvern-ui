@@ -66,7 +66,7 @@ onMounted(async () => {
       </div>
     </div>
   </div>
-<div class="card">
+<div class="card mt-5">
 
   <PrimeCarousel :value="vehicles" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions" circular
     :autoplayInterval="3000">
