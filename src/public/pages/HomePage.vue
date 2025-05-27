@@ -183,4 +183,27 @@ onMounted(async () => {
   border: 1px solid white;
   font-weight: 500;
 }
+
+@media (max-width: 768px) {
+  .hero-container {
+    background-image: none;
+    background-color: black;
+        height: 60vh;
+  }
+
+  .content {
+    margin-right: 0;
+    text-align: center;
+    margin-top: 0rem;
+  }
+
+  .main-heading {
+    font-size: 2rem;
+  }
+
+  .button-row {
+    justify-content: center;
+  }
+}
+
 </style>
