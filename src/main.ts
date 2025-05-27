@@ -1,7 +1,7 @@
 import './assets/style.css'
 // import 'primevue/resources/themes/aura-light-indigo/theme.css';
 //change colour theme here
-import 'primevue/resources/themes/aura-light-amber/theme.css';
+import 'primevue/resources/themes/aura-light-indigo/theme.css';
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 const pinia = createPinia();
@@ -42,7 +42,9 @@ import FloatLabel from 'primevue/floatlabel';
 import Panel from 'primevue/panel';
 import Dialog from 'primevue/dialog';
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
-
+import Image from 'primevue/image';
+import Menubar from 'primevue/menubar';
+import MegaMenu from 'primevue/megamenu';
 
 import Dropdown from 'primevue/dropdown';
 
@@ -84,6 +86,7 @@ app.component('PrimeToast', Toast);
 app.component('PrimeCheckbox', Checkbox);
 app.component('PrimeDivider', Divider);
 app.component('PrimeCarousel', Carousel);
+app.component('PrimeImage', Image);
 app.component('VirtualScroller', VirtualScroller);
 app.component('PrimeDataView', DataView)
 app.component('PrimeDataViewLayoutOptions', DataViewLayoutOptions)
@@ -101,6 +104,8 @@ app.component('PrimeFloatLabel', FloatLabel);
 app.component('PrimePanel', Panel);
 app.component('PrimeDialog', Dialog);
 app.component('PrimeToast', Toast)
+app.component('PrimeMenubar', Menubar)
+app.component('PrimeMegaMenu', MegaMenu)
 
 
 app.config.globalProperties.$filters = {

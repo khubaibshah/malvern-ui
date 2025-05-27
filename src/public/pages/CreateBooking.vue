@@ -1,79 +1,107 @@
 <template>
   <div>
     <PrimeToast />
-    <!-- Hero Section -->
-    <div class="hero-section surface-ground p-5">
-      <div class="grid grid-nogutter align-items-center justify-content-between">
-        <div class="col-12 md:col-6 text-white z-1">
-          <h1 class="text-4xl font-bold mb-3">Welcome to SCS Car Sales LTD</h1>
-          <p class="text-lg mb-4">In partnership with <span class="font-bold">Malvern Autos</span></p>
-          <div class="p-inputgroup w-full md:w-30rem">
-            <InputText placeholder="Keyword search" class="w-full p-3 border-round" />
-            <PrimeButton icon="pi pi-search" class="p-button-secondary" />
-          </div>
-        </div>
-        <div class="col-12 md:col-6 text-center mt-4 md:mt-0 hidden md:block">
-          <img src="../../assets/img/lambo.png" alt="car" class="hero-image" />
-        </div>
+    <div class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container">
+      <PrimeToast />
+      <div
+        class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border mb-3">
+        <div class="text-3xl font-medium text-900 mb-3">Available Vehicles</div>
+        <div class="text-500">Filtered Vehicles based on your search criteria.</div>
       </div>
     </div>
+    <!-- mega menu -->
+    <div
+      class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container md:align-items-center md:justify-content-between">
+      <!-- Filter Bar -->
+      <div
+        class="filter-bar  text-white px-2 py-3 flex flex-wrap gap-3 align-items-center justify-content-start">
+        <div
+          class=" text-white px-2 py-3 flex flex-wrap gap-3 justify-content-start desktop-margin-left">
 
-    <!-- Content Section with Filter + Cars -->
-    <div class="grid pl-2 mt-3 mr-0">
-      <!-- Filter Column -->
-      <div class="col-12 md:col-3">
-        <div class="p-4 border-1 surface-border surface-card border-round">
-          <h2 class="text-xl font-semibold mb-3">Filter Cars</h2>
-
-          <div class="mb-4">
-            <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label" class="w-full" placeholder="Select Make" />
-          </div>
-
-          <div class="mb-4">
-            <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label" class="w-full" placeholder="Select Model" />
-          </div>
-
-          <div class="mb-4">
-            <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label" class="w-full" placeholder="Select Variant" />
-          </div>
-
-          <PrimeButton label="Apply Filters" icon="pi pi-filter" class="w-full mt-2" @click="applyFilters" />
-          <PrimeButton label="Clear Filters" icon="pi pi-times" severity="secondary" class="w-full mt-2" @click="clearFilters" />
+          <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label" class="w-full md:w-14rem"
+            placeholder="Make" />
+          <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label"
+            class="w-full md:w-14rem" placeholder="Model" />
+          <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label"
+            class="w-full md:w-14rem" placeholder="Variant" />
+          <PrimeButton icon="pi pi-times" label="Clear" @click="clearFilters"
+            class="p-button-sm p-button-secondary w-full md:w-auto" />
         </div>
-      </div>
 
-      <!-- Cars Column -->
-      <div class="col-12 md:col-9">
+      </div>
+      
+
+      <div class="col-12 md:col-12 mt-5">
         <div class="flex justify-content-between mb-4">
-          <div>
-            <div class="text-3xl font-medium text-900 mb-2">Cars Available</div>
-            <div class="text-500">Filtered Vehicles based on your search criteria.</div>
-          </div>
         </div>
 
         <div class="grid">
+          
           <div v-for="(item, index) in filteredVehicles" :key="index" class="col-12 sm:col-6 lg:col-4 p-2">
-            <div class="p-3 border-1 surface-border surface-card border-round">
+            <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative">
+              <!-- Image Carousel (or first image preview) -->
               <div class="relative">
-                <img
-                  v-if="item.images && item.images.length > 0"
-                  class="border-round w-full"
-                  :src="item.images[0].car_image.startsWith('http') ? item.images[0].car_image : `data:image/jpeg;base64,${item.images[0].car_image}`"
-                  :alt="item.make"
-                  style="height: 200px; object-fit: cover;"
-                />
+                <img v-if="item.images && item.images.length > 0" :src="item.images[0]" alt="car"
+                  class="w-full border-round" style="height: 180px; object-fit: cover;" />
+                <div v-else class="h-[180px] w-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                  No Image
+                </div>
+
+                <!-- Registration Plate Badge -->
+                <div
+                  class="absolute bottom-0 right-0 bg-white text-black text-xs font-semibold px-2 py-1 border-round m-2 shadow">
+                  £{{ item.price?.toLocaleString() || '£N/A' }}
+                </div>
               </div>
+
+              <!-- Car Info -->
               <div class="mt-3">
-                <div class="text-lg font-bold text-900 mb-1">{{ item.make }}</div>
-                <div class="text-md text-500 mb-2">{{ item.model }}</div>
-                <div class="text-sm text-500 mb-2">{{ item.variant || 'Category' }}</div>
-                <div class="text-green-600 font-semibold">£{{ item.price || 'N/A' }}</div>
-                <div class="text-500 text-sm line-through">£{{ item.was_price || '123.00' }}</div>
+                <div class="text-lg font-bold text-900 mb-1">
+                  {{ item.make }} {{ item.model }}
+                </div>
+                <div class="text-sm text-600 mb-1">
+                  {{ item.variant || 'Variant Info' }}
+                </div>
+                <div class="text-xs text-gray-500 mb-2 truncate">
+                  {{ item.description || 'No description provided' }}
+                </div>
+
+                <!-- Badges -->
+                <div class="flex gap-2 flex-wrap mt-2">
+                  <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
+                    {{ item.mileage?.toLocaleString() || '0' }} miles
+                  </span>
+                  <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
+                    {{ item.year || 'Year' }}
+                  </span>
+                </div>
+
+                <!-- Price -->
+                <div class="text-xl text-green-600 font-bold mt-2">
+                  £{{ item.price?.toLocaleString() || 'N/A' }}
+                </div>
               </div>
             </div>
           </div>
         </div>
+
       </div>
+
+
+
+
+    </div>
+
+    <!-- Content Section with Filter + Cars -->
+    <div class="grid pl-2 mt-3 mr-0">
+
+      <!-- Filter Column -->
+      <div class="col-12 md:col-12">
+
+      </div>
+
+      <!-- Cars Column -->
+
     </div>
   </div>
 </template>
@@ -96,9 +124,9 @@ const variantOptions = ref([])
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/vehicle-list`)
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-all-vehicles`)
     if (response.status === 200) {
-      vehicles.value = response.data
+      vehicles.value = response.data.cars || []
 
       const makes = new Set()
       const models = new Set()
@@ -163,14 +191,71 @@ const clearFilters = () => {
 </script>
 
 <style scoped>
-.hero-section {
-  background: linear-gradient(to right, #facc15, #f97316);
-  border-radius: 0 0 1.5rem 1.5rem;
-  position: relative;
+@media (max-width: 768px) {
+  .p-megamenu-start {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
 }
 
-.hero-image {
-  max-height: 230px;
-  filter: drop-shaWdow(0 10px 15px rgba(0, 0, 0, 0.2));
+.filter-bar {
+  /* border-radius: 0.75rem; */
+  /* margin-top: 2rem; */
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: #000000;
+
+  /* Matches Audi’s bar */
 }
+
+.white-btn {
+  color: #fff;
+  background-color: transparent;
+  border-color: #fff;
+}
+
+.white-btn:hover {
+  background-color: #333;
+  border-color: #ccc;
+}
+
+
+
+@media (max-width: 768px) {
+  .filter-bar {
+    /* flex-direction: column; */
+    align-items: stretch;
+  }
+}
+
+@media (min-width: 768px) {
+  .desktop-margin-left {
+    margin-left: 2rem;
+  }
+}
+
+::v-deep(.p-dropdown) {
+  background-color: #000 !important;
+  color: #fff !important;
+  border: 1px solid #333;
+}
+
+::v-deep(.p-dropdown .p-dropdown-label) {
+  color: #fff !important;
+}
+
+::v-deep(.p-dropdown-panel) {
+  background-color: #000 !important;
+}
+
+::v-deep(.p-dropdown-item) {
+  color: #fff !important;
+}
+
+::v-deep(.p-dropdown-item.p-highlight) {
+  background-color: #333 !important;
+  color: #fff !important;
+}
+
 </style>
