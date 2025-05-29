@@ -115,7 +115,7 @@ const filterByModel = (modelName: string) => {
         <img src="/src/assets/img/lambo2.jpg" alt="Featured Audi" class="w-full border-round">
       </div>
       <div class="w-full md:w-6 flex flex-column justify-center p-4">
-        <span class="bg-y-500 text-black font-bold py-1 mb-3 inline-block w-auto">FEATURED</span>
+        <span class="bg-y-500 text-black font-bold py-1 mb-3 inline-block w-auto text-5xl">FEATURED</span>
         <h2 class="text-3xl font-bold mb-3">Audi RS6 Avant</h2>
         <p>asdfasdf</p>
         <PrimeButton label="View Details" icon="pi pi-arrow-right" iconPos="right" 
