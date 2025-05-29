@@ -13,49 +13,42 @@
     <div
       class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container md:align-items-center md:justify-content-between">
       <!-- Filter Bar -->
-       <div class="filter-bar text-white py-1 flex flex-wrap gap-3 align-items-center justify-content-start">
-    
-    <!-- DESKTOP FILTER CONTROLS (hidden on small screens) -->
-    <div class="hidden md:flex text-white px-2 py-3 flex-wrap gap-3 justify-start desktop-margin-left">
-      <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label"
-        class="w-full md:w-14rem custom-black-button" placeholder="Make" />
-      <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label"
-        class="w-full md:w-14rem custom-black-button" placeholder="Model" />
-      <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label"
-        class="w-full md:w-14rem custom-black-button" placeholder="Variant" />
-      <PrimeButton icon="pi pi-filter" label="Advanced Filters"
-        class="w-full md:w-14rem custom-black-button" @click="advancedFilters = true" />
-      <PrimeButton icon="pi pi-times" label="Clear filters" @click="clearFilters"
-        class="w-full md:w-auto custom-black-button" />
-    </div>
+      <div class="filter-bar text-white py-1 flex flex-wrap gap-3 align-items-center justify-content-start">
 
-    <!-- MOBILE FILTER BUTTON (only visible on small screens) -->
-    <div class="flex md:hidden w-full justify-end">
-      <PrimeButton
-        icon="pi pi-sliders-h"
-        label="Filters"
-        class="w-full custom-black-button"
-        @click="advancedFilters = true"
-      />
-    </div>
+        <!-- DESKTOP FILTER CONTROLS (hidden on small screens) -->
+        <div class="hidden md:flex text-white px-2 py-3 flex-wrap gap-3 justify-start desktop-margin-left">
+          <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label"
+            class="w-full md:w-14rem custom-black-button" placeholder="Make" />
+          <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label"
+            class="w-full md:w-14rem custom-black-button" placeholder="Model" />
+          <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label"
+            class="w-full md:w-14rem custom-black-button" placeholder="Variant" />
+          <PrimeButton icon="pi pi-filter" label="Advanced Filters" class="w-full md:w-14rem custom-black-button"
+            @click="showFilters = true"  />
+          <PrimeButton icon="pi pi-times" label="Clear filters" @click="clearFilters"
+            class="w-full md:w-auto custom-black-button" />
+        </div>
 
-    <!-- MODAL -->
-    <PrimeDialog
-      v-model:visible="advancedFilters"
-      header="Advanced Filters"
-      maximizable
-      :maximized="true"
-      modal
-      :style="{ width: '100vw', height: '100vh' }"
-      :breakpoints="{ '1199px': '100vw', '575px': '100vw' }"
-    >
-      <p class="m-0">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore...
-      </p>
-    </PrimeDialog>
+        <!-- MOBILE FILTER BUTTON (only visible on small screens) -->
+        <div class="flex md:hidden w-full justify-end">
+          <PrimeButton icon="pi pi-sliders-h" label="Filters" class="w-full custom-black-button" @click="showFilters = true" />
+        </div>
 
-  </div>
-      <div class="col-12 md:col-12 mt-5">
+        <!-- MODAL -->
+        <FilterModel v-model:visible="showFilters"/>
+        <!-- <PrimeDialog v-model:visible="advancedFilters" header="Advanced Filters" maximizable :maximized="true" modal
+          :style="{ width: '100vw', height: '100vh' }" :breakpoints="{ '1199px': '100vw', '575px': '100vw' }">
+          <p class="m-0">
+
+
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore...
+          </p>
+        </PrimeDialog> -->
+
+      </div>
+
+
+      <div class="col-12 md:col-12 mt-2">
         <div class="flex justify-content-between mb-4">
         </div>
         <div class="grid">
@@ -127,7 +120,7 @@
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
-
+import FilterModel from '../components/filterModal.vue'
 const toast = useToast()
 const vehicles = ref([])
 const layout = ref('grid')
@@ -138,6 +131,10 @@ const advancedFilters = ref(false);
 const makeOptions = ref([])
 const modelOptions = ref([])
 const variantOptions = ref([])
+
+const showFilters = ref(false);
+
+
 
 onMounted(async () => {
   try {
@@ -213,7 +210,8 @@ const clearFilters = () => {
   color: white !important;
   border: 1px solid black !important;
   box-shadow: none !important;
-  border-radius: 0 !important; /* removes rounding */
+  border-radius: 0 !important;
+  /* removes rounding */
 }
 
 :deep(.custom-black-button:focus),
