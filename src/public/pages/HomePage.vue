@@ -108,7 +108,7 @@ const filterByModel = (modelName: string) => {
       </div>
     </div>
   </div>
-<!-- Featured Vehicle (White Background) -->
+  <!-- Featured Vehicle (White Background) -->
   <div class="surface-0 py-8 px-4" style="margin-left: 2rem; margin-right: 2rem; margin-top: 1rem;">
     <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
       <div class="w-full md:w-6 p-0 md:pr-4 mb-4 md:mb-0">
@@ -118,13 +118,54 @@ const filterByModel = (modelName: string) => {
         <span class="bg-y-500 text-black font-bold py-1 mb-3 inline-block w-auto text-5xl">FEATURED</span>
         <h2 class="text-3xl font-bold mb-3">Audi RS6 Avant</h2>
         <p>asdfasdf</p>
-        <PrimeButton label="View Details" icon="pi pi-arrow-right" iconPos="right" 
-                    class="p-button-outlined border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white w-auto" />
+        <div class="button-row">
+          <!-- <PrimeButton label="Discover more" class="custom-button left-btn w-full" /> -->
+          <PrimeButton label="View" class="custom-button right-btn w-full" />
+        </div>
       </div>
     </div>
   </div>
   <!-- Model Explorer (White Background) -->
-  <div class="surface-0 py-6 px-4">
+  <div class="text-center mb-6">
+    <h2 class="text-4xl font-bold mb-2">Explore Our Range</h2>
+    <p class="text-gray-600">Discover our premium selection of vehicles</p>
+  </div>
+
+  <div class="flex justify-content-evenly flex-wrap">
+
+    <div class="flex align-items-center justify-content-center w-4rem h-4rem font-bold border-round m-2 
+    surface-border border-round cursor-pointer hover:shadow-2 transition-all p-8 border-1 mb-6"
+      v-for="model in audiModels" :key="model.name">
+      <PrimeCard style="width: 25rem; overflow: hidden">
+        <template #header>
+          <img alt="user header" src="/src/assets/img/lambo2.jpg" />
+        </template>
+        <template #title>Advanced Card</template>
+        <template #subtitle>Card subtitle</template>
+        <template #content>
+          <p class="m-0">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae
+            numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse,
+            cupiditate neque
+            quas!
+          </p>
+        </template>
+        <template #footer>
+          <div class="flex gap-4 mt-1">
+            <Button label="Cancel" severity="secondary" outlined class="w-full" />
+            <Button label="Save" class="w-full" />
+          </div>
+        </template>
+      </PrimeCard>
+      <img :src="model.image" :alt="model.name" class="w-full h-auto mb-3">
+      <h3 class="text-xl font-semibold mb-1">{{ model.name }}</h3>
+      <span class="text-gray-600">{{ model.count }} available</span>
+    </div>
+    <!-- <div class="flex align-items-center justify-content-center w-4rem h-4rem bg-primary font-bold border-round m-2">2</div> -->
+    <!-- <div class="flex align-items-center justify-content-center w-4rem h-4rem bg-primary font-bold border-round m-2">3</div> -->
+  </div>
+
+  <!-- <div class="surface-0 py-6 px-4">
     <div class="text-center mb-6">
       <h2 class="text-4xl font-bold mb-2">Explore Our Range</h2>
       <p class="text-gray-600">Discover our premium selection of vehicles</p>
@@ -139,36 +180,43 @@ const filterByModel = (modelName: string) => {
         <span class="text-gray-600">{{ model.count }} available</span>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <!-- Value Props (Black Background) -->
   <div class="surface-900 py-8 px-4 text-white">
-    <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-      <div class="text-center p-6">
-        <i class="pi pi-shield text-5xl mb-4" style="color: #d4af37"></i>
-        <h3 class="text-xl font-bold mb-2">Certified Pre-Owned</h3>
-        <p class="text-gray-300">Rigorous 150-point inspection</p>
+    <div class="grid">
+      <div class="col-12 md:col-6 lg:col-4">
+        <div class="text-center p-6">
+          <i class="pi pi-shield text-5xl mb-4" style="color: #d4af37"></i>
+          <h3 class="text-xl font-bold mb-2">Certified Pre-Owned</h3>
+          <p class="text-gray-300">Rigorous 150-point inspection</p>
+        </div>
       </div>
-      <div class="text-center p-6">
-        <i class="pi pi-star text-5xl mb-4" style="color: #d4af37"></i>
-        <h3 class="text-xl font-bold mb-2">Premium Selection</h3>
-        <p class="text-gray-300">Only the finest vehicles</p>
+      <div class="col-12 md:col-6 lg:col-4">
+        <div class="text-center p-6">
+          <i class="pi pi-star text-5xl mb-4" style="color: #d4af37"></i>
+          <h3 class="text-xl font-bold mb-2">Premium Selection</h3>
+          <p class="text-gray-300">Only the finest vehicles</p>
+        </div>
       </div>
-      <div class="text-center p-6">
-        <i class="pi pi-wallet text-5xl mb-4" style="color: #d4af37"></i>
-        <h3 class="text-xl font-bold mb-2">Flexible Finance</h3>
-        <p class="text-gray-300">Tailored payment plans</p>
+      <div class="col-12 md:col-6 lg:col-4">
+        <div class="text-center p-6">
+          <i class="pi pi-wallet text-5xl mb-4" style="color: #d4af37"></i>
+          <h3 class="text-xl font-bold mb-2">Flexible Finance</h3>
+          <p class="text-gray-300">Tailored payment plans</p>
+        </div>
       </div>
     </div>
   </div>
 
-  
+
 
   <!-- Testimonials (Black Background) -->
   <div class="surface-900 py-8 px-4 text-white">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-3xl font-bold text-center mb-6">What Our Customers Say</h2>
-      <Carousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions" class="custom-carousel">
+      <Carousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions"
+        class="custom-carousel">
         <template #item="slotProps">
           <div class="surface-800 p-6 border-round">
             <div class="text-xl italic mb-4">"{{ slotProps.data.quote }}"</div>
@@ -185,37 +233,7 @@ const filterByModel = (modelName: string) => {
     </div>
   </div>
 
-  <!-- Advanced Filters (White Background) -->
-  <div class="surface-0 py-8 px-4">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-3xl font-bold text-center mb-6">Find Your Perfect Car</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="p-4 surface-100 border-round">
-          <label class="block font-bold mb-3">Price Range</label>
-          <Slider v-model="priceRange" :min="0" :max="100000" :step="1000" range class="mb-2" />
-          <div class="flex justify-between">
-            <span>£{{ priceRange[0].toLocaleString() }}</span>
-            <span>£{{ priceRange[1].toLocaleString() }}</span>
-          </div>
-        </div>
-        
-        <div class="p-4 surface-100 border-round">
-          <label class="block font-bold mb-3">Mileage</label>
-          <Dropdown v-model="maxMileage" :options="mileageOptions" optionLabel="label" optionValue="value" 
-                   class="w-full" />
-        </div>
-        
-        <div class="p-4 surface-100 border-round">
-          <label class="block font-bold mb-3">Fuel Type</label>
-          <div class="flex flex-wrap gap-2">
-            <Chip v-for="type in fuelTypes" :key="type" :label="type" 
-                  :class="{'bg-primary': selectedFuel === type}" 
-                  @click="selectedFuel = type" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
 </template>
 
 <style scoped>
@@ -323,12 +341,12 @@ const filterByModel = (modelName: string) => {
   .button-row {
     justify-content: center;
   }
-  
+
   .featured-vehicle {
     flex-direction: column;
   }
-  
-  .featured-vehicle > div {
+
+  .featured-vehicle>div {
     width: 100% !important;
   }
 }
