@@ -126,7 +126,7 @@ const filterByModel = (modelName: string) => {
     </div>
   </div>
   <!-- Model Explorer (White Background) -->
-  <div class="text-center mb-6">
+  <div class="text-center mb-6 ">
     <h2 class="text-4xl font-bold mb-2">Explore Our Range</h2>
     <p class="text-gray-600">Discover our premium selection of vehicles</p>
   </div>
@@ -183,7 +183,8 @@ const filterByModel = (modelName: string) => {
   </div> -->
 
   <!-- Value Props (Black Background) -->
-  <div class="surface-900 py-8 px-4 text-white">
+<div class="tile-bg py-8 px-4 text-white">
+
     <div class="grid">
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
@@ -212,16 +213,18 @@ const filterByModel = (modelName: string) => {
 
 
   <!-- Testimonials (Black Background) -->
-  <div class="surface-900 py-8 px-4 text-white">
+  <div class="py-8 px-4">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-3xl font-bold text-center mb-6">What Our Customers Say</h2>
       <Carousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions"
         class="custom-carousel">
         <template #item="slotProps">
-          <div class="surface-800 p-6 border-round">
+          <div class="p-6 border-round">
             <div class="text-xl italic mb-4">"{{ slotProps.data.quote }}"</div>
             <div class="flex align-items-center">
-              <img :src="slotProps.data.avatar" class="w-3rem h-3rem border-circle mr-3">
+                          <i class="pi pi-user w-3rem h-3rem border-circle mr-3" ></i>
+
+              <!-- <img :src="slotProps.data.avatar" class="w-3rem h-3rem border-circle mr-3"> -->
               <div>
                 <div class="font-bold">{{ slotProps.data.name }}</div>
                 <div class="text-gray-400">{{ slotProps.data.role }}</div>
@@ -234,7 +237,7 @@ const filterByModel = (modelName: string) => {
   </div>
 <!-- Footer Section (Black Background) -->
    <!-- Footer Section (Black Background) -->
-  <footer class="surface-900 text-white py-6 px-4">
+  <footer class="tile-bg text-white py-6 px-4">
     <div class="max-w-7xl mx-auto ml-auto" style="width: 90%">  <!-- Added ml-auto and width -->
       <!-- Main Footer Content -->
       <div class="grid md:grid-cols-4 gap-8 mb-6">
@@ -324,6 +327,10 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+.tile-bg
+{
+   background-color: black;
+}
 footer a {
   transition: color 0.2s ease;
 }
@@ -423,8 +430,8 @@ footer a {
 
 :deep(.custom-carousel .p-carousel-prev),
 :deep(.custom-carousel .p-carousel-next) {
-  color: white;
-  background: rgba(255, 255, 255, 0.1);
+  color: rgb(0, 0, 0);
+  background: rgb(255, 255, 255);
 }
 
 :deep(.custom-carousel .p-carousel-prev:hover),
