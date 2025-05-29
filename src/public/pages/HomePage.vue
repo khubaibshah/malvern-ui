@@ -2,6 +2,8 @@
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
+import Dropdown from 'primevue/dropdown'
+import Carousel from 'primevue/carousel'
 
 const toast = useToast()
 const vehicles = ref([])
@@ -9,10 +11,15 @@ const layout = ref('grid')
 const vehicle_make = ref()
 const vehicle_model = ref()
 const vehicle_variant = ref()
+const priceRange = ref([20000, 60000])
+const maxMileage = ref(50000)
+const selectedFuel = ref('All')
 
 const makeOptions = ref([])
 const modelOptions = ref([])
 const variantOptions = ref([])
+const selectedTag = ref('All Models')
+const filterTags = ['All Models', 'Fully Electric', 'Plug-In Hybrid', 'Sportback', 'Saloon', 'Sport', 'RS', 'Avant', '✓ SUV']
 const responsiveOptions = ref([
   {
     breakpoint: '1024px',
@@ -25,6 +32,39 @@ const responsiveOptions = ref([
     numScroll: 1
   }
 ])
+const audiModels = [
+  { name: 'Q2', image: '/src/assets/img/q2.png', count: 2 },
+  { name: 'Q3', image: '/src/assets/img/q3.png', count: 2 },
+  { name: 'Q4 e-tron', image: '/src/assets/img/q4.png', count: 2 },
+  { name: 'Q5', image: '/src/assets/img/q5.png', count: 4 },
+  { name: 'Q6 e-tron', image: '/src/assets/img/q6.png', count: 4 },
+  { name: 'Q7', image: '/src/assets/img/q7.png', count: 3 },
+  { name: 'Q8', image: '/src/assets/img/q8.png', count: 5 }
+]
+
+const testimonials = ref([
+  {
+    quote: "The buying process was seamless and the team was incredibly knowledgeable.",
+    name: "Sarah Johnson",
+    role: "Audi Q7 Owner",
+    avatar: "/src/assets/img/avatar1.jpg"
+  },
+  {
+    quote: "Found my dream car at a great price. Highly recommend!",
+    name: "Michael Chen",
+    role: "Audi Q5 Owner",
+    avatar: "/src/assets/img/avatar2.jpg"
+  }
+])
+
+const mileageOptions = ref([
+  { label: 'Under 10k miles', value: 10000 },
+  { label: 'Under 20k miles', value: 20000 },
+  { label: 'Under 50k miles', value: 50000 },
+  { label: 'Any mileage', value: 1000000 }
+])
+
+const fuelTypes = ['All', 'Petrol', 'Diesel', 'Hybrid', 'Electric']
 
 onMounted(async () => {
   try {
@@ -50,83 +90,146 @@ onMounted(async () => {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
   }
 })
+
+const filterByModel = (modelName: string) => {
+  vehicle_model.value = modelName
+}
 </script>
 
-
 <template>
+  <!-- Hero Section (Black Background) -->
   <div class="hero-container">
-
     <div class="overlay"></div>
     <div class="content">
       <h1 class="main-heading">STANLEY CAR SALES</h1>
       <div class="button-row">
-
         <PrimeButton label="Discover more" class="custom-button left-btn" />
         <PrimeButton label="Find & Buy" class="custom-button right-btn" />
       </div>
     </div>
   </div>
-<div class="card mt-5">
-
-  <PrimeCarousel :value="vehicles" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions" circular
-    :autoplayInterval="3000">
-    <template #item="slotProps">
-  <div class="carousel-card p-3 border-1 surface-border surface-card border-round shadow-1">
-    <div class="relative">
-      <img
-        v-if="slotProps.data.images?.[0]"
-        :src="slotProps.data.images[0]"
-        alt="car"
-        class="w-full border-round mb-3"
-        style="height: 140px; object-fit: cover;"
-      />
-      <div
-        class="absolute top-0 left-0 px-2 py-1 text-xs font-bold text-white bg-red-500 border-round-left"
-        v-if="slotProps.data.mileage && slotProps.data.mileage > 100000"
-      >
-        HIGH MILES
+<!-- Featured Vehicle (White Background) -->
+  <div class="surface-0 py-8 px-4" style="margin-left: 2rem; margin-right: 2rem; margin-top: 1rem;">
+    <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
+      <div class="w-full md:w-6 p-0 md:pr-4 mb-4 md:mb-0">
+        <img src="/src/assets/img/lambo2.jpg" alt="Featured Audi" class="w-full border-round">
+      </div>
+      <div class="w-full md:w-6 flex flex-column justify-center p-4">
+        <span class="bg-y-500 text-black font-bold py-1 mb-3 inline-block w-auto">FEATURED</span>
+        <h2 class="text-3xl font-bold mb-3">Audi RS6 Avant</h2>
+        <p>asdfasdf</p>
+        <PrimeButton label="View Details" icon="pi pi-arrow-right" iconPos="right" 
+                    class="p-button-outlined border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white w-auto" />
       </div>
     </div>
-
-    <div class="font-medium text-base mb-1">
-      {{ slotProps.data.make }} {{ slotProps.data.model }}
+  </div>
+  <!-- Model Explorer (White Background) -->
+  <div class="surface-0 py-6 px-4">
+    <div class="text-center mb-6">
+      <h2 class="text-4xl font-bold mb-2">Explore Our Range</h2>
+      <p class="text-gray-600">Discover our premium selection of vehicles</p>
     </div>
-    <div class="text-sm text-gray-600 mb-2">{{ slotProps.data.variant || 'No variant' }}</div>
-    <div class="text-lg font-bold text-green-600 mb-3">£{{ slotProps.data.price?.toLocaleString() }}</div>
+    
+    <div class="grid md:grid-cols-4 sm:grid-cols-2 gap-4 px-4">
+      <div v-for="model in audiModels" :key="model.name" 
+           class="p-4 border-1 surface-border border-round cursor-pointer hover:shadow-2 transition-all"
+           @click="filterByModel(model.name)">
+        <img :src="model.image" :alt="model.name" class="w-full h-auto mb-3">
+        <h3 class="text-xl font-semibold mb-1">{{ model.name }}</h3>
+        <span class="text-gray-600">{{ model.count }} available</span>
+      </div>
+    </div>
+  </div>
 
-    <div class="flex justify-between items-center">
-      <PrimeButton icon="pi pi-heart" severity="secondary" outlined rounded />
-      <PrimeButton icon="pi pi-info-circle" rounded label="Details" />
+  <!-- Value Props (Black Background) -->
+  <div class="surface-900 py-8 px-4 text-white">
+    <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      <div class="text-center p-6">
+        <i class="pi pi-shield text-5xl mb-4" style="color: #d4af37"></i>
+        <h3 class="text-xl font-bold mb-2">Certified Pre-Owned</h3>
+        <p class="text-gray-300">Rigorous 150-point inspection</p>
+      </div>
+      <div class="text-center p-6">
+        <i class="pi pi-star text-5xl mb-4" style="color: #d4af37"></i>
+        <h3 class="text-xl font-bold mb-2">Premium Selection</h3>
+        <p class="text-gray-300">Only the finest vehicles</p>
+      </div>
+      <div class="text-center p-6">
+        <i class="pi pi-wallet text-5xl mb-4" style="color: #d4af37"></i>
+        <h3 class="text-xl font-bold mb-2">Flexible Finance</h3>
+        <p class="text-gray-300">Tailored payment plans</p>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Testimonials (Black Background) -->
+  <div class="surface-900 py-8 px-4 text-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-6">What Our Customers Say</h2>
+      <Carousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions" class="custom-carousel">
+        <template #item="slotProps">
+          <div class="surface-800 p-6 border-round">
+            <div class="text-xl italic mb-4">"{{ slotProps.data.quote }}"</div>
+            <div class="flex align-items-center">
+              <img :src="slotProps.data.avatar" class="w-3rem h-3rem border-circle mr-3">
+              <div>
+                <div class="font-bold">{{ slotProps.data.name }}</div>
+                <div class="text-gray-400">{{ slotProps.data.role }}</div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </Carousel>
+    </div>
+  </div>
+
+  <!-- Advanced Filters (White Background) -->
+  <div class="surface-0 py-8 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-6">Find Your Perfect Car</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="p-4 surface-100 border-round">
+          <label class="block font-bold mb-3">Price Range</label>
+          <Slider v-model="priceRange" :min="0" :max="100000" :step="1000" range class="mb-2" />
+          <div class="flex justify-between">
+            <span>£{{ priceRange[0].toLocaleString() }}</span>
+            <span>£{{ priceRange[1].toLocaleString() }}</span>
+          </div>
+        </div>
+        
+        <div class="p-4 surface-100 border-round">
+          <label class="block font-bold mb-3">Mileage</label>
+          <Dropdown v-model="maxMileage" :options="mileageOptions" optionLabel="label" optionValue="value" 
+                   class="w-full" />
+        </div>
+        
+        <div class="p-4 surface-100 border-round">
+          <label class="block font-bold mb-3">Fuel Type</label>
+          <div class="flex flex-wrap gap-2">
+            <Chip v-for="type in fuelTypes" :key="type" :label="type" 
+                  :class="{'bg-primary': selectedFuel === type}" 
+                  @click="selectedFuel = type" />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-
-  </PrimeCarousel>
-
-
-</div>
-
-</template>
 <style scoped>
-.carousel-card {
-  width: 100%;
-  max-width: 240px;
-  min-height: 320px;
-  margin: auto;
-  text-align: center;
-}
-
 .hero-container {
   position: relative;
   width: 100%;
-  height: 90vh;
+  height: 77vh;
   background-image: url('/src/assets/img/lamb4.jpg');
   background-size: cover;
   background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 1rem;
 }
 
 .overlay {
@@ -141,7 +244,7 @@ onMounted(async () => {
   z-index: 2;
   color: white;
   max-width: 90%;
-  margin-right: 75rem;
+  margin-right: 70rem;
   margin-top: 26rem;
 }
 
@@ -155,7 +258,6 @@ onMounted(async () => {
 .button-row {
   display: flex;
   gap: 0.5rem;
-  /* slight gap */
 }
 
 /* Override PrimeButton deeply */
@@ -184,11 +286,28 @@ onMounted(async () => {
   font-weight: 500;
 }
 
+/* Custom Carousel */
+:deep(.custom-carousel .p-carousel-indicators) {
+  display: none;
+}
+
+:deep(.custom-carousel .p-carousel-prev),
+:deep(.custom-carousel .p-carousel-next) {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:deep(.custom-carousel .p-carousel-prev:hover),
+:deep(.custom-carousel .p-carousel-next:hover) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .hero-container {
     background-image: none;
     background-color: black;
-        height: 60vh;
+    height: 60vh;
   }
 
   .content {
@@ -204,6 +323,13 @@ onMounted(async () => {
   .button-row {
     justify-content: center;
   }
+  
+  .featured-vehicle {
+    flex-direction: column;
+  }
+  
+  .featured-vehicle > div {
+    width: 100% !important;
+  }
 }
-
 </style>

@@ -2,7 +2,7 @@
   <div>
     <PrimeToast />
     <div class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container">
-      <PrimeToast />
+      <!-- <PrimeToast /> -->
       <div
         class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border mb-3">
         <div class="text-3xl font-medium text-900 mb-3">Available Vehicles</div>
@@ -13,11 +13,8 @@
     <div
       class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container md:align-items-center md:justify-content-between">
       <!-- Filter Bar -->
-      <div
-        class="filter-bar  text-white px-2 py-1 flex flex-wrap gap-3 align-items-center justify-content-start">
-        <div
-          class=" text-white px-2 py-3 flex flex-wrap gap-3 justify-content-start desktop-margin-left">
-
+      <div class="filter-bar  text-white px-2 py-1 flex flex-wrap gap-3 align-items-center justify-content-start">
+        <div class=" text-white px-2 py-3 flex flex-wrap gap-3 justify-content-start desktop-margin-left">
           <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label" class="w-full md:w-14rem"
             placeholder="Make" />
           <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label"
@@ -27,16 +24,11 @@
           <PrimeButton icon="pi pi-times" label="Clear" @click="clearFilters"
             class="p-button-sm p-button-secondary w-full md:w-auto" />
         </div>
-
       </div>
-      
-
       <div class="col-12 md:col-12 mt-5">
         <div class="flex justify-content-between mb-4">
         </div>
-
         <div class="grid">
-          
           <div v-for="(item, index) in filteredVehicles" :key="index" class="col-12 sm:col-6 lg:col-4 p-2">
             <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative">
               <!-- Image Carousel (or first image preview) -->
@@ -84,12 +76,7 @@
             </div>
           </div>
         </div>
-
       </div>
-
-
-
-
     </div>
 
     <!-- Content Section with Filter + Cars -->
@@ -194,7 +181,8 @@ const clearFilters = () => {
 .filter-bar {
   font-size: 0.95rem;
   font-weight: 500;
-  background-color: #000; /* Default for desktop */
+  background-color: #000;
+  /* Default for desktop */
   color: #fff;
 }
 
@@ -308,5 +296,4 @@ const clearFilters = () => {
   background-color: #333 !important;
   color: #fff !important;
 }
-
 </style>
