@@ -109,7 +109,7 @@ const filterByModel = (modelName: string) => {
     </div>
   </div>
   <!-- Featured Vehicle (White Background) -->
-  <div class="surface-0 py-8 px-4" style="margin-left: 2rem; margin-right: 2rem; margin-top: 1rem;">
+<div class="surface-0 py-4 px-4 md:py-6 md:px-6 lg:py-7 lg:px-7">
     <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
       <div class="w-full md:w-6 p-0 md:pr-4 mb-4 md:mb-0">
         <img src="/src/assets/img/lambo2.jpg" alt="Featured Audi" class="w-full border-round">
