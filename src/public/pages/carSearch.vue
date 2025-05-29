@@ -4,7 +4,7 @@
     <div class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container">
       <!-- <PrimeToast /> -->
       <div
-        class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border mb-3">
+        class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
         <div class="text-3xl font-medium text-900 mb-3">Available Vehicles</div>
         <div class="text-500">Filter Vehicles based on your search criteria.</div>
       </div>
@@ -13,18 +13,48 @@
     <div
       class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container md:align-items-center md:justify-content-between">
       <!-- Filter Bar -->
-      <div class="filter-bar  text-white px-2 py-1 flex flex-wrap gap-3 align-items-center justify-content-start">
-        <div class=" text-white px-2 py-3 flex flex-wrap gap-3 justify-content-start desktop-margin-left">
-          <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label" class="w-full md:w-14rem"
-            placeholder="Make" />
-          <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label"
-            class="w-full md:w-14rem" placeholder="Model" />
-          <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label"
-            class="w-full md:w-14rem" placeholder="Variant" />
-          <PrimeButton icon="pi pi-times" label="Clear" @click="clearFilters"
-            class="p-button-sm p-button-secondary w-full md:w-auto" />
-        </div>
-      </div>
+       <div class="filter-bar text-white py-1 flex flex-wrap gap-3 align-items-center justify-content-start">
+    
+    <!-- DESKTOP FILTER CONTROLS (hidden on small screens) -->
+    <div class="hidden md:flex text-white px-2 py-3 flex-wrap gap-3 justify-start desktop-margin-left">
+      <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label"
+        class="w-full md:w-14rem custom-black-button" placeholder="Make" />
+      <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label"
+        class="w-full md:w-14rem custom-black-button" placeholder="Model" />
+      <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label"
+        class="w-full md:w-14rem custom-black-button" placeholder="Variant" />
+      <PrimeButton icon="pi pi-filter" label="Advanced Filters"
+        class="w-full md:w-14rem custom-black-button" @click="advancedFilters = true" />
+      <PrimeButton icon="pi pi-times" label="Clear filters" @click="clearFilters"
+        class="w-full md:w-auto custom-black-button" />
+    </div>
+
+    <!-- MOBILE FILTER BUTTON (only visible on small screens) -->
+    <div class="flex md:hidden w-full justify-end">
+      <PrimeButton
+        icon="pi pi-sliders-h"
+        label="Filters"
+        class="w-full custom-black-button"
+        @click="advancedFilters = true"
+      />
+    </div>
+
+    <!-- MODAL -->
+    <PrimeDialog
+      v-model:visible="advancedFilters"
+      header="Advanced Filters"
+      maximizable
+      :maximized="true"
+      modal
+      :style="{ width: '100vw', height: '100vh' }"
+      :breakpoints="{ '1199px': '100vw', '575px': '100vw' }"
+    >
+      <p class="m-0">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore...
+      </p>
+    </PrimeDialog>
+
+  </div>
       <div class="col-12 md:col-12 mt-5">
         <div class="flex justify-content-between mb-4">
         </div>
@@ -104,7 +134,7 @@ const layout = ref('grid')
 const vehicle_make = ref()
 const vehicle_model = ref()
 const vehicle_variant = ref()
-
+const advancedFilters = ref(false);
 const makeOptions = ref([])
 const modelOptions = ref([])
 const variantOptions = ref([])
@@ -178,6 +208,21 @@ const clearFilters = () => {
 </script>
 
 <style scoped>
+:deep(.custom-black-button) {
+  background-color: black !important;
+  color: white !important;
+  border: 1px solid black !important;
+  box-shadow: none !important;
+  border-radius: 0 !important; /* removes rounding */
+}
+
+:deep(.custom-black-button:focus),
+:deep(.custom-black-button:focus-visible) {
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.5) !important;
+  /* black focus ring */
+  outline: none !important;
+}
+
 .filter-bar {
   font-size: 0.95rem;
   font-weight: 500;
