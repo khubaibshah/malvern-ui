@@ -188,21 +188,21 @@ const filterByModel = (modelName: string) => {
     <div class="grid">
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
-          <i class="pi pi-shield text-5xl mb-4" style="color: #d4af37"></i>
+          <i class="pi pi-shield text-5xl mb-4"></i>
           <h3 class="text-xl font-bold mb-2">Certified Pre-Owned</h3>
           <p class="text-gray-300">Rigorous 150-point inspection</p>
         </div>
       </div>
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
-          <i class="pi pi-star text-5xl mb-4" style="color: #d4af37"></i>
+          <i class="pi pi-star text-5xl mb-4"></i>
           <h3 class="text-xl font-bold mb-2">Premium Selection</h3>
           <p class="text-gray-300">Only the finest vehicles</p>
         </div>
       </div>
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
-          <i class="pi pi-wallet text-5xl mb-4" style="color: #d4af37"></i>
+          <i class="pi pi-wallet text-5xl mb-4"></i>
           <h3 class="text-xl font-bold mb-2">Flexible Finance</h3>
           <p class="text-gray-300">Tailored payment plans</p>
         </div>
@@ -244,7 +244,7 @@ const filterByModel = (modelName: string) => {
         <!-- About Section -->
         <div class="col-span-2 md:col-span-1">
           <h3 class="text-xl font-bold mb-4 flex align-items-center">
-            <i class="pi pi-car mr-2" style="color: #d4af37"></i>
+            <i class="pi pi-car mr-2" ></i>
             STANLEY CAR SALES
           </h3>
           <p class="text-gray-400 mb-4">
@@ -259,7 +259,7 @@ const filterByModel = (modelName: string) => {
 
         <!-- Quick Links -->
         <div>
-          <h4 class="text-lg font-bold mb-4" style="border-bottom: 2px solid #d4af37; display: inline-block">
+          <h4 class="text-lg font-bold mb-4" style="border-bottom: 2px solid; display: inline-block">
             Quick Links
           </h4>
           <ul class="list-none p-0 m-0">
@@ -273,20 +273,20 @@ const filterByModel = (modelName: string) => {
 
         <!-- Contact Info -->
         <div>
-          <h4 class="text-lg font-bold mb-4" style="border-bottom: 2px solid #d4af37; display: inline-block">
+          <h4 class="text-lg font-bold mb-4" style="border-bottom: 2px; display: inline-block">
             Contact Us
           </h4>
           <ul class="list-none p-0 m-0">
             <li class="mb-3 flex align-items-start">
-              <i class="pi pi-map-marker mt-1 mr-2" style="color: #d4af37"></i>
+              <i class="pi pi-map-marker mt-1 mr-2" ></i>
               <span class="text-gray-400">123 Luxury Avenue, London, UK</span>
             </li>
             <li class="mb-3 flex align-items-start">
-              <i class="pi pi-phone mt-1 mr-2" style="color: #d4af37"></i>
+              <i class="pi pi-phone mt-1 mr-2" ></i>
               <span class="text-gray-400">+44 20 7123 4567</span>
             </li>
             <li class="flex align-items-start">
-              <i class="pi pi-envelope mt-1 mr-2" style="color: #d4af37"></i>
+              <i class="pi pi-envelope mt-1 mr-2" ></i>
               <span class="text-gray-400">info@stanleycars.com</span>
             </li>
           </ul>
@@ -294,7 +294,7 @@ const filterByModel = (modelName: string) => {
 
         <!-- Newsletter -->
         <div>
-          <h4 class="text-lg font-bold mb-4" style="border-bottom: 2px solid #d4af37; display: inline-block">
+          <h4 class="text-lg font-bold mb-4" style="border-bottom: 2px; display: inline-block">
             Newsletter
           </h4>
           <p class="text-gray-400 mb-4">
@@ -343,8 +343,8 @@ footer a {
 .p-button.p-button-warning {
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
-  background-color: #d4af37 !important;
-  border-color: #d4af37 !important;
+  /* background-colo !important; */
+  /* border-color: #d4af37 !important; */
 }
 
 @media (max-width: 768px) {
