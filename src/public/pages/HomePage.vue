@@ -381,8 +381,8 @@ footer a {
   z-index: 2;
   color: white;
   max-width: 90%;
-  margin-right: 70rem;
-  margin-top: 26rem;
+  margin-right: 52rem;
+  margin-top: 17rem;  
 }
 
 .main-heading {

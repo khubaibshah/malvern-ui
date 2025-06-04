@@ -45,12 +45,9 @@ import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
 import Image from 'primevue/image';
 import Menubar from 'primevue/menubar';
 import MegaMenu from 'primevue/megamenu';
-
 import Slider from 'primevue/slider';
-
-// import ButtonGroup from 'primevue/buttongroup';
-
 import Dropdown from 'primevue/dropdown';
+import Galleria from 'primevue/galleria';
 
 
 
@@ -111,6 +108,7 @@ app.component('PrimeToast', Toast)
 app.component('PrimeMenubar', Menubar)
 app.component('PrimeMegaMenu', MegaMenu)
 app.component('PrimeSlider', Slider)
+app.component('PrimeGalleria', Galleria)
 // app.component('PrimeButtonGroup', ButtonGroup)
 
 
