@@ -51,7 +51,7 @@ onMounted(fetchCar)
         <!-- Left: Main Image & Thumbnails -->
         <div>
           <div class="mb-4 border rounded overflow-hidden max-w-[400px] mx-auto">
-            <img :src="mainImage" alt="Main Image" class="object-cover" style="width: 50rem;" />
+            <img :src="mainImage" alt="Main Image" class="object-cover" />
           </div>
           <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
             <img v-for="(img, idx) in images" :key="idx" :src="img" @click="mainImage = img"
