@@ -62,36 +62,27 @@ onMounted(fetchCar)
             </div>
 
             <!-- Right: Vehicle Info -->
-            <div>
-              <PrimeCard>
+            <!-- Right: Vehicle Info -->
+            <div class="w-full">
+              <PrimeCard class="w-full">
                 <template #title>{{ car.make }} {{ car.model }} {{ car.variant }}</template>
                 <template #content>
-                  <p class="m-0">
-                  <p class="text-gray-500 text-sm mb-1">{{ car.year }} • {{ car.fuel_type }} • {{ car.doors }} doors</p>
-                  <p class="text-gray-500 text-sm mb-3">Reg: {{ car.registration }}</p>
-                  <p class="text-2xl text-green-600 font-bold mb-4">£{{ car.price?.toLocaleString() }}</p>
-
-                  <div class="mb-4 grid grid-cols-2 gap-y-2 text-sm text-gray-800">
-                    <div><strong>Mileage:</strong> {{ car.mileage?.toLocaleString() }} mi</div>
-                    <div><strong>Colour:</strong> {{ car.colour }}</div>
-                    <div><strong>Type:</strong> {{ car.veh_type }}</div>
-                    <div><strong>Fuel:</strong> {{ car.fuel_type }}</div>
-                    <div class="mt-10 border-t pt-6">
-                      <h2 class=" mb-2">Description</h2>
-                      <p class="text-gray-700 text-sm leading-relaxed">
+                  <div>
+                    <div><PrimeTag :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" /></div>
+                    <div><PrimeTag :value="car.year" class="mb-2" /></div>
+                    <div><PrimeTag :value="car.fuel_type" class="mb-2" /></div>
+                    <p class="text-gray-500 text-sm mb-3">Reg: {{ car.registration }}</p>
+                    <p class="text-2xl text-green-600 font-bold mb-4">£{{ car.price?.toLocaleString() }}</p>
+                    <p class="text-gray-700 text-sm leading-relaxed">
                         {{ car.description }}
                       </p>
-                    </div>
+                    <PrimeButton label="Enquire / Book Test Drive"
+                      class="w-full bg-blue-600 border-blue-600 hover:bg-blue-700 text-white" />
                   </div>
-
-                  <PrimeButton label="Enquire / Book Test Drive"
-                    class="w-full bg-blue-600 border-blue-600 hover:bg-blue-700 text-white" />
-                  </p>
                 </template>
               </PrimeCard>
-
-
             </div>
+
           </div>
 
           <!-- Description -->
