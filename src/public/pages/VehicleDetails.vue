@@ -13,10 +13,7 @@ const seshId = localStorage.getItem('token') || ''
 const fetchCar = async () => {
   try {
     const id = route.params.id
-    const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/get-vehicle-by-id/${id}`, {
-      headers: { Authorization: 'Bearer ' + seshId }
-    })
-
+    const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-vehicle-by-id/${id}`)
     car.value = res.data.car
     images.value = Array.isArray(car.value.images) ? car.value.images : []
     if (Array.isArray(images.value) && images.value.length > 0) {
