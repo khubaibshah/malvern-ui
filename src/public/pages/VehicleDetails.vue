@@ -51,11 +51,8 @@ onMounted(fetchCar)
             <!-- Left: Main Image & Thumbnails -->
             <div>
               <div class="mb-4 border rounded overflow-hidden max-w-[400px] mx-auto">
-               <img
-  :src="mainImage"
-  alt="Main Image"
-  class="w-full h-[250px] object-cover rounded"
-/>
+                <img :src="mainImage" alt="Main Image" class="w-full h-[250px] object-cover rounded" style="
+    border-radius: 12px;"/>
 
               </div>
               <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
@@ -72,14 +69,20 @@ onMounted(fetchCar)
                 <template #title>{{ car.make }} {{ car.model }} {{ car.variant }}</template>
                 <template #content>
                   <div>
-                    <div><PrimeTag :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" /></div>
-                    <div><PrimeTag :value="car.year" class="mb-2" /></div>
-                    <div><PrimeTag :value="car.fuel_type" class="mb-2" /></div>
+                    <div>
+                      <PrimeTag :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
+                    </div>
+                    <div>
+                      <PrimeTag :value="car.year" class="mb-2" />
+                    </div>
+                    <div>
+                      <PrimeTag :value="car.fuel_type" class="mb-2" />
+                    </div>
                     <p class="text-gray-500 text-sm mb-3">Reg: {{ car.registration }}</p>
                     <p class="text-2xl text-green-600 font-bold mb-4">£{{ car.price?.toLocaleString() }}</p>
                     <p class="text-gray-700 text-sm leading-relaxed">
-                        {{ car.description }}
-                      </p>
+                      {{ car.description }}
+                    </p>
                     <PrimeButton label="Enquire / Book Test Drive"
                       class="w-full bg-blue-600 border-blue-600 hover:bg-blue-700 text-white" />
                   </div>
