@@ -79,7 +79,7 @@ const isButtonDisabled = computed(() => {
   return (
     !date.value ||
     !props.vehicleData ||
-    !props.vehicleData || !Array.isArray(props.vehicleData) || props.vehicleData.length === 0 || !props.vehicleData[0]?.registration ||
+    !props.vehicleData.registration ||
     // Check if selectedRepairs is empty
     props.selectedRepairs.length === 0
   );
