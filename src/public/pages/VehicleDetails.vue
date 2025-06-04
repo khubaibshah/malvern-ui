@@ -49,23 +49,26 @@ onMounted(fetchCar)
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <!-- Left: Main Image & Thumbnails -->
       <div>
-        <div class="mb-4 border rounded overflow-hidden">
-          <img
-            :src="mainImage"
-            alt="Main Image"
-            class="w-full h-[300px] md:h-[400px] object-cover"
-          />
-        </div>
-        <div class="flex gap-3 overflow-x-auto">
-          <img
-            v-for="(img, idx) in images"
-            :key="idx"
-            :src="img"
-            @click="mainImage = img"
-            class="h-[75px] w-[100px] object-cover rounded cursor-pointer border-2"
-            :class="{ 'border-blue-500': mainImage === img, 'border-gray-300': mainImage !== img }"
-          />
-        </div>
+       <div class="mb-4 border rounded overflow-hidden max-w-[400px] mx-auto">
+  <img
+    :src="mainImage"
+    alt="Main Image"
+    class="object-cover"
+    style="width: 20rem;"
+  />
+</div>
+        <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
+  <img
+    v-for="(img, idx) in images"
+    :key="idx"
+    :src="img"
+    @click="mainImage = img"
+    class="object-cover rounded cursor-pointer border-2"
+    style="    width: 26rem;
+    height: 20rem;"
+    :class="{ 'border-blue-500': mainImage === img, 'border-gray-300': mainImage !== img }"
+/>
+</div>
       </div>
 
       <!-- Right: Vehicle Info -->
@@ -102,10 +105,17 @@ onMounted(fetchCar)
 
   <div v-else class="text-center py-12 text-gray-400">Loading vehicle details...</div>
 </template>
+
 <style>
 @media (max-width: 768px) {
   img {
     max-width: 100%;
   }
+}
+
+.img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 </style>
