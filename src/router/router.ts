@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import carSearch from '@/public/pages/carSearch.vue'
 import HomePage from '@/public/pages/HomePage.vue'
 import CarDetails from '@/public/pages/CarDetails.vue'
+import VehicleDetails from '@/public/pages/VehicleDetails.vue'
 import bookJob from '@/public/pages/bookJobs.vue'
 import payment from '@/public/pages/Payment.vue'
 import SCSCarsVue from '@/public/pages/SCSCars.vue'
@@ -24,6 +25,11 @@ const router = createRouter({
       path: '/car-search',
       name: 'car-search',
       component: carSearch
+    },
+    {
+      path: '/vehicle/:id',
+      name: 'vehicle-details',
+      component: VehicleDetails
     },
     {
       path: '/scscars',

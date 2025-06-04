@@ -53,7 +53,8 @@
         </div>
         <div class="grid">
           <div v-for="(item, index) in filteredVehicles" :key="index" class="col-12 sm:col-6 lg:col-4 p-2">
-            <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative">
+            <RouterLink :to="{ name: 'vehicle-details', params: { id: item.id } }" class="no-underline">
+            <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative cursor-pointer">
               <!-- Image Carousel (or first image preview) -->
               <div class="relative">
                 <img v-if="item.images && item.images.length > 0" :src="item.images[0]" alt="car"
@@ -97,6 +98,7 @@
                 </div>
               </div>
             </div>
+            </RouterLink>
           </div>
         </div>
       </div>
