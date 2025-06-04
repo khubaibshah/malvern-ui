@@ -44,8 +44,21 @@ onMounted(fetchCar)
   <div class="surface-section px-5 py-5 md:px-6 lg:px-8">
       <div class="text-3xl font-bold text-900 mb-4">{{ car?.make }} {{ car?.model }} {{ car?.variant }}</div>
 
-      </div>
-  <div v-if="car" class="max-w-7xl mx-auto px-4 py-6">
+      <div class="grid">
+    <div class="col-12 md:col-12 lg:col-12 mx-auto">
+        
+    </div>
+    <!-- <div class="col-12 md:col-6 lg:col-3">
+        <div class="text-center p-3 border-round-sm bg-primary font-bold">col-12 md:col-6 lg:col-3</div>
+    </div>
+    <div class="col-12 md:col-6 lg:col-3">
+        <div class="text-center p-3 border-round-sm bg-primary font-bold">col-12 md:col-6 lg:col-3</div>
+    </div>
+    <div class="col-12 md:col-6 lg:col-3">
+        <div class="text-center p-3 border-round-sm bg-primary font-bold">col-12 md:col-6 lg:col-3</div>
+    </div> -->
+</div>
+<div v-if="car" class="max-w-7xl mx-auto">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <!-- Left: Main Image & Thumbnails -->
       <div>
@@ -54,7 +67,7 @@ onMounted(fetchCar)
     :src="mainImage"
     alt="Main Image"
     class="object-cover"
-    style="width: 20rem;"
+    style="width: 50rem;"
   />
 </div>
         <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
@@ -64,8 +77,8 @@ onMounted(fetchCar)
     :src="img"
     @click="mainImage = img"
     class="object-cover rounded cursor-pointer border-2"
-    style="    width: 26rem;
-    height: 20rem;"
+    style="    width: 7rem;
+    height: 5rem;"
     :class="{ 'border-blue-500': mainImage === img, 'border-gray-300': mainImage !== img }"
 />
 </div>
@@ -104,6 +117,8 @@ onMounted(fetchCar)
   </div>
 
   <div v-else class="text-center py-12 text-gray-400">Loading vehicle details...</div>
+      </div>
+  
 </template>
 
 <style>
