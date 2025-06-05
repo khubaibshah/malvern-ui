@@ -24,7 +24,7 @@ const fetchCar = async () => {
     const id = route.params.id
     const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-vehicle-by-id/${id}`)
     car.value = res.data.car
-console.log('Full car data:', car.value)
+    console.log('Full car data:', car.value)
 
     images.value = Array.isArray(car.value.images) ? car.value.images : []
 
@@ -100,7 +100,8 @@ onMounted(fetchCar)
 
       <!-- vehicle details -->
       <div class="col-12 md:col-6 lg:col-4">
-        <PrimeCard class="w-full">
+        <PrimeCard class="w-full border-color custom-shadow ">
+
           <template #title>
             <div class="text-3xl font-medium text-900">{{ car.make }} {{ car.model }} {{ car.variant }}</div>
           </template>
@@ -109,12 +110,8 @@ onMounted(fetchCar)
               <div>
                 <PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
               </div>
-              <p class="text-sm text-gray-600 mb-2">
-  <span class="font-medium">Registration:</span> {{ registrationLabel }}
-</p>
-
               <div>
-                <PrimeTag severity="contrast" :value="car.year" class="mb-2" />
+                <PrimeTag severity="contrast" :value="registrationLabel" class="mb-2" />
               </div>
               <div>
                 <PrimeTag severity="contrast" :value="car.fuel_type" class="mb-2" />
@@ -170,5 +167,10 @@ onMounted(fetchCar)
   box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.5) !important;
   /* black focus ring */
   outline: none !important;
+}
+
+.custom-shadow {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+
 }
 </style>
