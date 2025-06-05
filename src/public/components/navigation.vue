@@ -3,7 +3,10 @@
   :class="'bg-' + backgroundColor + '-500 px-6  flex align-items-center justify-content-between relative lg:static '"
   style="z-index: 1000;"
 >
-    <img :src="newLogo" alt="Logo" class="logo-img mr-0 lg:mr-6" />
+    <router-link :to="{ name: 'home' }">
+  <img :src="newLogo" alt="Logo" class="logo-img mr-0 lg:mr-6 cursor-pointer" />
+</router-link>
+
 
     <a
       v-ripple
@@ -41,7 +44,7 @@
         </li>
       </ul>
 
-      <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row">
+      <!-- <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row">
         <li class="flex-order-2 lg:flex-order-0">
           <div class="flex px-6 p-3 lg:px-3 lg:py-2">
             <span class="p-input-icon-left w-full">
@@ -62,7 +65,7 @@
             </div>
           </a>
         </li>
-      </ul>
+      </ul> -->
     </div>
   </div>
 </template>
