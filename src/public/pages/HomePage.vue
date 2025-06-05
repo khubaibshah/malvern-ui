@@ -116,23 +116,23 @@ const filterByModel = (modelName: string) => {
     </div>
   </div>
   <!-- Featured Vehicle (White Background) -->
-<!-- Featured Vehicle (White Background) -->
-<div v-if="featuredVehicle" class="surface-0 py-4 px-4 md:py-6 md:px-6 lg:py-7 lg:px-7">
-  <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
-    <div class="w-full md:w-6 p-0 md:pr-4 mb-4 md:mb-0">
-      <img :src="featuredVehicle.images?.[0] || '/src/assets/img/default.jpg'" 
-           :alt="featuredVehicle.make + ' ' + featuredVehicle.model"
-           class="w-full border-round" />
-    </div>
-    <div class="w-full md:w-6 flex flex-column justify-center p-4">
-      <span class="bg-y-500 text-black font-bold py-1 mb-3 inline-block w-auto text-5xl">FEATURED</span>
-      <h2 class="text-3xl font-bold mb-3">{{ featuredVehicle.make }} {{ featuredVehicle.model }}</h2>
-      <p class="text-gray-600 mb-2">{{ featuredVehicle.description }}</p>
-      <div class="text-xl font-bold text-green-600 mb-4">£{{ parseFloat(featuredVehicle.price).toLocaleString() }}</div>
-      <PrimeButton label="View" class="custom-button right-btn w-full" :to="`/vehicles/${featuredVehicle.id}`" />
+  <!-- Featured Vehicle (White Background) -->
+  <div v-if="featuredVehicle" class="surface-0 py-4 px-4 md:py-6 md:px-6 lg:py-7 lg:px-7">
+    <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
+      <div class="w-full md:w-6 p-0 md:pr-4 mb-4 md:mb-0">
+        <img :src="featuredVehicle.images?.[0] || '/src/assets/img/default.jpg'"
+          :alt="featuredVehicle.make + ' ' + featuredVehicle.model" class="w-full border-round" />
+      </div>
+      <div class="w-full md:w-6 flex flex-column justify-center p-4">
+        <span class="bg-y-500 text-black font-bold py-1 mb-3 inline-block w-auto text-5xl">FEATURED</span>
+        <h2 class="text-3xl font-bold mb-3">{{ featuredVehicle.make }} {{ featuredVehicle.model }}</h2>
+        <p class="text-gray-600 mb-2">{{ featuredVehicle.description }}</p>
+        <div class="text-xl font-bold text-green-600 mb-4">£{{ parseFloat(featuredVehicle.price).toLocaleString() }}
+        </div>
+        <PrimeButton label="View" class="custom-button right-btn w-full" :to="`/vehicles/${featuredVehicle.id}`" />
+      </div>
     </div>
   </div>
-</div>
 
   <!-- Model Explorer (White Background) -->
   <div class="text-center mb-6 ">
@@ -192,7 +192,7 @@ const filterByModel = (modelName: string) => {
   </div> -->
 
   <!-- Value Props (Black Background) -->
-<div class="tile-bg py-8 px-4 text-white">
+  <div class="tile-bg py-8 px-4 text-white">
 
     <div class="grid">
       <div class="col-12 md:col-6 lg:col-4">
@@ -231,7 +231,7 @@ const filterByModel = (modelName: string) => {
           <div class="p-6 border-round">
             <div class="text-xl italic mb-4">"{{ slotProps.data.quote }}"</div>
             <div class="flex align-items-center">
-                          <i class="pi pi-user w-3rem h-3rem border-circle mr-3" ></i>
+              <i class="pi pi-user w-3rem h-3rem border-circle mr-3"></i>
 
               <!-- <img :src="slotProps.data.avatar" class="w-3rem h-3rem border-circle mr-3"> -->
               <div>
@@ -244,17 +244,17 @@ const filterByModel = (modelName: string) => {
       </Carousel>
     </div>
   </div>
-<!-- Footer Section (Black Background) -->
-   <!-- Footer Section (Black Background) -->
-  
+  <!-- Footer Section (Black Background) -->
+  <!-- Footer Section (Black Background) -->
+
 
 </template>
 
 <style scoped>
-.tile-bg
-{
-   background-color: black;
+.tile-bg {
+  background-color: black;
 }
+
 footer a {
   transition: color 0.2s ease;
 }
@@ -275,11 +275,12 @@ footer a {
   .grid {
     grid-template-columns: 1fr !important;
   }
-  
+
   .col-span-2 {
     grid-column: span 1 !important;
   }
 }
+
 .hero-container {
   position: relative;
   width: 100%;
@@ -306,7 +307,7 @@ footer a {
   color: white;
   max-width: 90%;
   margin-right: 52rem;
-  margin-top: 17rem;  
+  margin-top: 17rem;
 }
 
 .main-heading {
