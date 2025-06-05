@@ -66,12 +66,18 @@ const mileageOptions = ref([
 
 const fuelTypes = ['All', 'Petrol', 'Diesel', 'Hybrid', 'Electric']
 
+const featuredVehicle = ref(null)
+
 onMounted(async () => {
   try {
     const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-all-vehicles`)
     if (response.status === 200) {
       vehicles.value = response.data.cars || []
 
+      // Get the first vehicle marked as featured
+      featuredVehicle.value = vehicles.value.find(v => v.featured === 1)
+
+      // Populate filter dropdowns
       const makes = new Set()
       const models = new Set()
       const variants = new Set()
@@ -91,6 +97,7 @@ onMounted(async () => {
   }
 })
 
+
 const filterByModel = (modelName: string) => {
   vehicle_model.value = modelName
 }
@@ -109,22 +116,24 @@ const filterByModel = (modelName: string) => {
     </div>
   </div>
   <!-- Featured Vehicle (White Background) -->
-<div class="surface-0 py-4 px-4 md:py-6 md:px-6 lg:py-7 lg:px-7">
-    <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
-      <div class="w-full md:w-6 p-0 md:pr-4 mb-4 md:mb-0">
-        <img src="/src/assets/img/lambo2.jpg" alt="Featured Audi" class="w-full border-round">
-      </div>
-      <div class="w-full md:w-6 flex flex-column justify-center p-4">
-        <span class="bg-y-500 text-black font-bold py-1 mb-3 inline-block w-auto text-5xl">FEATURED</span>
-        <h2 class="text-3xl font-bold mb-3">Audi RS6 Avant</h2>
-        <p>asdfasdf</p>
-        <div class="button-row">
-          <!-- <PrimeButton label="Discover more" class="custom-button left-btn w-full" /> -->
-          <PrimeButton label="View" class="custom-button right-btn w-full" />
-        </div>
-      </div>
+<!-- Featured Vehicle (White Background) -->
+<div v-if="featuredVehicle" class="surface-0 py-4 px-4 md:py-6 md:px-6 lg:py-7 lg:px-7">
+  <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
+    <div class="w-full md:w-6 p-0 md:pr-4 mb-4 md:mb-0">
+      <img :src="featuredVehicle.images?.[0] || '/src/assets/img/default.jpg'" 
+           :alt="featuredVehicle.make + ' ' + featuredVehicle.model"
+           class="w-full border-round" />
+    </div>
+    <div class="w-full md:w-6 flex flex-column justify-center p-4">
+      <span class="bg-y-500 text-black font-bold py-1 mb-3 inline-block w-auto text-5xl">FEATURED</span>
+      <h2 class="text-3xl font-bold mb-3">{{ featuredVehicle.make }} {{ featuredVehicle.model }}</h2>
+      <p class="text-gray-600 mb-2">{{ featuredVehicle.description }}</p>
+      <div class="text-xl font-bold text-green-600 mb-4">£{{ parseFloat(featuredVehicle.price).toLocaleString() }}</div>
+      <PrimeButton label="View" class="custom-button right-btn w-full" :to="`/vehicles/${featuredVehicle.id}`" />
     </div>
   </div>
+</div>
+
   <!-- Model Explorer (White Background) -->
   <div class="text-center mb-6 ">
     <h2 class="text-4xl font-bold mb-2">Explore Our Range</h2>
