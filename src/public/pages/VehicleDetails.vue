@@ -66,21 +66,28 @@ onMounted(fetchCar)
           <template #content>
             <div>
               <div>
-                <PrimeTag :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
+                <PrimeTag  severity="contrast":value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
               </div>
               <div>
-                <PrimeTag :value="car.year" class="mb-2" />
+                <PrimeTag severity="contrast" :value="car.year" class="mb-2" />
               </div>
               <div>
-                <PrimeTag :value="car.fuel_type" class="mb-2" />
+                <PrimeTag  severity="contrast":value="car.fuel_type" class="mb-2" />
               </div>
-              <p class="text-gray-500 text-sm mb-3">Reg: {{ car.registration }}</p>
+              <Accordion :activeIndex="0" style="padding-left: 0px;">
+                <AccordionTab header="Description">
+                  
+                  <p class="text-gray-700 text-sm leading-relaxed">
+                    {{ car.description }}
+                  </p>
+                  
+                </AccordionTab>
+
+              </Accordion>
+              <!-- <p class="text-gray-500 text-sm mb-3">Reg: {{ car.registration }}</p> -->
               <p class="text-2xl text-green-600 font-bold mb-4">£{{ car.price?.toLocaleString() }}</p>
-              <p class="text-gray-700 text-sm leading-relaxed">
-                {{ car.description }}
-              </p>
               <PrimeButton label="Enquire / Book Test Drive"
-                class="w-full bg-blue-600 border-blue-600 hover:bg-blue-700 text-white" />
+                class="w-full custom-black-button" />
             </div>
           </template>
         </PrimeCard>
@@ -103,5 +110,21 @@ onMounted(fetchCar)
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+.custom-black-button {
+  background-color: black !important;
+  color: white !important;
+  border: 1px solid black !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  /* removes rounding */
+}
+
+.custom-black-button:focus,
+.custom-black-button:focus-visible {
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.5) !important;
+  /* black focus ring */
+  outline: none !important;
 }
 </style>

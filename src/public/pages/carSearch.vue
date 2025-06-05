@@ -24,18 +24,19 @@
           <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label"
             class="w-full md:w-14rem custom-black-button" placeholder="Variant" />
           <PrimeButton icon="pi pi-filter" label="Advanced Filters" class="w-full md:w-14rem custom-black-button"
-            @click="showFilters = true"  />
+            @click="showFilters = true" />
           <PrimeButton icon="pi pi-times" label="Clear filters" @click="clearFilters"
             class="w-full md:w-auto custom-black-button" />
         </div>
 
         <!-- MOBILE FILTER BUTTON (only visible on small screens) -->
         <div class="flex md:hidden w-full justify-end">
-          <PrimeButton icon="pi pi-sliders-h" label="Filters" class="w-full custom-black-button" @click="showFilters = true" />
+          <PrimeButton icon="pi pi-sliders-h" label="Filters" class="w-full custom-black-button"
+            @click="showFilters = true" />
         </div>
 
         <!-- MODAL -->
-        <FilterModel v-model:visible="showFilters"/>
+        <FilterModel v-model:visible="showFilters" />
         <!-- <PrimeDialog v-model:visible="advancedFilters" header="Advanced Filters" maximizable :maximized="true" modal
           :style="{ width: '100vw', height: '100vh' }" :breakpoints="{ '1199px': '100vw', '575px': '100vw' }">
           <p class="m-0">
@@ -51,69 +52,75 @@
       <div class="col-12 md:col-12 mt-2">
         <div class="flex justify-content-between mb-4">
         </div>
-        <div class="grid">
-          <div v-for="(item, index) in filteredVehicles" :key="index" class="col-12 sm:col-6 lg:col-4 p-2">
-            <RouterLink :to="{ name: 'vehicle-details', params: { id: item.id } }" class="no-underline">
-            <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative cursor-pointer">
-              <!-- Image Carousel (or first image preview) -->
-              <div class="relative">
-                <img v-if="item.images && item.images.length > 0" :src="item.images[0]" alt="car"
-                  class="w-full border-round" style="height: 180px; object-fit: cover;" />
-                <div v-else class="h-[180px] w-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                  No Image
-                </div>
-
-                <!-- Registration Plate Badge -->
-                <div
-                  class="absolute bottom-0 right-0 bg-white text-black text-xs font-semibold px-2 py-1 border-round m-2 shadow">
-                  £{{ item.price?.toLocaleString() || '£N/A' }}
-                </div>
-              </div>
-
-              <!-- Car Info -->
-              <div class="mt-3">
-                <div class="text-lg font-bold text-900 mb-1">
-                  {{ item.make }} {{ item.model }}
-                </div>
-                <div class="text-sm text-600 mb-1">
-                  {{ item.variant || 'Variant Info' }}
-                </div>
-                <div class="text-xs text-gray-500 mb-2 truncate">
-                  {{ item.description || 'No description provided' }}
-                </div>
-
-                <!-- Badges -->
-                <div class="flex gap-2 flex-wrap mt-2">
-                  <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
-                    {{ item.mileage?.toLocaleString() || '0' }} miles
-                  </span>
-                  <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
-                    {{ item.year || 'Year' }}
-                  </span>
-                </div>
-
-                <!-- Price -->
-                <div class="text-xl text-green-600 font-bold mt-2">
-                  £{{ item.price?.toLocaleString() || 'N/A' }}
-                </div>
+        <div v-if="loading" class="grid">
+          <div v-for="n in 6" :key="n" class="col-12 sm:col-6 lg:col-4 p-2">
+            <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative">
+              <PrimeSkeleton width="100%" height="180px" class="mb-3 border-round" />
+              <PrimeSkeleton width="70%" class="mb-2" />
+              <PrimeSkeleton width="50%" class="mb-2" />
+              <PrimeSkeleton width="100%" height="1rem" />
+              <div class="flex justify-content-between mt-3">
+                <PrimeSkeleton width="5rem" height="2rem" />
+                <PrimeSkeleton width="5rem" height="2rem" />
               </div>
             </div>
+          </div>
+        </div>
+        <div class="grid" v-else-if="filteredVehicles.length > 0">
+          <div v-for="(item, index) in filteredVehicles" :key="index" class="col-12 sm:col-6 lg:col-4 p-2">
+            <RouterLink :to="{ name: 'vehicle-details', params: { id: item.id } }" class="no-underline">
+              <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative cursor-pointer">
+                <!-- Image Carousel (or first image preview) -->
+                <div class="relative">
+                  <img v-if="item.images && item.images.length > 0" :src="item.images[0]" alt="car"
+                    class="w-full border-round" style="height: 180px; object-fit: cover;" />
+                  <div v-else
+                    class="h-[180px] w-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                    No Image
+                  </div>
+
+                  <!-- Registration Plate Badge -->
+                  <div
+                    class="absolute bottom-0 right-0 bg-white text-black text-xs font-semibold px-2 py-1 border-round m-2 shadow">
+                    £{{ item.price?.toLocaleString() || '£N/A' }}
+                  </div>
+                </div>
+
+                <!-- Car Info -->
+                <div class="mt-3">
+                  <div class="text-lg font-bold text-900 mb-1">
+                    {{ item.make }} {{ item.model }}
+                  </div>
+                  <div class="text-sm text-600 mb-1">
+                    {{ item.variant || 'Variant Info' }}
+                  </div>
+                  <div class="text-xs text-gray-500 mb-2 truncate">
+                    {{ item.description || 'No description provided' }}
+                  </div>
+
+                  <!-- Badges -->
+                  <div class="flex gap-2 flex-wrap mt-2">
+                    <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
+                      {{ item.mileage?.toLocaleString() || '0' }} miles
+                    </span>
+                    <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
+                      {{ item.year || 'Year' }}
+                    </span>
+                  </div>
+
+                  <!-- Price -->
+                  <div class="text-xl text-green-600 font-bold mt-2">
+                    £{{ item.price?.toLocaleString() || 'N/A' }}
+                  </div>
+                </div>
+              </div>
             </RouterLink>
           </div>
         </div>
+        <div v-else class="text-center text-gray-400 py-4">
+          No vehicles found.
+        </div>
       </div>
-    </div>
-
-    <!-- Content Section with Filter + Cars -->
-    <div class="grid pl-2 mt-3 mr-0">
-
-      <!-- Filter Column -->
-      <div class="col-12 md:col-12">
-
-      </div>
-
-      <!-- Cars Column -->
-
     </div>
   </div>
 </template>
@@ -133,7 +140,7 @@ const advancedFilters = ref(false);
 const makeOptions = ref([])
 const modelOptions = ref([])
 const variantOptions = ref([])
-
+const loading = ref(true)
 const showFilters = ref(false);
 
 
@@ -160,8 +167,11 @@ onMounted(async () => {
     }
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
+  } finally {
+    loading.value = false
   }
 })
+
 
 const filteredModelOptions = computed(() => {
   const models = new Set()

@@ -49,6 +49,8 @@ import Slider from 'primevue/slider';
 import Dropdown from 'primevue/dropdown';
 import Galleria from 'primevue/galleria';
 
+import Skeleton from 'primevue/skeleton';
+
 
 
 import Toast from 'primevue/toast';
@@ -109,6 +111,7 @@ app.component('PrimeMenubar', Menubar)
 app.component('PrimeMegaMenu', MegaMenu)
 app.component('PrimeSlider', Slider)
 app.component('PrimeGalleria', Galleria)
+app.component('PrimeSkeleton', Skeleton)
 // app.component('PrimeButtonGroup', ButtonGroup)
 
 
