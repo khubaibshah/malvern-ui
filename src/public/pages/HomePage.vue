@@ -198,6 +198,7 @@ const filterByModel = (modelName: string) => {
   <div class="tile-bg py-8 px-4 text-white">
 
     <div class="grid">
+     
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
           <i class="pi pi-shield text-5xl mb-4"></i>

@@ -2,6 +2,9 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
+import { getUkRegistrationLabel } from '@/utils/registration';
+
+
 
 
 const route = useRoute()
@@ -10,7 +13,7 @@ const images = ref<string[]>([])
 const galleriaItems = ref<any[]>([])
 const mainImage = ref<string>('')
 const loading = ref(true)
-
+import router from '@/router/router';
 const responsiveOptions = ref([
   { breakpoint: '1300px', numVisible: 4 },
   { breakpoint: '575px', numVisible: 1 }
@@ -21,6 +24,7 @@ const fetchCar = async () => {
     const id = route.params.id
     const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-vehicle-by-id/${id}`)
     car.value = res.data.car
+console.log('Full car data:', car.value)
 
     images.value = Array.isArray(car.value.images) ? car.value.images : []
 
@@ -39,13 +43,20 @@ const fetchCar = async () => {
     loading.value = false
   }
 }
-
+const registrationLabel = computed(() => {
+  const dateStr = car.value?.registration_date || car.value?.reg_date || '';
+  return dateStr ? getUkRegistrationLabel(dateStr) : '';
+});
+console.log(getUkRegistrationLabel('2021-04-01')); // should print: 2021 (21 reg)
 
 onMounted(fetchCar)
 </script>
 
 <template>
+
   <div class="surface-section px-5 py-5 md:px-6 lg:px-8">
+    <PrimeButton label="Home" text class="mt-2 mb-2" style="right: 15px; color: black;" icon="pi pi-arrow-left"
+      @click="router.push({ name: 'home' })" />
     <div class="grid" v-if="loading">
       <!-- Skeletons while loading -->
       <div class="col-12 md:col-6 lg:col-8">
@@ -70,6 +81,7 @@ onMounted(fetchCar)
         </PrimeCard>
       </div>
     </div>
+
     <div class="grid" v-else-if="car">
 
       <!-- images and thumbail section -->
@@ -89,12 +101,18 @@ onMounted(fetchCar)
       <!-- vehicle details -->
       <div class="col-12 md:col-6 lg:col-4">
         <PrimeCard class="w-full">
-          <template #title>{{ car.make }} {{ car.model }} {{ car.variant }}</template>
+          <template #title>
+            <div class="text-3xl font-medium text-900">{{ car.make }} {{ car.model }} {{ car.variant }}</div>
+          </template>
           <template #content>
             <div>
               <div>
                 <PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
               </div>
+              <p class="text-sm text-gray-600 mb-2">
+  <span class="font-medium">Registration:</span> {{ registrationLabel }}
+</p>
+
               <div>
                 <PrimeTag severity="contrast" :value="car.year" class="mb-2" />
               </div>
