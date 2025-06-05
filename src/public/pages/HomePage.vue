@@ -129,7 +129,10 @@ const filterByModel = (modelName: string) => {
         <p class="text-gray-600 mb-2">{{ featuredVehicle.description }}</p>
         <div class="text-xl font-bold text-green-600 mb-4">£{{ parseFloat(featuredVehicle.price).toLocaleString() }}
         </div>
-        <PrimeButton label="View" class="custom-button right-btn w-full" :to="`/vehicles/${featuredVehicle.id}`" />
+        <RouterLink :to="{ name: 'vehicle-details', params: { id: featuredVehicle.id } }" class="no-underline w-full">
+          <PrimeButton label="View" class="custom-button right-btn w-full" />
+        </RouterLink>
+
       </div>
     </div>
   </div>
