@@ -3,6 +3,8 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 
+import PrimeButton from 'primevue/button';
+
 
 const route = useRoute()
 const car = ref<any>(null)
@@ -14,7 +16,11 @@ const responsiveOptions = ref([
   { breakpoint: '1300px', numVisible: 4 },
   { breakpoint: '575px', numVisible: 1 }
 ])
-
+const tabs = ref([
+    { title: 'Title 1', content: 'Content 1', value: '0' },
+    { title: 'Title 2', content: 'Content 2', value: '1' },
+    { title: 'Title 3', content: 'Content 3', value: '2' }
+]);
 const fetchCar = async () => {
   try {
     const id = route.params.id
@@ -41,6 +47,7 @@ onMounted(fetchCar)
 </script>
 
 <template>
+  
   <div class="surface-section px-5 py-5 md:px-6 lg:px-8">
     <!-- <div class="text-3xl font-bold text-900 mb-4">{{ car?.make }} {{ car?.model }} {{ car?.variant }}</div> -->
 
@@ -50,11 +57,10 @@ onMounted(fetchCar)
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Left: Main Image & Thumbnails -->
             <div>
-              <div class="mb-4 border rounded overflow-hidden max-w-[400px] mx-auto">
-                <img :src="mainImage" alt="Main Image" class="w-full h-[250px] object-cover rounded" style="
-    border-radius: 12px;"/>
-
+              <div class="mb-4 border rounded overflow-hidden mx-auto" >
+                <img :src="mainImage" alt="Main Image" class="w-full h-full object-cover rounded-lg" />
               </div>
+
               <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
                 <img v-for="(img, idx) in images" :key="idx" :src="img" @click="mainImage = img"
                   class="object-cover rounded cursor-pointer border-2" style="    width: 7rem;
@@ -83,8 +89,15 @@ onMounted(fetchCar)
                     <p class="text-gray-700 text-sm leading-relaxed">
                       {{ car.description }}
                     </p>
-                    <PrimeButton label="Enquire / Book Test Drive"
-                      class="w-full bg-blue-600 border-blue-600 hover:bg-blue-700 text-white" />
+                    <PrimeAccordion value="0">
+            <PrimeAccordionPanel v-for="tab in tabs" :key="tab.title" :value="tab.value">
+                <PrimeAccordionHeader>{{ tab.title }}</PrimeAccordionHeader>
+                <PrimeAccordionContent>
+                    <p class="m-0">{{ tab.content }}</p>
+                </PrimeAccordionContent>
+            </PrimeAccordionPanel>
+        </PrimeAccordion>
+                    
                   </div>
                 </template>
               </PrimeCard>
@@ -112,7 +125,7 @@ onMounted(fetchCar)
 }
 
 .img {
-  max-width: 100%;
+  max-width: 40%;
   height: auto;
   display: block;
 }
