@@ -9,6 +9,7 @@ const car = ref<any>(null)
 const images = ref<string[]>([])
 const galleriaItems = ref<any[]>([])
 const mainImage = ref<string>('')
+const loading = ref(true)
 
 const responsiveOptions = ref([
   { breakpoint: '1300px', numVisible: 4 },
@@ -34,16 +35,42 @@ const fetchCar = async () => {
     }
   } catch (err) {
     console.error('Failed to load car data', err)
+  } finally {
+    loading.value = false
   }
 }
+
 
 onMounted(fetchCar)
 </script>
 
 <template>
   <div class="surface-section px-5 py-5 md:px-6 lg:px-8">
+    <div class="grid" v-if="loading">
+      <!-- Skeletons while loading -->
+      <div class="col-12 md:col-6 lg:col-8">
+        <PrimeSkeleton width="100%" height="350px" class="mb-3 border-round mx-auto max-w-[400px]" />
+        <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
+          <PrimeSkeleton v-for="n in 4" :key="n" width="7rem" height="5rem" class="border-round" />
+        </div>
+      </div>
 
-    <div class="grid" v-if="car">
+      <div class="col-12 md:col-6 lg:col-4">
+        <PrimeCard class="w-full">
+          <template #title>
+            <PrimeSkeleton width="70%" class="mb-2" />
+          </template>
+          <template #content>
+            <PrimeSkeleton width="50%" class="mb-2" />
+            <PrimeSkeleton width="50%" class="mb-2" />
+            <PrimeSkeleton width="50%" class="mb-2" />
+            <PrimeSkeleton height="4rem" class="mt-4" />
+            <PrimeSkeleton width="100%" height="2.5rem" class="mt-3" />
+          </template>
+        </PrimeCard>
+      </div>
+    </div>
+    <div class="grid" v-else-if="car">
 
       <!-- images and thumbail section -->
       <div class="col-12 md:col-6 lg:col-8">
@@ -66,28 +93,27 @@ onMounted(fetchCar)
           <template #content>
             <div>
               <div>
-                <PrimeTag  severity="contrast":value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
+                <PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
               </div>
               <div>
                 <PrimeTag severity="contrast" :value="car.year" class="mb-2" />
               </div>
               <div>
-                <PrimeTag  severity="contrast":value="car.fuel_type" class="mb-2" />
+                <PrimeTag severity="contrast" :value="car.fuel_type" class="mb-2" />
               </div>
               <Accordion :activeIndex="0" style="padding-left: 0px;">
                 <AccordionTab header="Description">
-                  
+
                   <p class="text-gray-700 text-sm leading-relaxed">
                     {{ car.description }}
                   </p>
-                  
+
                 </AccordionTab>
 
               </Accordion>
               <!-- <p class="text-gray-500 text-sm mb-3">Reg: {{ car.registration }}</p> -->
               <p class="text-2xl text-green-600 font-bold mb-4">£{{ car.price?.toLocaleString() }}</p>
-              <PrimeButton label="Enquire / Book Test Drive"
-                class="w-full custom-black-button" />
+              <PrimeButton label="Enquire / Book Test Drive" class="w-full custom-black-button" />
             </div>
           </template>
         </PrimeCard>
