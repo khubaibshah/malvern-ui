@@ -145,34 +145,26 @@ const filterByModel = (modelName: string) => {
 
   <div class="flex justify-content-evenly flex-wrap">
 
-    <div class="flex align-items-center justify-content-center w-4rem h-4rem font-bold border-round m-2 
-    surface-border border-round cursor-pointer hover:shadow-2 transition-all p-8 border-1 mb-6"
-      v-for="model in audiModels" :key="model.name">
-      <PrimeCard style="width: 25rem; overflow: hidden">
-        <template #header>
-          <img alt="user header" src="/src/assets/img/lambo2.jpg" />
-        </template>
-        <template #title>Advanced Card</template>
-        <template #subtitle>Card subtitle</template>
-        <template #content>
-          <p class="m-0">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae
-            numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse,
-            cupiditate neque
-            quas!
-          </p>
-        </template>
-        <template #footer>
-          <div class="flex gap-4 mt-1">
-            <Button label="Cancel" severity="secondary" outlined class="w-full" />
-            <Button label="Save" class="w-full" />
-          </div>
-        </template>
-      </PrimeCard>
-      <img :src="model.image" :alt="model.name" class="w-full h-auto mb-3">
-      <h3 class="text-xl font-semibold mb-1">{{ model.name }}</h3>
-      <span class="text-gray-600">{{ model.count }} available</span>
+   <PrimeCarousel :value="vehicles" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions">
+  <template #item="slotProps">
+    <div class="vehicle-card">
+      <img
+        :src="slotProps.data.images?.[0] || '/src/assets/img/default.jpg'"
+        :alt="slotProps.data.make + ' ' + slotProps.data.model"
+        class="vehicle-image"
+      />
+      <div class="vehicle-info">
+        <h3 class="text-base font-semibold">{{ slotProps.data.make }} {{ slotProps.data.model }}</h3>
+        <p class="text-green-600 font-bold text-sm">£{{ parseFloat(slotProps.data.price).toLocaleString() }}</p>
+        <RouterLink :to="{ name: 'vehicle-details', params: { id: slotProps.data.id } }">
+          <PrimeButton label="View" class="custom-button right-btn text-sm w-full"/>
+        </RouterLink>
+      </div>
     </div>
+  </template>
+</PrimeCarousel>
+
+
     <!-- <div class="flex align-items-center justify-content-center w-4rem h-4rem bg-primary font-bold border-round m-2">2</div> -->
     <!-- <div class="flex align-items-center justify-content-center w-4rem h-4rem bg-primary font-bold border-round m-2">3</div> -->
   </div>
@@ -255,6 +247,28 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+.vehicle-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.75rem;
+  max-width: 300px;
+  margin: 0 0.5rem; /* ⬅️ Add horizontal spacing */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  background: white;
+  flex-shrink: 0;
+}
+
+.vehicle-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.vehicle-info {
+  margin-top: 0.75rem;
+  text-align: center;
+}
 .tile-bg {
   background-color: black;
 }

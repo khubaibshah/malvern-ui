@@ -103,18 +103,28 @@ onMounted(fetchCar)
         <PrimeCard class="w-full border-color custom-shadow ">
 
           <template #title>
+            <!-- {{ car }} -->
             <div class="text-3xl font-medium text-900">{{ car.make }} {{ car.model }} {{ car.variant }}</div>
           </template>
           <template #content>
             <div>
               <div>
-                <PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
+              <i class="fa-sharp-duotone fa-thin fa-tire"></i><PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
               </div>
               <div>
-                <PrimeTag severity="contrast" :value="registrationLabel" class="mb-2" />
+                <i class="fa-solid fa-calendar"></i> <PrimeTag severity="contrast" :value="registrationLabel" class="mb-2" />
               </div>
               <div>
-                <PrimeTag severity="contrast" :value="car.fuel_type" class="mb-2" />
+              <i class="fa fa-key"></i> <PrimeTag severity="contrast" :value="car.keys" class="mb-2" />
+              </div>
+              <div>
+                <i class="fa-solid fa-gear"></i> <PrimeTag severity="contrast" :value="car.gearbox" class="mb-2" />
+              </div>
+              <div>
+                <i class="fa-solid fa-car"></i> <PrimeTag severity="contrast" :value="car.body_style" class="mb-2" />
+              </div>
+              <div>
+                <i class="fa-solid fa-gas-pump"></i> <PrimeTag severity="contrast" :value="car.fuel_type" class="mb-2" />
               </div>
               <Accordion :activeIndex="0" style="padding-left: 0px;">
                 <AccordionTab header="Description">
