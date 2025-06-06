@@ -109,7 +109,7 @@ onMounted(fetchCar)
           <template #content>
             <div>
               <div>
-              <i class="fa-sharp-duotone fa-thin fa-tire"></i><PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
+              <i class="fa-solid fa-road"></i> <i class="fa-sharp-duotone fa-thin fa-tire"></i><PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
               </div>
               <div>
                 <i class="fa-solid fa-calendar"></i> <PrimeTag severity="contrast" :value="registrationLabel" class="mb-2" />
@@ -119,6 +119,9 @@ onMounted(fetchCar)
               </div>
               <div>
                 <i class="fa-solid fa-gear"></i> <PrimeTag severity="contrast" :value="car.gearbox" class="mb-2" />
+              </div>
+              <div>
+                <i class="fa-solid fa-gear"></i> <PrimeTag severity="contrast" :value="car.engine_size" class="mb-2" />
               </div>
               <div>
                 <i class="fa-solid fa-car"></i> <PrimeTag severity="contrast" :value="car.body_style" class="mb-2" />
