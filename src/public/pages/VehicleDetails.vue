@@ -3,8 +3,8 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { getUkRegistrationLabel } from '@/utils/registration';
-
-
+import enquiryForm from '../components/enquiryForm.vue';
+import { useVehicleStore } from '@/stores/vehicleData';
 
 
 const route = useRoute()
@@ -14,11 +14,12 @@ const galleriaItems = ref<any[]>([])
 const mainImage = ref<string>('')
 const loading = ref(true)
 import router from '@/router/router';
+import EnquiryForm from '../components/enquiryForm.vue';
 const responsiveOptions = ref([
   { breakpoint: '1300px', numVisible: 4 },
   { breakpoint: '575px', numVisible: 1 }
 ])
-
+const vehicleStore = useVehicleStore();
 const fetchCar = async () => {
   try {
     const id = route.params.id
@@ -47,7 +48,11 @@ const registrationLabel = computed(() => {
   const dateStr = car.value?.registration_date || car.value?.reg_date || '';
   return dateStr ? getUkRegistrationLabel(dateStr) : '';
 });
-console.log(getUkRegistrationLabel('2021-04-01')); // should print: 2021 (21 reg)
+
+const handleEnquireClick = () => {
+  vehicleStore.setVehicleData(car.value);
+  router.push({ name: 'enquiry-form', params: { vehicleId: car.value.id } });
+};
 
 onMounted(fetchCar)
 </script>
@@ -141,13 +146,19 @@ onMounted(fetchCar)
               </Accordion>
               <!-- <p class="text-gray-500 text-sm mb-3">Reg: {{ car.registration }}</p> -->
               <p class="text-2xl text-green-600 font-bold mb-4">£{{ car.price?.toLocaleString() }}</p>
-              <PrimeButton label="Enquire / Book Test Drive" class="w-full custom-black-button" />
+<PrimeButton
+  label="Enquire / Book Test Drive"
+  class="w-full custom-black-button"
+  @click="handleEnquireClick"
+/>
+
             </div>
           </template>
         </PrimeCard>
 
       </div>
     </div>
+    
     <div v-else class="text-center py-12 text-gray-400">Loading vehicle details...</div>
   </div>
 

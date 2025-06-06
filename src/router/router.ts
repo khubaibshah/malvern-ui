@@ -7,6 +7,7 @@ import bookJob from '@/public/pages/bookJobs.vue'
 import payment from '@/public/pages/Payment.vue'
 import SCSCarsVue from '@/public/pages/SCSCars.vue'
 import vehicleSearch from '@/public/pages/vehicleSearch.vue'
+import enquiryForm from '@/public/components/enquiryForm.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +40,11 @@ const router = createRouter({
       path: '/scscars',
       name: 'scscars',
       component: SCSCarsVue
+    },
+    {
+      path: '/enquire/:vehicleId',
+      name: 'enquiry-form',
+      component: enquiryForm
     },
     {
       path: '/bookJob',
