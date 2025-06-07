@@ -1,21 +1,28 @@
 <template>
-    <footer class="tile-bg text-white py-6 px-4 mt-7">
-    <div class="max-w-7xl mx-auto ml-auto" style="width: 90%">  <!-- Added ml-auto and width -->
+  <footer class="tile-bg text-white py-6 px-4 mt-7">
+    <div class="max-w-7xl mx-auto ml-auto" style="width: 90%"> <!-- Added ml-auto and width -->
       <!-- Main Footer Content -->
       <div class="grid md:grid-cols-4 gap-8 mb-6">
         <!-- About Section -->
         <div class="col-span-2 md:col-span-1">
           <h3 class="text-xl font-bold mb-4 flex align-items-center">
-            <i class="pi pi-car mr-2" ></i>
+            <i class="pi pi-car mr-2"></i>
             STANLEY CAR SALES
           </h3>
           <p class="text-gray-400 mb-4">
             Your premier destination for luxury and performance vehicles since 2005.
           </p>
           <div class="flex gap-3">
-            <PrimeButton icon="pi pi-facebook" class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
+            <PrimeButton icon="pi pi-facebook"
+              class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
             <PrimeButton icon="pi pi-twitter" class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
-            <PrimeButton icon="pi pi-instagram" class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
+            <a href="https://www.instagram.com/r.k.autobodies?igsh=MXgydDd3azgxb2Vnag%3D%3D&utm_source=qr"
+              target="_blank" rel="noopener noreferrer">
+              <PrimeButton icon="pi pi-instagram"
+                class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
+            </a>
+
+            <PrimeButton icon="pi pi-tiktok" class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
           </div>
         </div>
 
@@ -26,7 +33,8 @@
           </h4>
           <ul class="list-none p-0 m-0">
             <li class="mb-2"><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Home</a></li>
-            <li class="mb-2"><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Inventory</a></li>
+            <li class="mb-2"><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Inventory</a>
+            </li>
             <li class="mb-2"><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Services</a></li>
             <li class="mb-2"><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Finance</a></li>
             <li><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Contact</a></li>
@@ -40,15 +48,15 @@
           </h4>
           <ul class="list-none p-0 m-0">
             <li class="mb-3 flex align-items-start">
-              <i class="pi pi-map-marker mt-1 mr-2" ></i>
+              <i class="pi pi-map-marker mt-1 mr-2"></i>
               <span class="text-gray-400">123 Luxury Avenue, London, UK</span>
             </li>
             <li class="mb-3 flex align-items-start">
-              <i class="pi pi-phone mt-1 mr-2" ></i>
+              <i class="pi pi-phone mt-1 mr-2"></i>
               <span class="text-gray-400">+44 20 7123 4567</span>
             </li>
             <li class="flex align-items-start">
-              <i class="pi pi-envelope mt-1 mr-2" ></i>
+              <i class="pi pi-envelope mt-1 mr-2"></i>
               <span class="text-gray-400">info@stanleycars.com</span>
             </li>
           </ul>
@@ -88,10 +96,10 @@
 </template>
 
 <style>
-.tile-bg
-{
-   background-color: black;
+.tile-bg {
+  background-color: black;
 }
+
 footer a {
   transition: color 0.2s ease;
 }
