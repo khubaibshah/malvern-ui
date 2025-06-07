@@ -60,7 +60,7 @@ onMounted(fetchCar)
 <template>
 
   <div class="surface-section px-5 py-5 md:px-6 lg:px-8">
-    <PrimeButton label="Home" text class="mt-2 mb-2" style="right: 15px; color: black;" icon="pi pi-arrow-left"
+    <PrimeButton label="All Vehicles" text class="mt-2 mb-2" style="right: 15px; color: black;" icon="pi pi-arrow-left"
       @click="router.push({ name: 'car-search' })" />
     <div class="grid" v-if="loading">
       <!-- Skeletons while loading -->
