@@ -60,8 +60,8 @@
                             <div><i class="pi pi-sliders-h mr-2"></i> {{ car.engine_size }}</div>
                             <div><i class="pi pi-key mr-2"></i> {{ car.keys }}</div>
                             <div><i class="pi pi-car mr-2"></i> {{ car.body_style }}</div>
-                            <div><i class="fa-solid fa-gas-pump"> </i> {{ car.fuel_type }}</div>
-                            <div><i class="pi pi-align-left mr-2"></i> {{ car.description }}</div>
+                            <div><i class="fa-solid fa-gas-pump mr-2"> </i> {{ car.fuel_type }}</div>
+                            <div><i class="pi pi-align-left mr-2"> </i> {{ car.description }}</div>
                         </div>
                     </template>
 

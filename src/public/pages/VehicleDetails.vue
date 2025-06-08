@@ -114,13 +114,13 @@ onMounted(fetchCar)
           <template #content>
             <div>
               <div>
-              <i class="fa-solid fa-road"></i> <i class="fa-sharp-duotone fa-thin fa-tire"></i><PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
+                <i class="fa-solid fa-road"></i> <PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
               </div>
               <div>
                 <i class="fa-solid fa-calendar"></i> <PrimeTag severity="contrast" :value="registrationLabel" class="mb-2" />
               </div>
               <div>
-              <i class="fa fa-key"></i> <PrimeTag severity="contrast" :value="car.keys" class="mb-2" />
+                <i class="fa fa-key"></i> <PrimeTag severity="contrast" :value="car.keys" class="mb-2" />
               </div>
               <div>
                 <i class="fa-solid fa-gear"></i> <PrimeTag severity="contrast" :value="car.gearbox" class="mb-2" />
@@ -136,6 +136,7 @@ onMounted(fetchCar)
               </div>
               <Accordion :activeIndex="0" style="padding-left: 0px;">
                 <AccordionTab header="Description">
+                <i class="pi pi-align-left mr-2"></i> 
 
                   <p class="text-gray-700 text-sm leading-relaxed">
                     {{ car.description }}
@@ -146,11 +147,8 @@ onMounted(fetchCar)
               </Accordion>
               <!-- <p class="text-gray-500 text-sm mb-3">Reg: {{ car.registration }}</p> -->
               <p class="text-2xl text-green-600 font-bold mb-4">£{{ car.price?.toLocaleString() }}</p>
-<PrimeButton
-  label="Enquire / Book Test Drive"
-  class="w-full custom-black-button"
-  @click="handleEnquireClick"
-/>
+              <PrimeButton label="Enquire / Book Test Drive" class="w-full custom-black-button"
+                @click="handleEnquireClick" />
 
             </div>
           </template>
@@ -158,7 +156,7 @@ onMounted(fetchCar)
 
       </div>
     </div>
-    
+
     <div v-else class="text-center py-12 text-gray-400">Loading vehicle details...</div>
   </div>
 

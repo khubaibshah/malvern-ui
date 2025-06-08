@@ -16,11 +16,11 @@
             <PrimeButton icon="pi pi-facebook"
               class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
             <PrimeButton icon="pi pi-twitter" class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
-            <a href="https://www.instagram.com/r.k.autobodies?igsh=MXgydDd3azgxb2Vnag%3D%3D&utm_source=qr"
-              target="_blank" rel="noopener noreferrer">
+            <!-- <a href="https://www.instagram.com/r.k.autobodies?igsh=MXgydDd3azgxb2Vnag%3D%3D&utm_source=qr"
+              target="_blank" rel="noopener noreferrer"> -->
               <PrimeButton icon="pi pi-instagram"
                 class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
-            </a>
+            <!-- </a> -->
 
             <PrimeButton icon="pi pi-tiktok" class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
           </div>

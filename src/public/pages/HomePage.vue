@@ -136,6 +136,12 @@ const filterByModel = (modelName: string) => {
       </div>
     </div>
   </div>
+<div
+  v-animateonscroll="{ enterClass: 'fadein', leaveClass: 'fadeout' }"
+  class="flex justify-content-center my-4 animation-duration-2000 animation-ease-in-out"
+>
+  <hr class="custom-hr" />
+</div>
 
   <!-- Model Explorer (White Background) -->
   <div class="text-center mb-6 ">
@@ -247,6 +253,14 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+.custom-hr {
+  width: 90%;
+  height: 1px;
+  background-color: rgb(54, 54, 54);
+  border: none;
+  border-radius: 2px;
+}
+
 .vehicle-card {
   border: 1px solid #e5e7eb;
   border-radius: 8px;

@@ -50,6 +50,7 @@ import MegaMenu from 'primevue/megamenu';
 import Slider from 'primevue/slider';
 import Dropdown from 'primevue/dropdown';
 import Galleria from 'primevue/galleria';
+import AnimateOnScroll from 'primevue/animateonscroll';
 
 import Skeleton from 'primevue/skeleton';
 
@@ -74,7 +75,7 @@ app.directive('badge', BadgeDirective);
 app.directive('styleclass', StyleClass);
 app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
-
+app.directive('animateonscroll', AnimateOnScroll);
 
 app.component('AccordionTab', AccordionTab);
 app.component('Accordion', Accordion);
