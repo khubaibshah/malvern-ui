@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useRouter } from "vue-router";
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import Dropdown from 'primevue/dropdown'
 import Carousel from 'primevue/carousel'
+const router = useRouter();
+
 
 const toast = useToast()
 const vehicles = ref([])
@@ -106,12 +109,16 @@ const filterByModel = (modelName: string) => {
 <template>
   <!-- Hero Section (Black Background) -->
   <div class="hero-container">
+    <video autoplay muted loop playsinline class="hero-video">
+      <source src="/src/assets/img/hero.mp4" type="video/mp4" />
+    </video>
     <div class="overlay"></div>
     <div class="content">
       <h1 class="main-heading">STANLEY CAR SALES</h1>
       <div class="button-row">
         <PrimeButton label="Discover more" class="custom-button left-btn" />
-        <PrimeButton label="Find & Buy" class="custom-button right-btn" />
+         <!-- <a v-ripple @click="router.push({ name: 'car-search' })" -->
+        <PrimeButton label="Find & Buy" class="custom-button right-btn" @click="router.push({ name: 'car-search' })" />
       </div>
     </div>
   </div>
@@ -253,6 +260,24 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1;
+}
+.content {
+  position: relative;
+  z-index: 2;
+}
 .custom-hr {
   width: 90%;
   height: 1px;
