@@ -1,49 +1,62 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from "vue-router";
-import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
-import Dropdown from 'primevue/dropdown'
-import Carousel from 'primevue/carousel'
+import axios from 'axios'
+
 const router = useRouter();
+const toast = useToast();
 
 
-const toast = useToast()
 const vehicles = ref([])
-const layout = ref('grid')
-const vehicle_make = ref()
 const vehicle_model = ref()
-const vehicle_variant = ref()
-const priceRange = ref([20000, 60000])
-const maxMileage = ref(50000)
-const selectedFuel = ref('All')
 
-const makeOptions = ref([])
-const modelOptions = ref([])
-const variantOptions = ref([])
-const selectedTag = ref('All Models')
-const filterTags = ['All Models', 'Fully Electric', 'Plug-In Hybrid', 'Sportback', 'Saloon', 'Sport', 'RS', 'Avant', '✓ SUV']
+
+const makeOptions = ref()
+const modelOptions = ref()
+const variantOptions = ref()
+const images = ref([
+  {
+    itemImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1364&q=80',
+    thumbnailImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+    alt: 'Audi Q8 in showroom'
+  },
+  {
+    itemImageSrc: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1364&q=80',
+    thumbnailImageSrc: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+    alt: 'Audi RS5 sportback'
+  },
+  {
+    itemImageSrc: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1364&q=80',
+    thumbnailImageSrc: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+    alt: 'Audi e-tron electric SUV'
+  },
+  {
+    itemImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1364&q=80',
+    thumbnailImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+    alt: 'Audi A5 coupe'
+  },
+  // {
+  //   itemImageSrc: 'https://images.unsplash.com/photo-1551836026-d1b4d0e33037?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1364&q=80',
+  //   thumbnailImageSrc: 'https://images.unsplash.com/photo-1551836026-d1b4d0e33037?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+  //   alt: 'Audi Q7 luxury SUV'
+  // }
+]);
+
 const responsiveOptions = ref([
   {
     breakpoint: '1024px',
-    numVisible: 2,
-    numScroll: 1
+    numVisible: 3
   },
   {
     breakpoint: '768px',
-    numVisible: 1,
-    numScroll: 1
+    numVisible: 2
+  },
+  {
+    breakpoint: '560px',
+    numVisible: 1
   }
-])
-const audiModels = [
-  { name: 'Q2', image: '/src/assets/img/q2.png', count: 2 },
-  { name: 'Q3', image: '/src/assets/img/q3.png', count: 2 },
-  { name: 'Q4 e-tron', image: '/src/assets/img/q4.png', count: 2 },
-  { name: 'Q5', image: '/src/assets/img/q5.png', count: 4 },
-  { name: 'Q6 e-tron', image: '/src/assets/img/q6.png', count: 4 },
-  { name: 'Q7', image: '/src/assets/img/q7.png', count: 3 },
-  { name: 'Q8', image: '/src/assets/img/q8.png', count: 5 }
-]
+]);
 
 const testimonials = ref([
   {
@@ -60,16 +73,8 @@ const testimonials = ref([
   }
 ])
 
-const mileageOptions = ref([
-  { label: 'Under 10k miles', value: 10000 },
-  { label: 'Under 20k miles', value: 20000 },
-  { label: 'Under 50k miles', value: 50000 },
-  { label: 'Any mileage', value: 1000000 }
-])
 
-const fuelTypes = ['All', 'Petrol', 'Diesel', 'Hybrid', 'Electric']
-
-const featuredVehicle = ref(null)
+const featuredVehicle = ref()
 
 onMounted(async () => {
   try {
@@ -109,7 +114,28 @@ const filterByModel = (modelName: string) => {
 <template>
   <!-- Hero Section (Black Background) -->
   <div class="hero-container">
-    <video autoplay muted loop playsinline class="hero-video">
+    <!-- Hero Section with Galleria -->
+    <PrimeGalleria :value="images" :responsiveOptions="responsiveOptions" :numVisible="1" :circular="true"
+      :autoPlay="true" :transitionInterval="5000" :showItemNavigatorsOnHover="false" :showThumbnails="false"
+      containerClass="hero-galleria">
+
+      <template #item="slotProps">
+        <div class="hero-slide">
+          <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" class="hero-background" />
+          <div class="overlay"></div>
+          <div class="slide-content">
+            <h1 class="main-heading">STANLEY CAR SALES</h1>
+            <p class="subheading">Premium vehicles at competitive prices</p>
+            <div class="button-row">
+              <PrimeButton label="Discover more" class="custom-button left-btn" />
+              <PrimeButton label="Find & Buy" class="custom-button right-btn"
+                @click="router.push({ name: 'car-search' })" />
+            </div>
+          </div>
+        </div>
+      </template>
+    </PrimeGalleria>
+    <!-- <video autoplay muted loop playsinline class="hero-video">
       <source src="/src/assets/img/hero.mp4" type="video/mp4" />
     </video>
     <div class="overlay"></div>
@@ -117,10 +143,9 @@ const filterByModel = (modelName: string) => {
       <h1 class="main-heading">STANLEY CAR SALES</h1>
       <div class="button-row">
         <PrimeButton label="Discover more" class="custom-button left-btn" />
-         <!-- <a v-ripple @click="router.push({ name: 'car-search' })" -->
         <PrimeButton label="Find & Buy" class="custom-button right-btn" @click="router.push({ name: 'car-search' })" />
       </div>
-    </div>
+    </div> -->
   </div>
   <!-- Featured Vehicle (White Background) -->
   <!-- Featured Vehicle (White Background) -->
@@ -143,12 +168,10 @@ const filterByModel = (modelName: string) => {
       </div>
     </div>
   </div>
-<div
-  v-animateonscroll="{ enterClass: 'fadein', leaveClass: 'fadeout' }"
-  class="flex justify-content-center my-4 animation-duration-2000 animation-ease-in-out"
->
-  <hr class="custom-hr" />
-</div>
+  <div v-animateonscroll="{ enterClass: 'fadein', leaveClass: 'fadeout' }"
+    class="flex justify-content-center my-4 animation-duration-2000 animation-ease-in-out">
+    <hr class="custom-hr" />
+  </div>
 
   <!-- Model Explorer (White Background) -->
   <div class="text-center mb-6 ">
@@ -158,24 +181,21 @@ const filterByModel = (modelName: string) => {
 
   <div class="flex justify-content-evenly flex-wrap">
 
-   <PrimeCarousel :value="vehicles" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions">
-  <template #item="slotProps">
-    <div class="vehicle-card">
-      <img
-        :src="slotProps.data.images?.[0] || '/src/assets/img/default.jpg'"
-        :alt="slotProps.data.make + ' ' + slotProps.data.model"
-        class="vehicle-image"
-      />
-      <div class="vehicle-info">
-        <h3 class="text-base font-semibold">{{ slotProps.data.make }} {{ slotProps.data.model }}</h3>
-        <p class="text-green-600 font-bold text-sm">£{{ parseFloat(slotProps.data.price).toLocaleString() }}</p>
-        <RouterLink :to="{ name: 'vehicle-details', params: { id: slotProps.data.id } }">
-          <PrimeButton label="View" class="custom-button right-btn text-sm w-full"/>
-        </RouterLink>
-      </div>
-    </div>
-  </template>
-</PrimeCarousel>
+    <PrimeCarousel :value="vehicles" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions">
+      <template #item="slotProps">
+        <div class="vehicle-card">
+          <img :src="slotProps.data.images?.[0] || '/src/assets/img/default.jpg'"
+            :alt="slotProps.data.make + ' ' + slotProps.data.model" class="vehicle-image" />
+          <div class="vehicle-info">
+            <h3 class="text-base font-semibold">{{ slotProps.data.make }} {{ slotProps.data.model }}</h3>
+            <p class="text-green-600 font-bold text-sm">£{{ parseFloat(slotProps.data.price).toLocaleString() }}</p>
+            <RouterLink :to="{ name: 'vehicle-details', params: { id: slotProps.data.id } }">
+              <PrimeButton label="View" class="custom-button right-btn text-sm w-full" />
+            </RouterLink>
+          </div>
+        </div>
+      </template>
+    </PrimeCarousel>
 
 
     <!-- <div class="flex align-items-center justify-content-center w-4rem h-4rem bg-primary font-bold border-round m-2">2</div> -->
@@ -203,7 +223,7 @@ const filterByModel = (modelName: string) => {
   <div class="tile-bg py-8 px-4 text-white">
 
     <div class="grid">
-     
+
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
           <i class="pi pi-shield text-5xl mb-4"></i>
@@ -260,6 +280,15 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+.overlay,
+.hero-background {
+  pointer-events: none;
+}
+
+:deep(.p-galleria .p-galleria-item-nav) {
+  z-index: 10 !important;
+}
+
 .hero-video {
   position: absolute;
   inset: 0;
@@ -268,16 +297,19 @@ const filterByModel = (modelName: string) => {
   object-fit: cover;
   z-index: 0;
 }
+
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0, 0, 0, 0.45);
   z-index: 1;
 }
+
 .content {
   position: relative;
   z-index: 2;
 }
+
 .custom-hr {
   width: 90%;
   height: 1px;
@@ -291,8 +323,9 @@ const filterByModel = (modelName: string) => {
   border-radius: 8px;
   padding: 0.75rem;
   max-width: 300px;
-  margin: 0 0.5rem; /* ⬅️ Add horizontal spacing */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin: 0 0.5rem;
+  /* ⬅️ Add horizontal spacing */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   background: white;
   flex-shrink: 0;
 }
@@ -308,6 +341,7 @@ const filterByModel = (modelName: string) => {
   margin-top: 0.75rem;
   text-align: center;
 }
+
 .tile-bg {
   background-color: black;
 }
@@ -342,7 +376,7 @@ footer a {
   position: relative;
   width: 100%;
   height: 77vh;
-  background-image: url('/src/assets/img/lamb4.jpg');
+  /* background-image: url('/src/assets/img/lamb4.jpg'); */
   background-size: cover;
   background-position: center;
   display: flex;
@@ -449,6 +483,127 @@ footer a {
 
   .featured-vehicle>div {
     width: 100% !important;
+  }
+}
+
+/* Hero Galleria Styles */
+.hero-galleria {
+  position: relative;
+  width: 100%;
+  height: 77vh;
+  margin-bottom: 1rem;
+}
+
+.hero-slide {
+  position: relative;
+  width: 100%;
+  height: 77vh;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+}
+
+.slide-content {
+  position: absolute;
+  z-index: 2;
+  color: white;
+  max-width: 600px;
+left: 2%;
+    top: 67%;
+  transform: translateY(-50%);
+  text-align: left;
+  padding: 0 1rem;
+}
+
+.main-heading {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  color: white;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.subheading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  color: white;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+
+
+/* Navigation arrows */
+:deep(.p-galleria .p-galleria-item-nav) {
+  z-index: 2;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin: 0 1rem;
+}
+
+:deep(.p-galleria .p-galleria-item-nav:hover) {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+
+  .hero-galleria,
+  .hero-slide {
+    height: 60vh;
+  }
+
+  .main-heading {
+    font-size: 2rem;
+  }
+
+  .subheading {
+    font-size: 1.2rem;
+  }
+
+  .slide-content {
+    padding: 0 1rem;
+  }
+
+  :deep(.p-galleria .p-galleria-item-nav) {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+.button-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .slide-content {
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    top: 50%;
   }
 }
 </style>

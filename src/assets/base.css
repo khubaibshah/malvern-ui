@@ -1,5 +1,5 @@
 /* Add at the top of base.css */
-@import url('https://fonts.googleapis.com/css2?family=Hanuman:wght@400;700&family=Inter:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500&display=swap');
 
 /* Modify the body section */
 body {
@@ -19,7 +19,7 @@ body {
 
 /* Add heading styles */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Hanuman', serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--color-heading);
