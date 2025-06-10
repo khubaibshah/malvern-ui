@@ -160,6 +160,17 @@ const filterByModel = (modelName: string) => {
       </template>
     </PrimeGalleria>
   </div>
+<!-- 
+    <div  class="surface-0 py-4 px-4 md:py-6 md:px-6 lg:py-7 lg:px-7">
+      <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
+   <h1>
+        Find Your used car
+      </h1>
+
+      </div>
+   
+      </div> -->
+
 
 
   <!-- Featured Vehicle (White Background) -->
@@ -305,18 +316,6 @@ const filterByModel = (modelName: string) => {
   pointer-events: none;
 }
 
-:deep(.p-galleria .p-galleria-item-nav) {
-  z-index: 10 !important;
-}
-
-.hero-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
-}
 
 .overlay {
   position: absolute;
@@ -325,10 +324,7 @@ const filterByModel = (modelName: string) => {
   z-index: 1;
 }
 
-.content {
-  position: relative;
-  z-index: 2;
-}
+
 
 .custom-hr {
   width: 90%;
@@ -405,21 +401,7 @@ footer a {
   margin-bottom: 1rem;
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.45);
-  z-index: 1;
-}
 
-.content {
-  position: relative;
-  z-index: 2;
-  color: white;
-  max-width: 90%;
-  margin-right: 52rem;
-  margin-top: 17rem;
-}
 
 
 .button-row {
@@ -534,7 +516,7 @@ footer a {
 .overlay {
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.45);
+  /* background-color: rgba(0, 0, 0, 0.45); */
   z-index: 1;
 }
 
