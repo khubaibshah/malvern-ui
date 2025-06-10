@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { useToast } from 'primevue/usetoast'
 import axios from 'axios'
 import { animate, svg, stagger } from 'animejs';
-
+import Carousel from 'primevue/carousel';
 const router = useRouter();
 const toast = useToast();
 
@@ -36,11 +36,7 @@ const images = ref([
     thumbnailImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
     alt: 'Audi A5 coupe'
   },
-  // {
-  //   itemImageSrc: 'https://images.unsplash.com/photo-1551836026-d1b4d0e33037?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1364&q=80',
-  //   thumbnailImageSrc: 'https://images.unsplash.com/photo-1551836026-d1b4d0e33037?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
-  //   alt: 'Audi Q7 luxury SUV'
-  // }
+
 ]);
 
 const responsiveOptions = ref([
@@ -229,8 +225,10 @@ const filterByModel = (modelName: string) => {
 
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
-          <i class="pi pi-shield text-5xl mb-4"></i>
-          <svg viewBox="0 0 304 112">
+          <!-- <i class="pi pi-shield text-5xl mb-4"></i> -->
+          <svg viewBox="0 0 304 112" style="
+    height: 42px;
+">
             <title>Suzuka</title>
             <g stroke="none" fill="none" fill-rule="evenodd">
               <path
@@ -244,14 +242,19 @@ const filterByModel = (modelName: string) => {
       </div>
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
-          <i class="pi pi-star text-5xl mb-4"></i>
+          <!-- <i class="pi pi-star text-5xl mb-4"></i> -->
+          <i class="fa-solid fa-star fa-spin text-5xl"
+            style="--fa-animation-duration: 3s; --fa-animation-iteration-count: 5;--fa-animation-timing: ease-in-out;"></i>
+
           <h3 class="text-xl font-bold mb-2">Premium Selection</h3>
           <p class="text-gray-300">Only the finest vehicles</p>
         </div>
       </div>
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
-          <i class="pi pi-wallet text-5xl mb-4"></i>
+          <!-- <i class="pi pi-wallet text-5xl mb-4"></i> -->
+          <i class="fa-solid fa-money-check-dollar  text-5xl fa-flip" style="--fa-animation-duration: 3s;"></i>
+
           <h3 class="text-xl font-bold mb-2">Flexible Finance</h3>
           <p class="text-gray-300">Tailored payment plans</p>
         </div>
@@ -265,7 +268,7 @@ const filterByModel = (modelName: string) => {
   <div class="py-8 px-4">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-3xl font-bold text-center mb-6">What Our Customers Say</h2>
-      <PrimeCarousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions"
+      <Carousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions"
         circular :autoplayInterval="3000" class="custom-carousel">
         <template #item="slotProps">
           <div class="p-6 border-round">
@@ -281,7 +284,7 @@ const filterByModel = (modelName: string) => {
             </div>
           </div>
         </template>
-      </PrimeCarousel>
+      </Carousel>
     </div>
   </div>
 </template>
