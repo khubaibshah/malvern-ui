@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, shallowRef } from 'vue'
 import { useRouter } from "vue-router";
 import { useToast } from 'primevue/usetoast'
 import axios from 'axios'
-import { animate, svg } from 'animejs';
+import { animate, svg, stagger } from 'animejs';
+
 const router = useRouter();
 const toast = useToast();
-
 
 const vehicles = ref([])
 const vehicle_model = ref()
@@ -77,22 +77,32 @@ const testimonials = ref([
 const featuredVehicle = ref()
 
 onMounted(async () => {
-  // Animate the transforms properties of .car the motion path values
-const carAnimation = animate('.car', {
-  ease: 'linear',
-  duration: 5000,
-  loop: true,
-  ...svg.createMotionPath('path')
-});
 
-// Line drawing animation following the motion path values
-// For demo aesthetic only
-animate(svg.createDrawable('path'), {
-  draw: '0 1',
-  ease: 'linear',
-  duration: 5000,
-  loop: true
-});
+  animate(svg.createDrawable('.line'), {
+    draw: ['0 0', '0 1', '1 1'],
+    ease: 'inOutQuad',
+    duration: 2000,
+    delay: stagger(100),
+    loop: true
+  });
+
+
+  // Animate the transforms properties of .car the motion path values
+  const carAnimation = animate('.car', {
+    ease: 'linear',
+    duration: 5000,
+    loop: true,
+    ...svg.createMotionPath('path')
+  });
+
+  // Line drawing animation following the motion path values
+  // For demo aesthetic only
+  animate(svg.createDrawable('path'), {
+    draw: '0 1',
+    ease: 'linear',
+    duration: 5000,
+    loop: true
+  });
   try {
     const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-all-vehicles`)
     if (response.status === 200) {
@@ -128,35 +138,20 @@ const filterByModel = (modelName: string) => {
 </script>
 
 <template>
+
   <!-- Hero Section (Black Background) -->
   <div class="hero-container">
     <!-- Hero Section with Galleria -->
-    <PrimeGalleria
-  :value="images"
-  :responsiveOptions="responsiveOptions"
-  :numVisible="1"
-  :circular="true"
-  :autoPlay="true"
-  :transitionInterval="5000"
-  :showItemNavigatorsOnHover="false"
-  :showThumbnails="false"
-  containerClass="hero-galleria"
-  :transitionOptions="{ name: 'fade-slide', css: true }"
->
+    <PrimeGalleria :value="images" :responsiveOptions="responsiveOptions" :numVisible="1" :circular="true"
+      :autoPlay="true" :transitionInterval="5000" :showItemNavigatorsOnHover="false" :showThumbnails="false"
+      containerClass="hero-galleria" :transitionOptions="{ name: 'fade-slide', css: true }">
 
       <template #item="slotProps">
         <div class="hero-slide">
           <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" class="hero-background" />
-          
           <div class="overlay"></div>
           <div class="slide-content">
-            <svg viewBox="0 0 304 112">
-  <title>Suzuka</title>
-  <g stroke="none" fill="none" fill-rule="evenodd">
-    <path d="M189.142857,4 C227.456875,4 248.420457,4.00974888 256.864191,4.00974888 C263.817211,4.00974888 271.61219,3.69583517 274.986231,6.63061513 C276.382736,7.84531176 279.193529,11.3814152 280.479499,13.4815847 C281.719344,15.5064248 284.841964,20.3571626 275.608629,20.3571626 C265.817756,20.3571626 247.262478,19.9013915 243.955117,19.9013915 C239.27946,19.9013915 235.350655,24.7304885 228.6344,24.7304885 C224.377263,24.7304885 219.472178,21.0304113 214.535324,21.0304113 C207.18393,21.0304113 200.882842,30.4798911 194.124187,30.4798911 C186.992968,30.4798911 182.652552,23.6245972 173.457298,23.6245972 C164.83277,23.6245972 157.191045,31.5424105 157.191045,39.1815359 C157.191045,48.466779 167.088672,63.6623005 166.666679,66.9065088 C166.378668,69.1206889 155.842137,79.2568633 151.508744,77.8570506 C145.044576,75.7689355 109.126667,61.6405346 98.7556561,52.9785141 C96.4766876,51.0750861 89.3680347,39.5769094 83.4195005,38.5221785 C80.6048001,38.0231057 73.0179337,38.7426555 74.4158694,42.6956376 C76.7088819,49.1796531 86.3280337,64.1214904 87.1781062,66.9065088 C88.191957,70.2280995 86.4690152,77.0567847 82.2060607,79.2503488 C79.2489435,80.7719756 73.1324132,82.8858479 64.7015706,83.0708761 C55.1604808,83.2802705 44.4254811,80.401884 39.1722168,80.401884 C25.7762119,80.401884 24.3280517,89.1260466 22.476679,94.4501705 C21.637667,96.8629767 20.4337535,108 33.2301959,108 C37.8976087,108 45.0757044,107.252595 53.4789069,103.876424 C61.8821095,100.500252 122.090049,78.119656 128.36127,75.3523302 C141.413669,69.5926477 151.190142,68.4987755 147.018529,52.0784879 C143.007818,36.291544 143.396957,23.4057975 145.221196,19.6589263 C146.450194,17.1346449 148.420955,14.8552817 153.206723,15.7880203 C155.175319,16.1716965 155.097637,15.0525421 156.757598,11.3860986 C158.417558,7.71965506 161.842736,4.00974888 167.736963,4.00974888 C177.205308,4.00974888 184.938832,4 189.142857,4 Z" id="suzuka" stroke="currentColor" stroke-width="2"></path>
-  </g>
-</svg>
-<div class="square car motion-path-car" style="transform: translateX(189px) translateY(4px);"></div>
+            <div class="square car motion-path-car" style="transform: translateX(189px) translateY(4px);"></div>
             <h1 class="main-heading">STANLEY CAR SALES</h1>
             <p class="subheading">Premium vehicles at competitive prices</p>
             <div class="button-row">
@@ -168,19 +163,9 @@ const filterByModel = (modelName: string) => {
         </div>
       </template>
     </PrimeGalleria>
-    <!-- <video autoplay muted loop playsinline class="hero-video">
-      <source src="/src/assets/img/hero.mp4" type="video/mp4" />
-    </video>
-    <div class="overlay"></div>
-    <div class="content">
-      <h1 class="main-heading">STANLEY CAR SALES</h1>
-      <div class="button-row">
-        <PrimeButton label="Discover more" class="custom-button left-btn" />
-        <PrimeButton label="Find & Buy" class="custom-button right-btn" @click="router.push({ name: 'car-search' })" />
-      </div>
-    </div> -->
   </div>
-  <!-- Featured Vehicle (White Background) -->
+
+
   <!-- Featured Vehicle (White Background) -->
   <div v-if="featuredVehicle" class="surface-0 py-4 px-4 md:py-6 md:px-6 lg:py-7 lg:px-7">
     <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
@@ -201,56 +186,41 @@ const filterByModel = (modelName: string) => {
       </div>
     </div>
   </div>
+
   <div v-animateonscroll="{ enterClass: 'fadein', leaveClass: 'fadeout' }"
     class="flex justify-content-center my-4 animation-duration-2000 animation-ease-in-out">
     <hr class="custom-hr" />
   </div>
 
   <!-- Model Explorer (White Background) -->
-  <div class="text-center mb-6 ">
+
+  <div class="text-center mb-6 animation-duration-2000 animation-ease-in-out"
+    v-animateonscroll="{ enterClass: 'fadein', leaveClass: 'fadeout' }">
+
     <h2 class="text-4xl font-bold mb-2">Explore Our Range</h2>
     <p class="text-gray-600">Discover our premium selection of vehicles</p>
-  </div>
+    <div class="flex justify-content-evenly flex-wrap">
 
-  <div class="flex justify-content-evenly flex-wrap">
-
-    <PrimeCarousel :value="vehicles" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions">
-      <template #item="slotProps">
-        <div class="vehicle-card">
-          <img :src="slotProps.data.images?.[0] || '/src/assets/img/default.jpg'"
-            :alt="slotProps.data.make + ' ' + slotProps.data.model" class="vehicle-image" />
-          <div class="vehicle-info">
-            <h3 class="text-base font-semibold">{{ slotProps.data.make }} {{ slotProps.data.model }}</h3>
-            <p class="text-green-600 font-bold text-sm">£{{ parseFloat(slotProps.data.price).toLocaleString() }}</p>
-            <RouterLink :to="{ name: 'vehicle-details', params: { id: slotProps.data.id } }">
-              <PrimeButton label="View" class="custom-button right-btn text-sm w-full" />
-            </RouterLink>
+      <PrimeCarousel :value="vehicles" :numVisible="3" :numScroll="1" :responsiveOptions="responsiveOptions">
+        <template #item="slotProps">
+          <div class="vehicle-card">
+            <img :src="slotProps.data.images?.[0] || '/src/assets/img/default.jpg'"
+              :alt="slotProps.data.make + ' ' + slotProps.data.model" class="vehicle-image" />
+            <div class="vehicle-info">
+              <h3 class="text-base font-semibold">{{ slotProps.data.make }} {{ slotProps.data.model }}</h3>
+              <p class="text-green-600 font-bold text-sm">£{{ parseFloat(slotProps.data.price).toLocaleString() }}</p>
+              <RouterLink :to="{ name: 'vehicle-details', params: { id: slotProps.data.id } }">
+                <PrimeButton label="View" class="custom-button right-btn text-sm w-full" />
+              </RouterLink>
+            </div>
           </div>
-        </div>
-      </template>
-    </PrimeCarousel>
+        </template>
+      </PrimeCarousel>
+    </div>
 
-
-    <!-- <div class="flex align-items-center justify-content-center w-4rem h-4rem bg-primary font-bold border-round m-2">2</div> -->
-    <!-- <div class="flex align-items-center justify-content-center w-4rem h-4rem bg-primary font-bold border-round m-2">3</div> -->
   </div>
 
-  <!-- <div class="surface-0 py-6 px-4">
-    <div class="text-center mb-6">
-      <h2 class="text-4xl font-bold mb-2">Explore Our Range</h2>
-      <p class="text-gray-600">Discover our premium selection of vehicles</p>
-    </div>
-    
-    <div class="grid md:grid-cols-4 sm:grid-cols-2 gap-4 px-4">
-      <div v-for="model in audiModels" :key="model.name" 
-           class="p-4 border-1 surface-border border-round cursor-pointer hover:shadow-2 transition-all"
-           @click="filterByModel(model.name)">
-        <img :src="model.image" :alt="model.name" class="w-full h-auto mb-3">
-        <h3 class="text-xl font-semibold mb-1">{{ model.name }}</h3>
-        <span class="text-gray-600">{{ model.count }} available</span>
-      </div>
-    </div>
-  </div> -->
+
 
   <!-- Value Props (Black Background) -->
   <div class="tile-bg py-8 px-4 text-white">
@@ -260,6 +230,14 @@ const filterByModel = (modelName: string) => {
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
           <i class="pi pi-shield text-5xl mb-4"></i>
+          <svg viewBox="0 0 304 112">
+            <title>Suzuka</title>
+            <g stroke="none" fill="none" fill-rule="evenodd">
+              <path
+                d="M189.142857,4 C227.456875,4 248.420457,4.00974888 256.864191,4.00974888 C263.817211,4.00974888 271.61219,3.69583517 274.986231,6.63061513 C276.382736,7.84531176 279.193529,11.3814152 280.479499,13.4815847 C281.719344,15.5064248 284.841964,20.3571626 275.608629,20.3571626 C265.817756,20.3571626 247.262478,19.9013915 243.955117,19.9013915 C239.27946,19.9013915 235.350655,24.7304885 228.6344,24.7304885 C224.377263,24.7304885 219.472178,21.0304113 214.535324,21.0304113 C207.18393,21.0304113 200.882842,30.4798911 194.124187,30.4798911 C186.992968,30.4798911 182.652552,23.6245972 173.457298,23.6245972 C164.83277,23.6245972 157.191045,31.5424105 157.191045,39.1815359 C157.191045,48.466779 167.088672,63.6623005 166.666679,66.9065088 C166.378668,69.1206889 155.842137,79.2568633 151.508744,77.8570506 C145.044576,75.7689355 109.126667,61.6405346 98.7556561,52.9785141 C96.4766876,51.0750861 89.3680347,39.5769094 83.4195005,38.5221785 C80.6048001,38.0231057 73.0179337,38.7426555 74.4158694,42.6956376 C76.7088819,49.1796531 86.3280337,64.1214904 87.1781062,66.9065088 C88.191957,70.2280995 86.4690152,77.0567847 82.2060607,79.2503488 C79.2489435,80.7719756 73.1324132,82.8858479 64.7015706,83.0708761 C55.1604808,83.2802705 44.4254811,80.401884 39.1722168,80.401884 C25.7762119,80.401884 24.3280517,89.1260466 22.476679,94.4501705 C21.637667,96.8629767 20.4337535,108 33.2301959,108 C37.8976087,108 45.0757044,107.252595 53.4789069,103.876424 C61.8821095,100.500252 122.090049,78.119656 128.36127,75.3523302 C141.413669,69.5926477 151.190142,68.4987755 147.018529,52.0784879 C143.007818,36.291544 143.396957,23.4057975 145.221196,19.6589263 C146.450194,17.1346449 148.420955,14.8552817 153.206723,15.7880203 C155.175319,16.1716965 155.097637,15.0525421 156.757598,11.3860986 C158.417558,7.71965506 161.842736,4.00974888 167.736963,4.00974888 C177.205308,4.00974888 184.938832,4 189.142857,4 Z"
+                id="suzuka" stroke="currentColor" stroke-width="2"></path>
+            </g>
+          </svg>
           <h3 class="text-xl font-bold mb-2">Certified Pre-Owned</h3>
           <p class="text-gray-300">Rigorous 150-point inspection</p>
         </div>
@@ -287,8 +265,8 @@ const filterByModel = (modelName: string) => {
   <div class="py-8 px-4">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-3xl font-bold text-center mb-6">What Our Customers Say</h2>
-      <PrimeCarousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions" circular :autoplayInterval="3000"
-        class="custom-carousel">
+      <PrimeCarousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions"
+        circular :autoplayInterval="3000" class="custom-carousel">
         <template #item="slotProps">
           <div class="p-6 border-round">
             <div class="text-xl italic mb-4">"{{ slotProps.data.quote }}"</div>
@@ -306,21 +284,16 @@ const filterByModel = (modelName: string) => {
       </PrimeCarousel>
     </div>
   </div>
-  <!-- Footer Section (Black Background) -->
-  <!-- Footer Section (Black Background) -->
-
-
 </template>
 
 <style scoped>
-
-/* PrimeVue Galleria Custom Transition */
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: opacity 1s ease-in-out;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
 }
-.fade-slide-enter-from,
-.fade-slide-leave-to {
+
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 
