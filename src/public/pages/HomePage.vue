@@ -254,13 +254,13 @@ const filterByModel = (modelName: string) => {
   <div class="py-8 px-4">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-3xl font-bold text-center mb-6">What Our Customers Say</h2>
-      <Carousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions"
+      <PrimeCarousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions"
         class="custom-carousel">
         <template #item="slotProps">
           <div class="p-6 border-round">
             <div class="text-xl italic mb-4">"{{ slotProps.data.quote }}"</div>
             <div class="flex align-items-center">
-              <i class="pi pi-user w-3rem h-3rem border-circle mr-3"></i>
+              <!-- <i class="pi pi-user w-3rem h-3rem border-circle mr-3"></i> -->
 
               <!-- <img :src="slotProps.data.avatar" class="w-3rem h-3rem border-circle mr-3"> -->
               <div>
@@ -270,7 +270,7 @@ const filterByModel = (modelName: string) => {
             </div>
           </div>
         </template>
-      </Carousel>
+      </PrimeCarousel>
     </div>
   </div>
   <!-- Footer Section (Black Background) -->
