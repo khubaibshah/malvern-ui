@@ -160,11 +160,11 @@ const filterByModel = (modelName: string) => {
       </template>
     </PrimeGalleria>
   </div>
-<div 
-    class=" text-center  my-4 animation-duration-2000 animation-ease-in-out">
-   <h2 class="text-3xl font-bold mb-2 text-gray-700">Our Featured Models</h2>
+  <div class=" text-center  my-4 animation-duration-2000 animation-ease-in-out">
+    <h2 class="text-3xl font-bold mb-2 text-gray-700">Our Featured Models</h2>
     <p class="text-gray-500" style="padding-left: 10px;
-    padding-right: 10px;">Experience the pinnacle of automotive excellence with our curated selection of premium vehicles
+    padding-right: 10px;">Experience the pinnacle of automotive excellence with our curated selection of premium
+      vehicles
 
     </p>
   </div>
@@ -203,14 +203,14 @@ const filterByModel = (modelName: string) => {
           <template #footer>
             <div class="flex gap-3 mt-1">
               <div class="text-lg font-bold text-green-600 mb-3 w-full">
-              £{{ parseFloat(car.price).toLocaleString() }}
-            </div>
- <RouterLink :to="{ name: 'vehicle-details', params: { id: car.id } }" class="w-full no-underline">
-<PrimeButton label="View Details" class="w-full text-right-btn p-button-sm" text />
-            </RouterLink>
+                £{{ parseFloat(car.price).toLocaleString() }}
+              </div>
+              <RouterLink :to="{ name: 'vehicle-details', params: { id: car.id } }" class="w-full no-underline">
+                <PrimeButton label="View Details" class="w-full text-right-btn p-button-sm" text />
+              </RouterLink>
 
             </div>
-           
+
           </template>
         </PrimeCard>
       </div>
@@ -334,8 +334,10 @@ const filterByModel = (modelName: string) => {
 
 <style scoped>
 .text-right-btn {
-  justify-content: flex-end !important; /* Align content (text) to the right */
-  text-align: right !important;         /* Just in case */
+  justify-content: flex-end !important;
+  /* Align content (text) to the right */
+  text-align: right !important;
+  /* Just in case */
 }
 
 .hover-card {
@@ -425,7 +427,7 @@ footer a {
 }
 
 @media (max-width: 768px) {
-  
+
   .grid {
     grid-template-columns: 1fr !important;
   }
@@ -445,7 +447,7 @@ footer a {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 5rem!important;
+  margin-bottom: 5rem !important;
 }
 
 
