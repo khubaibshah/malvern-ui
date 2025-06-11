@@ -11,7 +11,7 @@ const toast = useToast();
 const vehicles = ref([])
 const vehicle_model = ref()
 
-
+const featuredVehicles = ref([]);
 const makeOptions = ref()
 const modelOptions = ref()
 const variantOptions = ref()
@@ -70,7 +70,6 @@ const testimonials = ref([
 ])
 
 
-const featuredVehicle = ref()
 
 onMounted(async () => {
 
@@ -104,8 +103,9 @@ onMounted(async () => {
     if (response.status === 200) {
       vehicles.value = response.data.cars || []
 
-      // Get the first vehicle marked as featured
-      featuredVehicle.value = vehicles.value.find(v => v.featured === 1)
+      // Get the vehicles marked as featured
+
+      featuredVehicles.value = vehicles.value.filter(v => v.featured === 1)
 
       // Populate filter dropdowns
       const makes = new Set()
@@ -136,7 +136,7 @@ const filterByModel = (modelName: string) => {
 <template>
 
   <!-- Hero Section (Black Background) -->
-  <div class="hero-container">
+  <div class="hero-container mb-3">
     <!-- Hero Section with Galleria -->
     <PrimeGalleria :value="images" :responsiveOptions="responsiveOptions" :numVisible="1" :circular="true"
       :autoPlay="true" :transitionInterval="5000" :showItemNavigatorsOnHover="false" :showThumbnails="false"
@@ -160,48 +160,79 @@ const filterByModel = (modelName: string) => {
       </template>
     </PrimeGalleria>
   </div>
-<!-- 
-    <div  class="surface-0 py-4 px-4 md:py-6 md:px-6 lg:py-7 lg:px-7">
-      <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
-   <h1>
-        Find Your used car
-      </h1>
+<div 
+    class=" text-center  my-4 animation-duration-2000 animation-ease-in-out">
+   <h2 class="text-3xl font-bold mb-2 text-gray-700">Our Featured Models</h2>
+    <p class="text-gray-500">Experience the pinnacle of automotive excellence with our curated selection of premium vehicles
 
-      </div>
-   
-      </div> -->
+    </p>
+  </div>
 
 
+  <div class="surface-section px-3 py-5 md:px-6 lg:px-8" v-if="featuredVehicles.length > 0">
 
-  <!-- Featured Vehicle (White Background) -->
-  <div v-if="featuredVehicle" class="surface-0 py-4 px-4 md:py-6 md:px-6 lg:py-7 lg:px-7">
-    <div class="flex flex-column md:flex-row max-w-6xl mx-auto">
-      <div class="w-full md:w-6 p-0 md:pr-4 mb-4 md:mb-0">
-        <img :src="featuredVehicle.images?.[0] || '/src/assets/img/default.jpg'"
-          :alt="featuredVehicle.make + ' ' + featuredVehicle.model" class="w-full border-round" />
-      </div>
-      <div class="w-full md:w-6 flex flex-column justify-center p-4">
-        <span class="bg-y-500 text-black font-bold py-1 mb-3 inline-block w-auto text-5xl">FEATURED</span>
-        <h2 class="text-3xl font-bold mb-3">{{ featuredVehicle.make }} {{ featuredVehicle.model }}</h2>
-        <p class="text-gray-600 mb-2">{{ featuredVehicle.description }}</p>
-        <div class="text-xl font-bold text-green-600 mb-4">£{{ parseFloat(featuredVehicle.price).toLocaleString() }}
-        </div>
-        <RouterLink :to="{ name: 'vehicle-details', params: { id: featuredVehicle.id } }" class="no-underline w-full">
-          <PrimeButton label="View" class="custom-button right-btn w-full" />
-        </RouterLink>
 
+    <div class="grid mx-auto ">
+
+      <div v-for="(car, index) in featuredVehicles" :key="car.id"
+        :class="` col-12 sm:col-6 lg:col-4 px-3 mb-5  md:col-${12 / featuredVehicles.length}`">
+        <PrimeCard class=" border-round-lg overflow-hidden hover-card">
+          <template #header>
+            <img :src="car.images?.[0] || '/src/assets/img/default.jpg'" :alt="car.make + ' ' + car.model"
+              class="w-full h-40 object-cover border-top-round-lg" />
+          </template>
+
+
+          <template #title>
+            <h3 class="text-sm font-bold text-800 mb-1">{{ car.make }} {{ car.model }}</h3>
+          </template>
+
+          <!-- <template #subtitle>
+            <div class="text-sm text-gray-500 mb-1">
+              {{ car.variant || 'No Variant' }} • {{ car.year || 'N/A' }}
+            </div>
+          </template> -->
+
+          <template #content>
+            <div class="text-sm text-gray-500 mb-1">
+              {{ car.variant || 'No Variant' }} • {{ car.year || 'N/A' }}
+            </div>
+          </template>
+
+          <template #footer>
+            <div class="flex gap-3 mt-1">
+              <div class="text-lg font-bold text-green-600 mb-3 w-full">
+              £{{ parseFloat(car.price).toLocaleString() }}
+            </div>
+ <RouterLink :to="{ name: 'vehicle-details', params: { id: car.id } }" class="w-full no-underline">
+              <PrimeButton label="View Details" class="w-full p-button-sm" />
+            </RouterLink>
+
+            </div>
+           
+          </template>
+        </PrimeCard>
       </div>
     </div>
   </div>
 
-  <div v-animateonscroll="{ enterClass: 'fadein', leaveClass: 'fadeout' }"
+
+
+
+
+  <!-- Featured Vehicle (White Background) -->
+  <!-- Featured Vehicles Section (White Background) -->
+
+
+
+  <!-- <div v-animateonscroll="{ enterClass: 'fadein', leaveClass: 'fadeout' }"
     class="flex justify-content-center my-4 animation-duration-2000 animation-ease-in-out">
     <hr class="custom-hr" />
-  </div>
+  </div> -->
 
   <!-- Model Explorer (White Background) -->
 
-  <div class="text-center mb-6 animation-duration-2000 animation-ease-in-out"
+  <!-- <div class="text-center mb-6 animation-duration-2000 animation-ease-in-out"
     v-animateonscroll="{ enterClass: 'fadein', leaveClass: 'fadeout' }">
 
     <h2 class="text-4xl font-bold mb-2">Explore Our Range</h2>
@@ -225,7 +256,7 @@ const filterByModel = (modelName: string) => {
       </PrimeCarousel>
     </div>
 
-  </div>
+  </div> -->
 
 
 
@@ -279,8 +310,8 @@ const filterByModel = (modelName: string) => {
   <div class="py-8 px-4">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-3xl font-bold text-center mb-6">What Our Customers Say</h2>
-      <Carousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions"
-        circular :autoplayInterval="3000" class="custom-carousel">
+      <Carousel :value="testimonials" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions" circular
+        :autoplayInterval="3000" class="custom-carousel">
         <template #item="slotProps">
           <div class="p-6 border-round">
             <div class="text-xl italic mb-4">"{{ slotProps.data.quote }}"</div>
@@ -301,6 +332,15 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+.hover-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 40px rgba(0, 0, 0, 0.15);
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;
@@ -379,6 +419,7 @@ footer a {
 }
 
 @media (max-width: 768px) {
+  
   .grid {
     grid-template-columns: 1fr !important;
   }
@@ -398,7 +439,7 @@ footer a {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 5rem!important;
 }
 
 

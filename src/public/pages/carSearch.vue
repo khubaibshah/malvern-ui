@@ -94,9 +94,9 @@
                   <div class="text-sm text-600 mb-1">
                     {{ item.variant || 'Variant Info' }}
                   </div>
-                  <div class="text-xs text-gray-500 mb-2 truncate">
+                  <!-- <div class="text-xs text-gray-500 mb-2 truncate">
                     {{ item.description || 'No description provided' }}
-                  </div>
+                  </div> -->
 
                   <!-- Badges -->
                   <div class="flex gap-2 flex-wrap mt-2">
