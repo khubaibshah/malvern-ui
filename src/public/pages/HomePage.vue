@@ -163,7 +163,8 @@ const filterByModel = (modelName: string) => {
 <div 
     class=" text-center  my-4 animation-duration-2000 animation-ease-in-out">
    <h2 class="text-3xl font-bold mb-2 text-gray-700">Our Featured Models</h2>
-    <p class="text-gray-500">Experience the pinnacle of automotive excellence with our curated selection of premium vehicles
+    <p class="text-gray-500" style="padding-left: 10px;
+    padding-right: 10px;">Experience the pinnacle of automotive excellence with our curated selection of premium vehicles
 
     </p>
   </div>
