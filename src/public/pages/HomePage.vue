@@ -205,7 +205,7 @@ const filterByModel = (modelName: string) => {
               £{{ parseFloat(car.price).toLocaleString() }}
             </div>
  <RouterLink :to="{ name: 'vehicle-details', params: { id: car.id } }" class="w-full no-underline">
-              <PrimeButton label="View Details" class="w-full p-button-sm" />
+<PrimeButton label="View Details" class="w-full text-right-btn p-button-sm" text />
             </RouterLink>
 
             </div>
@@ -332,6 +332,11 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+.text-right-btn {
+  justify-content: flex-end !important; /* Align content (text) to the right */
+  text-align: right !important;         /* Just in case */
+}
+
 .hover-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
