@@ -134,34 +134,19 @@ const filterByModel = (modelName: string) => {
 </script>
 
 <template>
+<!-- Hero Section (Black Background) -->
+  <PrimeGalleria :value="images" :numVisible="5" :circular="true" :autoPlay="true" :showThumbnails="false"
+    :showItemNavigators="true" :showItemNavigatorsOnHover="true">
+    <template #item="slotProps">
+      <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%;    object-fit: cover;
+    height: 38rem; display: block;" />
+    </template>
 
-  <!-- Hero Section (Black Background) -->
-  <div class="hero-container mb-3">
-    <!-- Hero Section with Galleria -->
-    <PrimeGalleria :value="images" :responsiveOptions="responsiveOptions" :numVisible="1" :circular="true"
-      :autoPlay="true" :transitionInterval="5000" :showItemNavigatorsOnHover="false" :showThumbnails="false"
-      containerClass="hero-galleria" :transitionOptions="{ name: 'fade-slide', css: true }">
+  </PrimeGalleria>
+  
 
-      <template #item="slotProps">
-        <div class="hero-slide">
-          <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" class="hero-background" />
-          <div class="overlay"></div>
-          <div class="slide-content">
-            <div class="square car motion-path-car" style="transform: translateX(189px) translateY(4px);"></div>
-            <h1 class="main-heading">STANLEY CAR SALES</h1>
-            <p class="subheading">Premium vehicles at competitive prices</p>
-            <div class="button-row">
-              <PrimeButton label="Discover more" class="custom-button left-btn" />
-              <PrimeButton label="Find & Buy" class="custom-button right-btn"
-                @click="router.push({ name: 'car-search' })" />
-            </div>
-          </div>
-        </div>
-      </template>
-    </PrimeGalleria>
-  </div>
   <div class=" text-center  my-4 animation-duration-2000 animation-ease-in-out">
-    <h2 class="text-3xl font-bold mb-2 text-gray-700">Our Featured Models</h2>
+    <h2 class="text-3xl font-bold mb-2 text-gray-700" style="margin-top: 4rem;">Our Featured Models</h2>
     <p class="text-gray-500" style="padding-left: 10px;
     padding-right: 10px;">Experience the pinnacle of automotive excellence with our curated selection of premium
       vehicles
@@ -217,6 +202,97 @@ const filterByModel = (modelName: string) => {
     </div>
   </div>
 
+  <div class="tile-bg">
+    <div class="surface-section px-5 py-5 md:px-6 lg:px-8 tile-bg">
+
+      <div class="grid ">
+        <div class="col-12 md:col-6 lg:col-6 ">
+          <PrimeCard>
+            <template #title>
+              <h2 class="text-3xl font-bold text-gray-900 mb-4">Premium Ownership Experience</h2>
+
+            </template>
+            <template #content>
+              <p class="text-gray-600 mb-6">
+                At LUXURY CARS, we go beyond simply selling vehicles. We offer a complete premium
+                ownership experience with personalized services designed to exceed your expectations.
+              </p>
+              <div>
+
+                <ul class="space-y-7">
+                  <li class="flex items-start">
+                    <span class="text-green-600 mr-3 mt-1">
+                      <i class="pi pi-check-circle text-xl"></i>
+                    </span>
+                    <span>Personalized vehicle delivery service</span>
+                  </li>
+                  <li class="flex items-start">
+                    <span class="text-green-600 mr-3 mt-1">
+                      <i class="pi pi-check-circle text-xl"></i>
+                    </span>
+                    <span>24/7 Roadside Assistance</span>
+                  </li>
+                  <li class="flex items-start">
+                    <span class="text-green-600 mr-3 mt-1">
+                      <i class="pi pi-check-circle text-xl"></i>
+                    </span>
+                    <span>Complimentary maintenance for 3 years</span>
+                  </li>
+                  <li class="flex items-start">
+                    <span class="text-green-600 mr-3 mt-1">
+                      <i class="pi pi-check-circle text-xl"></i>
+                    </span>
+                    <span>Exclusive owner events and experiences</span>
+                  </li>
+                  <li class="flex items-start">
+                    <span class="text-green-600 mr-3 mt-1">
+                      <i class="pi pi-check-circle text-xl"></i>
+                    </span>
+                    <span>Dedicated concierge service</span>
+                  </li>
+                </ul>
+              </div>
+            </template>
+          </PrimeCard>
+
+        </div>
+        <div class="col-12 md:col-6 lg:col-6">
+
+          <PrimeCard>
+            <template #title>
+              <h3 class="text-xl font-bold">Schedule a Test Drive</h3>
+            </template>
+            <template #content>
+              <!-- <p class="m-0"> -->
+              <div class="mb-4">
+
+
+                <InputText placeholder="Your Name" class="w-full" />
+              </div>
+              <div class="mb-4">
+
+                <InputText placeholder="Email Address" class="w-full" />
+              </div>
+              <div class="mb-4">
+
+                <InputText placeholder="Phone Number" class="w-full" />
+              </div>
+              <div class="mb-4">
+
+                <Dropdown :options="modelOptions" placeholder="Select Model" class="w-full" />
+              </div>
+              <div class="mb-4">
+                <PrimeButton label="Request Appointment" class="w-full bg-black text-white font-semibold" />
+              </div>
+              <!-- </p> -->
+            </template>
+          </PrimeCard>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 
 
 
@@ -269,9 +345,7 @@ const filterByModel = (modelName: string) => {
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
           <!-- <i class="pi pi-shield text-5xl mb-4"></i> -->
-          <svg viewBox="0 0 304 112" style="
-    height: 42px;
-">
+          <svg viewBox="0 0 304 112" style="height: 42px;">
             <title>Suzuka</title>
             <g stroke="none" fill="none" fill-rule="evenodd">
               <path
@@ -546,8 +620,9 @@ footer a {
 .hero-slide {
   position: relative;
   width: 100%;
-  height: 77vh;
+  height: 88vh;
   overflow: hidden;
+  margin-bottom: 2rem !important;
 }
 
 .hero-background {
@@ -622,7 +697,7 @@ footer a {
 
   .hero-galleria,
   .hero-slide {
-    height: 60vh;
+    height: 58vh;
   }
 
   .main-heading {
