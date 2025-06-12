@@ -131,11 +131,11 @@ const filterByModel = (modelName: string) => {
             <p class="text-lg text-white mb-8" style="font-family: 'Inter', sans-serif;">
               Premium vehicles at competitive prices
             </p>
-            <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex flex-col gap-4">
               <PrimeButton severity="secondary" label="Discover More"
-                class="w-full sm:w-auto px-6 py-3 rounded-full bg-white text-black font-medium text-base border-none" />
+                class="w-full rounded-full bg-white text-black font-medium  border-none" />
               <PrimeButton severity="contrast" label="Find & Buy"
-                class="p-button-lg w-full sm:w-auto"
+                class="w-full "
                 @click="router.push({ name: 'car-search' })" />
             </div>
           </div>
