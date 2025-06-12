@@ -134,16 +134,43 @@ const filterByModel = (modelName: string) => {
 </script>
 
 <template>
-<!-- Hero Section (Black Background) -->
+  <!-- Hero Section (Black Background) -->
   <PrimeGalleria :value="images" :numVisible="5" :circular="true" :autoPlay="true" :showThumbnails="false"
     :showItemNavigators="true" :showItemNavigatorsOnHover="true">
     <template #item="slotProps">
-      <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%;    object-fit: cover;
+      <div class="relative w-full">
+        <!-- Background Image -->
+        <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" class="w-full object-cover" style="width: 100%;    object-fit: cover;
     height: 38rem; display: block;" />
+
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black bg-opacity-40 z-10 flex items-center justify-start" style="bottom: 12rem;
+    left: 6rem;">
+          <div class="text-white px-6 md:px-16 max-w-xl">
+            <h1 class="text-5xl font-extrabold leading-tight mb-4" style="font-family: 'Inter', sans-serif;">
+              STANLEY<br />CAR SALES
+            </h1>
+            <p class="text-lg text-white mb-8" style="font-family: 'Inter', sans-serif;">
+              Premium vehicles at competitive prices
+            </p>
+
+
+            <div class="flex flex-col sm:flex-row gap-4">
+              <PrimeButton severity="secondary" label="Discover More"
+                class="w-full sm:w-auto px-6 py-3 rounded-full bg-white text-black font-medium text-base border-none" />
+
+              <PrimeButton severity="contrast" label="Find & Buy" class="p-button-lg w-full sm:w-auto"
+                @click="router.push({ name: 'car-search' })" />
+            </div>
+          </div>
+        </div>
+      </div>
     </template>
 
+
+
   </PrimeGalleria>
-  
+
 
   <div class=" text-center  my-4 animation-duration-2000 animation-ease-in-out">
     <h2 class="text-3xl font-bold mb-2 text-gray-700" style="margin-top: 4rem;">Our Featured Models</h2>
@@ -407,6 +434,10 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+.p-galleria .p-galleria-item-nav {
+  z-index: 1;
+}
+
 .text-right-btn {
   justify-content: flex-end !important;
   /* Align content (text) to the right */
