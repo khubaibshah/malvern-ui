@@ -3,7 +3,7 @@
     :class="'bg-' + backgroundColor + '-500 px-6  flex align-items-center justify-content-between relative lg:static '"
     style="z-index: 1000;">
     <router-link :to="{ name: 'home' }">
-      <img :src="newLogo" alt="Logo" class="logo-img mr-0 lg:mr-6 cursor-pointer" />
+      <img :src="newLogo" alt="Logo" class="logo-img lg:mr-6 cursor-pointer" />
     </router-link>
 
 
@@ -69,14 +69,13 @@
 import { ref } from 'vue';
 import router from '@/router/router';
 const backgroundColor = ref('white'); // Default color is indigo 
-import newLogo from '@/assets/img/newlogo.png';
+import newLogo from '@/assets/img/newlogo1.png';
 
 </script>
 
 <style scoped>
 .logo-img {
-  margin-top: 14px;
-  height: 77px;
+    margin-top: 5px;
   width: 90px;
   transform: scale(1.4);
 }
