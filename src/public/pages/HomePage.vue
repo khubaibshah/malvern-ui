@@ -322,12 +322,21 @@ const filterByModel = (modelName: string) => {
 .hero-galleria {
   position: absolute;
   inset: 0;
-  z-index: 10;
+  z-index: 1; /* lower than PrimeVue's nav buttons */
   display: flex;
   align-items: center;
   justify-content: flex-start;
   bottom: 2rem;
-  left: 6rem; /* <-- Move this from inline style */
+  left: 6rem;
+}
+
+::v-deep(.p-galleria-item-next),
+::v-deep(.p-galleria-item-prev) {
+  z-index: 5;
+}
+::v-deep(.p-galleria-item-next),
+::v-deep(.p-galleria-item-prev) {
+  pointer-events: auto;
 }
 
 

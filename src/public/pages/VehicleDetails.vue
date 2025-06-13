@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed,watch } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { getUkRegistrationLabel } from '@/utils/registration';
@@ -139,19 +139,17 @@ onMounted(fetchCar)
 
       <!-- images and thumbail section -->
       <div class="col-12 md:col-6 lg:col-8">
-<div
-  class="mb-4 border rounded overflow-hidden max-w-[200px] mx-auto touch-area"
-  @touchstart="startTouch"
-  @touchend="endTouch"
->          <img :src="mainImage" alt="Main Image" class="w-full h-[250px] object-cover rounded" style="
+        <div class="mb-4 border rounded overflow-hidden max-w-[200px] mx-auto touch-area" @touchstart="startTouch"
+          @touchend="endTouch"> <img :src="mainImage" alt="Main Image" class="w-full h-[250px] object-cover rounded"
+            style="
           border-radius: 12px;" />
 
         </div>
         <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
-          <img v-for="(img, idx) in images" :key="idx" :src="img"
-            class="object-cover rounded cursor-pointer border-2" style="    width: 7rem;
-          height: 5rem;" :class="{ 'border-blue-500': mainImage === img, 'border-gray-300': mainImage !== img }"    @click="() => { mainImage = img; currentImageIndex.value = idx }"
-/>
+          <img v-for="(img, idx) in images" :key="idx" :src="img" class="object-cover rounded cursor-pointer border-2"
+            style="    width: 7rem;
+          height: 5rem;" :class="{ 'border-blue-500': mainImage === img, 'border-gray-300': mainImage !== img }"
+            @click="() => { mainImage = img; currentImageIndex.value = idx }" />
         </div>
       </div>
 
@@ -166,29 +164,36 @@ onMounted(fetchCar)
           <template #content>
             <div>
               <div>
-                <i class="fa-solid fa-road"></i> <PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
+                <i class="fa-solid fa-road"></i>
+                <PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
               </div>
               <div>
-                <i class="fa-solid fa-calendar"></i> <PrimeTag severity="contrast" :value="registrationLabel" class="mb-2" />
+                <i class="fa-solid fa-calendar"></i>
+                <PrimeTag severity="contrast" :value="registrationLabel" class="mb-2" />
               </div>
               <div>
-                <i class="fa fa-key"></i> <PrimeTag severity="contrast" :value="car.keys" class="mb-2" />
+                <i class="fa fa-key"></i>
+                <PrimeTag severity="contrast" :value="car.keys" class="mb-2" />
               </div>
               <div>
-                <i class="fa-solid fa-gear"></i> <PrimeTag severity="contrast" :value="car.gearbox" class="mb-2" />
+                <i class="fa-solid fa-gear"></i>
+                <PrimeTag severity="contrast" :value="car.gearbox" class="mb-2" />
               </div>
               <div>
-                <i class="fa-solid fa-gear"></i> <PrimeTag severity="contrast" :value="car.engine_size" class="mb-2" />
+                <i class="fa-solid fa-gear"></i>
+                <PrimeTag severity="contrast" :value="car.engine_size" class="mb-2" />
               </div>
               <div>
-                <i class="fa-solid fa-car"></i> <PrimeTag severity="contrast" :value="car.body_style" class="mb-2" />
+                <i class="fa-solid fa-car"></i>
+                <PrimeTag severity="contrast" :value="car.body_style" class="mb-2" />
               </div>
               <div>
-                <i class="fa-solid fa-gas-pump"></i> <PrimeTag severity="contrast" :value="car.fuel_type" class="mb-2" />
+                <i class="fa-solid fa-gas-pump"></i>
+                <PrimeTag severity="contrast" :value="car.fuel_type" class="mb-2" />
               </div>
               <Accordion :activeIndex="0" style="padding-left: 0px;">
                 <AccordionTab header="Description">
-                <i class="pi pi-align-left mr-2"></i> 
+                  <i class="pi pi-align-left mr-2"></i>
 
                   <p class="text-gray-700 text-sm leading-relaxed">
                     {{ car.description }}
