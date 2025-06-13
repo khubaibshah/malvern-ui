@@ -22,10 +22,11 @@ const currentImageIndex = ref(0)
 
 watch(images, () => {
   if (images.value.length > 0) {
-    currentImageIndex.value = images.value.indexOf(car.value.main_image) || 0
-    mainImage.value = images.value[currentImageIndex.value]
+    const mainIdx = images.value.indexOf(car.value.main_image);
+    currentImageIndex.value = mainIdx !== -1 ? mainIdx : 0;
+    mainImage.value = images.value[currentImageIndex.value];
   }
-})
+});
 
 let startX = 0
 
