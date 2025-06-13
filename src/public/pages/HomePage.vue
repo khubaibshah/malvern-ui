@@ -11,6 +11,7 @@ const toast = useToast();
 
 const vehicles = ref([])
 const vehicle_model = ref()
+const loading = ref(true)
 
 const featuredVehicles = ref([]);
 const makeOptions = ref()
@@ -19,7 +20,7 @@ const variantOptions = ref()
 const images = ref([
   {
     itemImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=60',
-thumbnailImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=200&q=30',
+    thumbnailImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=200&q=30',
 
     alt: 'Audi Q8 in showroom'
   },
@@ -106,6 +107,8 @@ onMounted(async () => {
     }
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
+  } finally {
+    loading.value = false; // ← add this here
   }
 })
 
@@ -120,11 +123,9 @@ const filterByModel = (modelName: string) => {
     :showItemNavigators="true" :showItemNavigatorsOnHover="true">
     <template #item="slotProps">
       <div class="relative w-full">
-        <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt"
-             class="w-full object-cover"
-             style="width: 100%; object-fit: cover; height: 52rem; display: block;" />
-        <div class="absolute inset-0 bg-black bg-opacity-40 z-10 flex items-center justify-start hero-galleria"
-             >
+        <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" class="w-full object-cover"
+          style="width: 100%; object-fit: cover; height: 52rem; display: block;" />
+        <div class="absolute inset-0 bg-black bg-opacity-40 z-10 flex items-center justify-start hero-galleria">
           <div class="text-white px-6 md:px-16 max-w-xl">
             <h1 class="text-5xl font-extrabold leading-tight mb-4" style="font-family: 'Inter', sans-serif;">
               STANLEY<br />CAR SALES
@@ -135,8 +136,7 @@ const filterByModel = (modelName: string) => {
             <div class="flex flex-col gap-4">
               <PrimeButton severity="secondary" label="Discover More"
                 class="w-full rounded-full bg-white text-black font-medium  border-none" />
-              <PrimeButton severity="contrast" label="Find & Buy"
-                class="w-full "
+              <PrimeButton severity="contrast" label="Find & Buy" class="w-full "
                 @click="router.push({ name: 'car-search' })" />
             </div>
           </div>
@@ -153,14 +153,40 @@ const filterByModel = (modelName: string) => {
     </p>
   </div>
 
-  <div class="surface-section px-3  md:px-6 lg:px-8" v-if="featuredVehicles.length > 0">
-    <div class="grid mx-auto">
+  <!-- featured car section -->
+  <div class="surface-section px-3  md:px-6 lg:px-8">
+    <div class="grid" v-if="loading">
+      <!-- Skeletons while loading -->
+      <div class="col-12 md:col-6 lg:col-8">
+        <PrimeSkeleton width="100%" height="350px" class="mb-3 border-round mx-auto max-w-[400px]" />
+        <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
+          <PrimeSkeleton v-for="n in 4" :key="n" width="7rem" height="5rem" class="border-round" />
+        </div>
+      </div>
+
+      <div class="col-12 md:col-6 lg:col-4">
+        <PrimeCard class="w-full">
+          <template #title>
+            <PrimeSkeleton width="70%" class="mb-2" />
+          </template>
+          <template #content>
+            <PrimeSkeleton width="50%" class="mb-2" />
+            <PrimeSkeleton width="50%" class="mb-2" />
+            <PrimeSkeleton width="50%" class="mb-2" />
+            <PrimeSkeleton height="4rem" class="mt-4" />
+            <PrimeSkeleton width="100%" height="2.5rem" class="mt-3" />
+          </template>
+        </PrimeCard>
+      </div>
+    </div>
+    <div class="grid mx-auto" v-else-if="featuredVehicles" style="
+    justify-content: center;
+">
       <div v-for="(car, index) in featuredVehicles" :key="car.id"
         :class="`col-12 sm:col-6 lg:col-4 px-3 mb-5 md:col-${12 / featuredVehicles.length}`">
         <PrimeCard class="border-round-lg overflow-hidden hover-card">
           <template #header>
-            <img :src="car.images?.[0] || '/src/assets/img/default.jpg'"
-              :alt="car.make + ' ' + car.model"
+            <img :src="car.images?.[0] || '/src/assets/img/default.jpg'" :alt="car.make + ' ' + car.model"
               class="w-full h-40 object-cover border-top-round-lg" />
           </template>
           <template #title>
@@ -222,10 +248,18 @@ const filterByModel = (modelName: string) => {
               <h3 class="text-xl font-bold">Schedule a Test Drive</h3>
             </template>
             <template #content>
-              <div class="mb-4"><InputText placeholder="Your Name" class="w-full" /></div>
-              <div class="mb-4"><InputText placeholder="Email Address" class="w-full" /></div>
-              <div class="mb-4"><InputText placeholder="Phone Number" class="w-full" /></div>
-              <div class="mb-4"><Dropdown :options="modelOptions" placeholder="Select Model" class="w-full" /></div>
+              <div class="mb-4">
+                <InputText placeholder="Your Name" class="w-full" />
+              </div>
+              <div class="mb-4">
+                <InputText placeholder="Email Address" class="w-full" />
+              </div>
+              <div class="mb-4">
+                <InputText placeholder="Phone Number" class="w-full" />
+              </div>
+              <div class="mb-4">
+                <Dropdown :options="modelOptions" placeholder="Select Model" class="w-full" />
+              </div>
               <div class="mb-4">
                 <PrimeButton label="Request Appointment" class="w-full bg-black text-white font-semibold" />
               </div>
@@ -323,7 +357,8 @@ const filterByModel = (modelName: string) => {
 .hero-galleria {
   position: absolute;
   inset: 0;
-  z-index: 1; /* lower than PrimeVue's nav buttons */
+  z-index: 1;
+  /* lower than PrimeVue's nav buttons */
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -335,6 +370,7 @@ const filterByModel = (modelName: string) => {
 ::v-deep(.p-galleria-item-prev) {
   z-index: 5;
 }
+
 ::v-deep(.p-galleria-item-next),
 ::v-deep(.p-galleria-item-prev) {
   pointer-events: auto;
@@ -345,10 +381,10 @@ const filterByModel = (modelName: string) => {
 @media (max-width: 768px) {
   .hero-galleria {
     left: 0 !important;
-    justify-content: center; /* center text if needed */
-    text-align: center; /* optional for headline/p */
+    justify-content: center;
+    /* center text if needed */
+    text-align: center;
+    /* optional for headline/p */
   }
 }
-
-
 </style>
