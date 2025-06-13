@@ -18,23 +18,24 @@ const modelOptions = ref()
 const variantOptions = ref()
 const images = ref([
   {
-    itemImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?...',
-    thumbnailImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?...',
+    itemImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=60',
+thumbnailImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=200&q=30',
+
     alt: 'Audi Q8 in showroom'
   },
   {
-    itemImageSrc: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?...',
-    thumbnailImageSrc: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?...',
+    itemImageSrc: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=60',
+    thumbnailImageSrc: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=200&q=30',
     alt: 'Audi RS5 sportback'
   },
   {
-    itemImageSrc: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?...',
-    thumbnailImageSrc: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?...',
+    itemImageSrc: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=1200&q=60',
+    thumbnailImageSrc: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=200&q=30',
     alt: 'Audi e-tron electric SUV'
   },
   {
-    itemImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?...',
-    thumbnailImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?...',
+    itemImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=60',
+    thumbnailImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=200&q=30',
     alt: 'Audi A5 coupe'
   }
 ]);
@@ -121,7 +122,7 @@ const filterByModel = (modelName: string) => {
       <div class="relative w-full">
         <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt"
              class="w-full object-cover"
-             style="width: 100%; object-fit: cover; height: 38rem; display: block;" />
+             style="width: 100%; object-fit: cover; height: 52rem; display: block;" />
         <div class="absolute inset-0 bg-black bg-opacity-40 z-10 flex items-center justify-start hero-galleria"
              >
           <div class="text-white px-6 md:px-16 max-w-xl">
