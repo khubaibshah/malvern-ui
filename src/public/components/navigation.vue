@@ -1,7 +1,8 @@
 <template>
   <div
-    :class="'bg-' + backgroundColor + '-500 px-6  flex align-items-center justify-content-between relative lg:static '"
-    style="z-index: 1000;">
+    :class="'bg-' + backgroundColor + '-500 px-6  flex align-items-center justify-content-between fixed'"
+    style="z-index: 1000;    background-color: white;
+    width: 100%;height: 5rem;">
     <router-link :to="{ name: 'home' }">
       <img :src="newLogo" alt="Logo" class="logo-img lg:mr-6 cursor-pointer" />
     </router-link>
@@ -16,25 +17,19 @@
       :class="'align-items-center flex-grow-1 justify-content-between hidden lg:flex menu-container'">
       <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row">
         <li>
-<router-link
-  :to="{ name: 'home' }"
-  @click="closeMobileMenu"
-  class="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-md transition duration-150 cursor-pointer no-underline text-black"
->
-  <span>Home</span>
-</router-link>
+          <router-link :to="{ name: 'home' }" @click="closeMobileMenu"
+            class="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-md transition duration-150 cursor-pointer no-underline text-black">
+            <span>Home</span>
+          </router-link>
 
 
-      
+
         </li>
         <li>
-          <router-link
-  :to="{ name: 'car-search' }"
-  @click="closeMobileMenu"
-  class="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-md transition duration-150 cursor-pointer no-underline text-black"
->
-  <span>Find & Buy</span>
-</router-link>
+          <router-link :to="{ name: 'car-search' }" @click="closeMobileMenu"
+            class="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-md transition duration-150 cursor-pointer no-underline text-black">
+            <span>Find & Buy</span>
+          </router-link>
         </li>
 
         <!-- <li>
@@ -85,6 +80,7 @@ const closeMobileMenu = () => {
   margin-top: 5px;
   width: 90px;
   transform: scale(1.4);
+  
 }
 
 /* 👇 Fixes the menu stacking and layout */

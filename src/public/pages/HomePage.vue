@@ -121,7 +121,7 @@ const filterByModel = (modelName: string) => {
       <div class="relative w-full">
         <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt"
              class="w-full object-cover"
-             style="width: 100%; object-fit: cover; height: 38rem; display: block;" />
+             style="width: 100%; object-fit: cover; height: 44rem; display: block;" />
         <div class="absolute inset-0 bg-black bg-opacity-40 z-10 flex items-center justify-start hero-galleria"
              >
           <div class="text-white px-6 md:px-16 max-w-xl">
