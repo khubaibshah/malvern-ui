@@ -5,8 +5,13 @@ import Footer from './public/components/Footer.vue';
 
 <template>
 <Nav />
-  <div>
+  <div class="page-content">
     <router-view />
   </div>
 <Footer />
 </template>
+<style scoped>
+.page-content {
+  padding-top: 5rem; /* Match navbar height */
+}
+</style>
