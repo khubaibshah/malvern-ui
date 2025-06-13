@@ -66,3 +66,7 @@ a,
     padding: 0 2rem;
   }
 }
+
+a:visited {
+  color: black;
+}

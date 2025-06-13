@@ -16,25 +16,26 @@
       :class="'align-items-center flex-grow-1 justify-content-between hidden lg:flex menu-container'">
       <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row">
         <li>
-  <a
-    v-ripple
-    @click="router.push({ name: 'home' })"
-    class="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-md transition duration-150 cursor-pointer"
-  >
-    <!-- <i class="pi pi-home text-lg"></i> -->
-    <span>Home</span>
-  </a>
-</li>
-<li>
-  <a
-    v-ripple
-    @click="router.push({ name: 'car-search' })"
-    class="flex items-center gap-2 px-4 py-2  hover:bg-white/10 rounded-md transition duration-150 cursor-pointer"
-  >
-    <!-- <i class="pi pi-car text-lg"></i> -->
-    <span>Find & Buy</span>
-  </a>
-</li>
+<router-link
+  :to="{ name: 'home' }"
+  @click="closeMobileMenu"
+  class="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-md transition duration-150 cursor-pointer no-underline text-black"
+>
+  <span>Home</span>
+</router-link>
+
+
+      
+        </li>
+        <li>
+          <router-link
+  :to="{ name: 'car-search' }"
+  @click="closeMobileMenu"
+  class="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-md transition duration-150 cursor-pointer no-underline text-black"
+>
+  <span>Find & Buy</span>
+</router-link>
+        </li>
 
         <!-- <li>
           <a v-ripple @click="router.push({ name: 'vehicle-search' })"
@@ -48,7 +49,7 @@
       <ul class="list-none p-0 m-0 flex flex-column lg:flex-row select-none gap-3">
         <!-- Phone -->
         <li class="flex items-center">
-          <PrimeButton label="+44 1234 567890" icon="pi pi-phone" severity="contrast" class="text-sm"  raised />
+          <PrimeButton label="+44 1234 567890" icon="pi pi-phone" severity="contrast" class="text-sm" raised />
         </li>
 
 
@@ -70,12 +71,18 @@ import { ref } from 'vue';
 import router from '@/router/router';
 const backgroundColor = ref('white'); // Default color is indigo 
 import newLogo from '@/assets/img/newlogo1.png';
+const closeMobileMenu = () => {
+  const mobileMenu = document.getElementById('mobile-menu')
+  if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+    mobileMenu.classList.add('hidden')
+  }
+}
 
 </script>
 
 <style scoped>
 .logo-img {
-    margin-top: 5px;
+  margin-top: 5px;
   width: 90px;
   transform: scale(1.4);
 }
