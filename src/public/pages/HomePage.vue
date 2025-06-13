@@ -127,7 +127,7 @@ const filterByModel = (modelName: string) => {
           style="width: 100%; object-fit: cover; height: 52rem; display: block;" />
         <div class="absolute inset-0 bg-black bg-opacity-40 z-10 flex items-center justify-start hero-galleria">
           <div class="text-white px-6 md:px-16 max-w-xl">
-            <h1 class="text-5xl font-extrabold leading-tight mb-4" style="font-family: 'Inter', sans-serif;">
+            <h1 class="text-5xl font-extrabold leading-tight mb-4 fade-slide" style="font-family: 'Inter', sans-serif;">
               STANLEY<br />CAR SALES
             </h1>
             <p class="text-lg text-white mb-8" style="font-family: 'Inter', sans-serif;">
@@ -135,8 +135,8 @@ const filterByModel = (modelName: string) => {
             </p>
             <div class="flex flex-col gap-4">
               <PrimeButton severity="secondary" label="Discover More"
-                class="w-full rounded-full bg-white text-black font-medium  border-none" />
-              <PrimeButton severity="contrast" label="Find & Buy" class="w-full "
+                class="w-full rounded-full bg-white text-black font-large  border-none w-full"   variant="outlined" size="large"/>
+              <PrimeButton severity="contrast" label="Find & Buy" class="w-full"  variant="outlined" size="large"
                 @click="router.push({ name: 'car-search' })" />
             </div>
           </div>
@@ -336,6 +336,19 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+.fade-slide {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideIn 1s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .text-right-btn {
   justify-content: flex-end !important;
   text-align: right !important;
