@@ -5,7 +5,9 @@ import { useToast } from 'primevue/usetoast'
 import axios from 'axios'
 import { animate, svg, stagger } from 'animejs';
 import Carousel from 'primevue/carousel';
+import { useVehicleStore } from '@/stores/vehicleData'
 
+const vehicleStore = useVehicleStore()
 const router = useRouter();
 const toast = useToast();
 
@@ -63,53 +65,51 @@ const testimonials = ref([
 ]);
 
 onMounted(async () => {
+  // Animate your SVGs etc.
   animate(svg.createDrawable('.line'), {
     draw: ['0 0', '0 1', '1 1'],
     ease: 'inOutQuad',
     duration: 2000,
     delay: stagger(100),
     loop: true
-  });
+  })
 
-  animate('.car', {
-    ease: 'linear',
-    duration: 5000,
-    loop: true,
-    ...svg.createMotionPath('path')
-  });
-
-  animate(svg.createDrawable('path'), {
-    draw: '0 1',
-    ease: 'linear',
-    duration: 5000,
-    loop: true
-  });
-
-  try {
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-all-vehicles`);
-    if (response.status === 200) {
-      vehicles.value = response.data.cars || []
-      featuredVehicles.value = vehicles.value.filter(v => v.featured === 1)
-
-      const makes = new Set()
-      const models = new Set()
-      const variants = new Set()
-
-      vehicles.value.forEach((v: any) => {
-        if (v.make) makes.add(v.make)
-        if (v.model) models.add(v.model)
-        if (v.variant) variants.add(v.variant)
+  if (!vehicleStore.vehiclesLoaded) {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-all-vehicles`)
+      if (response.status === 200) {
+        vehicleStore.setVehicles(response.data.cars || [])
+      }
+    } catch (error) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to load car data',
+        life: 3000
       })
-
-      makeOptions.value = [...makes].map(m => ({ label: m, value: m }))
-      modelOptions.value = [...models].map(m => ({ label: m, value: m }))
-      variantOptions.value = [...variants].map(v => ({ label: v, value: v }))
     }
-  } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
-  } finally {
-    loading.value = false; // ← add this here
   }
+
+  // Use store directly
+  vehicles.value = vehicleStore.getVehicles
+  featuredVehicles.value = vehicleStore.getFeaturedVehicles
+
+  // Set options for filters
+  const makes = new Set()
+  const models = new Set()
+  const variants = new Set()
+
+  vehicles.value.forEach((v: any) => {
+    if (v.make) makes.add(v.make)
+    if (v.model) models.add(v.model)
+    if (v.variant) variants.add(v.variant)
+  })
+
+  makeOptions.value = [...makes].map(m => ({ label: m, value: m }))
+  modelOptions.value = [...models].map(m => ({ label: m, value: m }))
+  variantOptions.value = [...variants].map(v => ({ label: v, value: v }))
+
+  loading.value = false
 })
 
 const filterByModel = (modelName: string) => {

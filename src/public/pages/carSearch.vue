@@ -130,6 +130,12 @@ import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import FilterModel from '../components/filterModal.vue'
+
+import { useVehicleStore } from '@/stores/vehicleData' // adjust path as needed
+const vehicleStore = useVehicleStore()
+
+
+
 const toast = useToast()
 const vehicles = ref([])
 const layout = ref('grid')
@@ -143,34 +149,38 @@ const variantOptions = ref([])
 const loading = ref(true)
 const showFilters = ref(false);
 
-
-
 onMounted(async () => {
-  try {
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-all-vehicles`)
-    if (response.status === 200) {
-      vehicles.value = response.data.cars || []
-
-      const makes = new Set()
-      const models = new Set()
-      const variants = new Set()
-
-      vehicles.value.forEach((v: any) => {
-        if (v.make) makes.add(v.make)
-        if (v.model) models.add(v.model)
-        if (v.variant) variants.add(v.variant)
-      })
-
-      makeOptions.value = [...makes].map(m => ({ label: m, value: m }))
-      modelOptions.value = [...models].map(m => ({ label: m, value: m }))
-      variantOptions.value = [...variants].map(v => ({ label: v, value: v }))
+  if (vehicleStore.vehiclesLoaded) {
+    vehicles.value = vehicleStore.getVehicles
+  } else {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-all-vehicles`)
+      if (response.status === 200) {
+        vehicleStore.setVehicles(response.data.cars || [])
+        vehicles.value = vehicleStore.getVehicles
+      }
+    } catch (error) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
     }
-  } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
-  } finally {
-    loading.value = false
   }
+
+  const makes = new Set()
+  const models = new Set()
+  const variants = new Set()
+
+  vehicles.value.forEach((v: any) => {
+    if (v.make) makes.add(v.make)
+    if (v.model) models.add(v.model)
+    if (v.variant) variants.add(v.variant)
+  })
+
+  makeOptions.value = [...makes].map(m => ({ label: m, value: m }))
+  modelOptions.value = [...models].map(m => ({ label: m, value: m }))
+  variantOptions.value = [...variants].map(v => ({ label: v, value: v }))
+
+  loading.value = false
 })
+
 
 
 const filteredModelOptions = computed(() => {
