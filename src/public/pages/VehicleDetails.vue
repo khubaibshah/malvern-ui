@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed,watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { getUkRegistrationLabel } from '@/utils/registration';
@@ -15,6 +15,54 @@ const mainImage = ref<string>('')
 const loading = ref(true)
 import router from '@/router/router';
 import EnquiryForm from '../components/enquiryForm.vue';
+
+
+
+const currentImageIndex = ref(0)
+
+watch(images, () => {
+  if (images.value.length > 0) {
+    currentImageIndex.value = images.value.indexOf(car.value.main_image) || 0
+    mainImage.value = images.value[currentImageIndex.value]
+  }
+})
+
+let startX = 0
+
+const startTouch = (e: TouchEvent) => {
+  startX = e.changedTouches[0].clientX
+}
+
+const endTouch = (e: TouchEvent) => {
+  const endX = e.changedTouches[0].clientX
+  const deltaX = endX - startX
+
+  if (Math.abs(deltaX) > 50) {
+    if (deltaX < 0) {
+      // swipe left
+      nextImage()
+    } else {
+      // swipe right
+      prevImage()
+    }
+  }
+}
+
+const nextImage = () => {
+  if (currentImageIndex.value < images.value.length - 1) {
+    currentImageIndex.value++
+    mainImage.value = images.value[currentImageIndex.value]
+  }
+}
+
+const prevImage = () => {
+  if (currentImageIndex.value > 0) {
+    currentImageIndex.value--
+    mainImage.value = images.value[currentImageIndex.value]
+  }
+}
+
+
 const responsiveOptions = ref([
   { breakpoint: '1300px', numVisible: 4 },
   { breakpoint: '575px', numVisible: 1 }
@@ -91,15 +139,19 @@ onMounted(fetchCar)
 
       <!-- images and thumbail section -->
       <div class="col-12 md:col-6 lg:col-8">
-        <div class="mb-4 border rounded overflow-hidden max-w-[200px] mx-auto">
-          <img :src="mainImage" alt="Main Image" class="w-full h-[250px] object-cover rounded" style="
+<div
+  class="mb-4 border rounded overflow-hidden max-w-[200px] mx-auto touch-area"
+  @touchstart="startTouch"
+  @touchend="endTouch"
+>          <img :src="mainImage" alt="Main Image" class="w-full h-[250px] object-cover rounded" style="
           border-radius: 12px;" />
 
         </div>
         <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
-          <img v-for="(img, idx) in images" :key="idx" :src="img" @click="mainImage = img"
+          <img v-for="(img, idx) in images" :key="idx" :src="img"
             class="object-cover rounded cursor-pointer border-2" style="    width: 7rem;
-          height: 5rem;" :class="{ 'border-blue-500': mainImage === img, 'border-gray-300': mainImage !== img }" />
+          height: 5rem;" :class="{ 'border-blue-500': mainImage === img, 'border-gray-300': mainImage !== img }"    @click="() => { mainImage = img; currentImageIndex.value = idx }"
+/>
         </div>
       </div>
 
