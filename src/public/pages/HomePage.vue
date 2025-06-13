@@ -152,7 +152,7 @@ const filterByModel = (modelName: string) => {
     </p>
   </div>
 
-  <div class="surface-section px-3 py-5 md:px-6 lg:px-8" v-if="featuredVehicles.length > 0">
+  <div class="surface-section px-3  md:px-6 lg:px-8" v-if="featuredVehicles.length > 0">
     <div class="grid mx-auto">
       <div v-for="(car, index) in featuredVehicles" :key="car.id"
         :class="`col-12 sm:col-6 lg:col-4 px-3 mb-5 md:col-${12 / featuredVehicles.length}`">
@@ -187,7 +187,7 @@ const filterByModel = (modelName: string) => {
 
   <!-- Value Props (Black Background) -->
   <div class="tile-bg">
-    <div class="surface-section px-5 py-5 md:px-6 lg:px-8 tile-bg">
+    <div class="surface-section px-5 md:px-6 lg:px-8 tile-bg">
       <div class="grid">
         <div class="col-12 md:col-6 lg:col-6">
           <PrimeCard>
