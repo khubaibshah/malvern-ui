@@ -147,8 +147,8 @@ const handleSubmit = async () => {
             life: 3000
         });
 
-        vehicleStore.setVehicleData(null);
-        vehicleStore.setVehicleReg(null);
+        // vehicleStore.setVehicleData(null);
+        // vehicleStore.setVehicleReg(null);
 
         form.value = { name: '', email: '', phone: '', message: '' };
     } catch (err) {

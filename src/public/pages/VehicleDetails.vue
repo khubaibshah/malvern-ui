@@ -163,53 +163,52 @@ onMounted(fetchCar)
             <div class="text-3xl font-medium text-900">{{ car.make }} {{ car.model }} {{ car.variant }}</div>
           </template>
           <template #content>
-            <div>
-              <div>
-                <i class="fa-solid fa-road"></i>
-                <PrimeTag severity="contrast" :value="car.mileage?.toLocaleString() + ` Miles`" class="mb-2" />
+            <div class="grid grid-cols-2 gap-4 text-gray-800 text-sm" style="margin:0rem">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-road text-lg text-gray-500"></i>
+                <span>{{ car.mileage?.toLocaleString() }} Miles</span>
               </div>
-              <div>
-                <i class="fa-solid fa-calendar"></i>
-                <PrimeTag severity="contrast" :value="registrationLabel" class="mb-2" />
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-calendar text-lg text-gray-500"></i>
+                <span>{{ registrationLabel }}</span>
               </div>
-              <div>
-                <i class="fa fa-key"></i>
-                <PrimeTag severity="contrast" :value="car.keys" class="mb-2" />
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-key text-lg text-gray-500"></i>
+                <span>{{ car.keys || 'N/A' }}</span>
               </div>
-              <div>
-                <i class="fa-solid fa-gear"></i>
-                <PrimeTag severity="contrast" :value="car.gearbox" class="mb-2" />
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-gear text-lg text-gray-500"></i>
+                <span>{{ car.gearbox }}</span>
               </div>
-              <div>
-                <i class="fa-solid fa-gear"></i>
-                <PrimeTag severity="contrast" :value="car.engine_size" class="mb-2" />
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-car-side text-lg text-gray-500"></i>
+                <span>{{ car.body_style }}</span>
               </div>
-              <div>
-                <i class="fa-solid fa-car"></i>
-                <PrimeTag severity="contrast" :value="car.body_style" class="mb-2" />
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-gas-pump text-lg text-gray-500"></i>
+                <span>{{ car.fuel_type }}</span>
               </div>
-              <div>
-                <i class="fa-solid fa-gas-pump"></i>
-                <PrimeTag severity="contrast" :value="car.fuel_type" class="mb-2" />
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-gear text-lg text-gray-500"></i>
+                <span>{{ car.engine_size }}</span>
               </div>
-              <Accordion :activeIndex="0" style="padding-left: 0px;">
-                <AccordionTab header="Description">
-                  <i class="pi pi-align-left mr-2"></i>
-
-                  <p class="text-gray-700 text-sm leading-relaxed">
-                    {{ car.description }}
-                  </p>
-
-                </AccordionTab>
-
-              </Accordion>
-              <!-- <p class="text-gray-500 text-sm mb-3">Reg: {{ car.registration }}</p> -->
-              <p class="text-2xl text-green-600 font-bold mb-4">£{{ car.price?.toLocaleString() }}</p>
-              <PrimeButton label="Enquire / Book Test Drive" class="w-full custom-black-button"
-                @click="handleEnquireClick" />
-
             </div>
+
+            <Accordion :activeIndex="0" class="mt-5">
+              <AccordionTab header="Description">
+                <i class="pi pi-align-left mr-2"></i>
+                <p class="text-gray-700 text-sm leading-relaxed">
+                  {{ car.description }}
+                </p>
+              </AccordionTab>
+            </Accordion>
+
+            <p class="text-2xl text-green-600 font-bold mt-5 mb-4">£{{ car.price?.toLocaleString() }}</p>
+
+            <PrimeButton label="Enquire / Book Test Drive" class="w-full custom-black-button"
+              @click="handleEnquireClick" />
           </template>
+
         </PrimeCard>
 
       </div>

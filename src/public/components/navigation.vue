@@ -61,8 +61,15 @@
 
     <!-- Desktop Contact Buttons (Far Right Side) -->
     <div class="hidden lg:flex items-center gap-4 w-full flex-row-reverse">
-      <PrimeButton label="+44 1234 567890" icon="pi pi-phone" severity="contrast" class="text-sm" raised />
-      <PrimeButton label="Sales@scscarsales.co.uk" icon="pi pi-envelope" severity="contrast" class="text-sm" raised />
+      <PrimeButton label="+44 1234 567890" icon="pi pi-phone" severity="contrast" class="text-sm" raised  />
+<PrimeButton
+  label="sales@scscarsales.co.uk"
+  icon="pi pi-envelope"
+  severity="contrast"
+  class="text-sm"
+  raised
+  @click="window.location.href='mailto:sales@scscarsales.co.uk'"
+/>
     </div>
   </div>
 </template>
