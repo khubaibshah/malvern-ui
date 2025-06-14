@@ -57,7 +57,7 @@
                             <div><i class="pi pi-clock mr-2"></i> {{ car.mileage?.toLocaleString() }} miles</div>
                             <div><i class="pi pi-calendar mr-2"></i> {{ car.registration_date }}</div>
                             <div><i class="pi pi-cog mr-2"></i> {{ car.gearbox }}</div>
-                            <div><i class="pi pi-sliders-h mr-2"></i> {{ car.engine_size }}</div>
+                            <div><i class="pi pi-sliders-h mr-2"></i> {{ formattedEngineSize }}</div>
                             <div><i class="pi pi-key mr-2"></i> {{ car.keys }}</div>
                             <div><i class="pi pi-car mr-2"></i> {{ car.body_style }}</div>
                             <div><i class="fa-solid fa-gas-pump mr-2"> </i> {{ car.fuel_type }}</div>
@@ -91,9 +91,11 @@ import Button from 'primevue/button';
 import Toast from 'primevue/toast';
 import axios from 'axios';
 import { useVehicleStore } from '@/stores/vehicleData';
+import { formatEngineSize } from '@/utils/engineSizeFormat';
 
 const vehicleStore = useVehicleStore();
 const car = computed(() => vehicleStore.getVehicleData);
+const formattedEngineSize = computed(() => formatEngineSize(car.value?.engine_size));
 
 // Optional: Fallback if data is missing
 // onMounted(() => {

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { formatEngineSize } from '@/utils/engineSizeFormat';
+
+
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
@@ -13,6 +16,10 @@ const images = ref<string[]>([])
 const galleriaItems = ref<any[]>([])
 const mainImage = ref<string>('')
 const loading = ref(true)
+const formattedEngineSize = computed(() => formatEngineSize(car.value?.engine_size));
+
+
+
 import router from '@/router/router';
 import EnquiryForm from '../components/enquiryForm.vue';
 
@@ -93,12 +100,6 @@ const fetchCar = async () => {
     loading.value = false
   }
 }
-
-const formattedEngineSize = computed(() => {
-  const size = parseFloat(car.value?.engine_size);
-  if (!size || isNaN(size)) return 'N/A';
-  return `${(size / 1000).toFixed(1)}L`;
-});
 
 
 const registrationLabel = computed(() => {
@@ -198,7 +199,7 @@ onMounted(fetchCar)
               </div>
               <div class="flex items-center gap-2">
                 <i class="fa-solid fa-gear text-lg text-gray-500"></i>
-                <span>{{ formattedEngineSize }}</span>
+<span>{{ formattedEngineSize }}</span>
               </div>
             </div>
 
