@@ -93,6 +93,14 @@ const fetchCar = async () => {
     loading.value = false
   }
 }
+
+const formattedEngineSize = computed(() => {
+  const size = parseFloat(car.value?.engine_size);
+  if (!size || isNaN(size)) return 'N/A';
+  return `${(size / 1000).toFixed(1)}L`;
+});
+
+
 const registrationLabel = computed(() => {
   const dateStr = car.value?.registration_date || car.value?.reg_date || '';
   return dateStr ? getUkRegistrationLabel(dateStr) : '';
@@ -190,7 +198,7 @@ onMounted(fetchCar)
               </div>
               <div class="flex items-center gap-2">
                 <i class="fa-solid fa-gear text-lg text-gray-500"></i>
-                <span>{{ car.engine_size }}</span>
+                <span>{{ formattedEngineSize }}</span>
               </div>
             </div>
 
