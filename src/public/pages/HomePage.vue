@@ -155,7 +155,7 @@ const filterByModel = (modelName: string) => {
   </PrimeGalleria>
 
   <!-- Featured Vehicles -->
-  <div class="text-center my-4">
+  <div class="text-center mb-8">
     <h2 class="text-3xl font-bold mb-2 text-gray-700" style="margin-top: 4rem;">Our Featured Models</h2>
     <p class="text-gray-500" style="padding: 0 10px;">
       Experience the pinnacle of automotive excellence with our curated selection of premium vehicles
@@ -222,93 +222,76 @@ const filterByModel = (modelName: string) => {
   </div>
 
   <!-- call back request form -->
-  <!-- <div class="tile-bg"> -->
-<div class="surface-section px-3 md:px-6 lg:px-8">
-  <div class="grid">
-    
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold mb-2 text-gray-700" style="margin-top: 4rem;">Schedule a Test Drive</h2>
 
-    <!-- Callback form -->
-    <div class="col-12 md:col-6 lg:col-6">
-      <PrimeCard>
-        <template #title>
-          <h3 class="text-xl font-bold">Schedule a Test Drive</h3>
-          <p class="text-lg" style="font-family: 'Inter', sans-serif;">
-              Fill out the form below to request a test drive appointment for your selected vehicle.
-            </p>
-        </template>
-        <template #content>
-          <div class="mb-4">
-            <InputText placeholder="Your Name" class="w-full" />
+    <!-- <h3 class="text-xl font-bold">Schedule a Test Drive</h3> -->
+    <p class="text-gray-500">
+      Fill out the form below to request a test drive appointment for your selected vehicle.
+    </p>
+  </div>
+  <div class="surface-section px-3 md:px-6 lg:px-8">
+    <div class="grid">
+
+
+      <!-- Callback form -->
+      <div class="col-12 md:col-6 lg:col-6">
+        <PrimeCard>
+          <template #title>
+
+
+          </template>
+          <template #content>
+            <div class="mb-4">
+              <InputText placeholder="Your Name" class="w-full" />
+            </div>
+            <div class="mb-4">
+              <InputText placeholder="Email Address" class="w-full" />
+            </div>
+            <div class="mb-4">
+              <InputText placeholder="Phone Number" class="w-full" />
+            </div>
+            <div class="mb-4">
+              <Dropdown v-model="vehicle_model" :options="vehicleOptions" placeholder="Selected Vehicle" class="w-full"
+                :disabled="true" />
+            </div>
+            <div class="mb-4">
+              <PrimeButton label="Request Appointment" class="w-full bg-black text-white font-semibold"
+                severity="contrast" />
+            </div>
+          </template>
+        </PrimeCard>
+      </div>
+
+      <!-- Vehicle selection carousel -->
+      <div class="col-12 md:col-6 lg:col-6">
+        <div class="flex overflow-x-auto gap-4 pb-2"
+          style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
+          <div v-for="(car, index) in vehicles" :key="car.id" class="flex-shrink-0"
+            style="scroll-snap-align: start; width: 22rem;">
+            <PrimeCard style="width: 100%; overflow: hidden;">
+              <template #header>
+                <img :src="car.images?.[0] || '/src/assets/img/default.jpg'" :alt="car.make + ' ' + car.model"
+                  class="w-full h-40 object-cover border-top-round-lg" />
+              </template>
+              <template #title>{{ car.make }} {{ car.model }}</template>
+              <template #subtitle>{{ car.variant || 'No Variant' }}</template>
+              <template #content>
+                <p class="m-0 text-sm text-gray-700">
+                  Discover the thrill of driving {{ car.make }}'s {{ car.model }} — packed with features, performance,
+                  and style.
+                </p>
+              </template>
+              <template #footer>
+                <PrimeButton label="Select This Car" size="small" @click="vehicle_model = car.id" class="w-full"
+                  :outlined="vehicle_model !== car.id" :severity="vehicle_model === car.id ? 'success' : 'secondary'" />
+              </template>
+            </PrimeCard>
           </div>
-          <div class="mb-4">
-            <InputText placeholder="Email Address" class="w-full" />
-          </div>
-          <div class="mb-4">
-            <InputText placeholder="Phone Number" class="w-full" />
-          </div>
-          <div class="mb-4">
-            <Dropdown
-              v-model="vehicle_model"
-              :options="vehicleOptions"
-              placeholder="Selected Vehicle"
-              class="w-full"
-              :disabled="true"
-            />
-          </div>
-          <div class="mb-4">
-            <PrimeButton
-              label="Request Appointment"
-              class="w-full bg-black text-white font-semibold"
-              severity="contrast"
-            />
-          </div>
-        </template>
-      </PrimeCard>
-    </div>
-    
-    <!-- Vehicle selection carousel -->
-    <div class="col-12 md:col-6 lg:col-6">
-      <div
-        class="flex overflow-x-auto gap-4 pb-2"
-        style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;"
-      >
-        <div
-          v-for="(car, index) in vehicles"
-          :key="car.id"
-          class="flex-shrink-0"
-          style="scroll-snap-align: start; width: 22rem;"
-        >
-          <PrimeCard style="width: 100%; overflow: hidden;">
-            <template #header>
-              <img
-                :src="car.images?.[0] || '/src/assets/img/default.jpg'"
-                :alt="car.make + ' ' + car.model"
-                class="w-full h-40 object-cover border-top-round-lg"
-              />
-            </template>
-            <template #title>{{ car.make }} {{ car.model }}</template>
-            <template #subtitle>{{ car.variant || 'No Variant' }}</template>
-            <template #content>
-              <p class="m-0 text-sm text-gray-700">
-                Discover the thrill of driving {{ car.make }}'s {{ car.model }} — packed with features, performance, and style.
-              </p>
-            </template>
-            <template #footer>
-              <PrimeButton
-                label="Select This Car"
-                size="small"
-                @click="vehicle_model = car.id"
-                class="w-full"
-                :outlined="vehicle_model !== car.id"
-                :severity="vehicle_model === car.id ? 'success' : 'secondary'"
-              />
-            </template>
-          </PrimeCard>
         </div>
       </div>
     </div>
   </div>
-</div>
 
   <!-- </div> -->
 
