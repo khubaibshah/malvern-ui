@@ -156,7 +156,7 @@ const filterByModel = (modelName: string) => {
           style="font-family: 'Open Sans', sans-serif; font-weight: 300;">
           Premium Pre-Owned Vehicles · Exceptional Value · Trusted Service
         </p>
-        <PrimeButton label="Browse Inventory" class="p-button-lg animate-fade-in-up delay-200" severity="contrast"
+        <PrimeButton label="Browse Vehicles" class="p-button-lg animate-fade-in-up delay-200" severity="contrast"
           @click="$router.push({ name: 'car-search' })" />
       </div>
     </div>
