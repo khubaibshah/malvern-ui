@@ -20,13 +20,21 @@ const vehicles = ref([])
 const vehicle_model = ref()
 const loading = ref(true)
 
+const form = ref({
+  name: '',
+  email: '',
+  phone: '',
+  vehicle_id: null
+});
+
+const submitting = ref(false);
 
 const vehicleOptions = ref([]);
 const slideText = computed(() => {
   return [
     { title: 'Stanley Car Sales', subtitle: 'Premium Pre-Owned Vehicles · Trusted Service' },
-    { title: 'Find Your Dream Supercar', subtitle: 'Unmatched Selection, Unbeatable Deals' },
-    { title: 'Drive Luxury Today', subtitle: 'Your Next Adventure Starts Here' }
+    { title: 'Find Your Dream Car', subtitle: 'Unmatched Selection, Unbeatable Deals' },
+    { title: 'Drive Away Today', subtitle: 'Your Next Adventure Starts Here' }
   ][currentIndex.value]
 })
 
@@ -77,6 +85,35 @@ const currentIndex = ref(0);
 const currentSlide = computed(() => images.value[currentIndex.value]);
 
 let interval: any = null;
+const submitTestDriveRequest = async () => {
+  console.log('Requesting to:', `${import.meta.env.VITE_API_BASE_URL}/scs/schedule-test-drive`);
+  console.log('Submitting form:', form.value); // <-- add this
+
+
+      if (!form.value.name || !form.value.email || !form.value.phone || !form.value.vehicle_id) {
+      toast.add({ severity: 'warn', summary: 'Incomplete', detail: 'Please fill out all fields and select a vehicle to schedule a test drive', life: 3000 });
+      return;
+    }
+
+  submitting.value = true;
+
+  try {
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/scs/schedule-test-drive`, {
+      name: form.value.name,
+      email: form.value.email,
+      phone: form.value.phone,
+      vehicle_id: form.value.vehicle_id
+    });
+
+
+    toast.add({ severity: 'success', summary: 'Request Sent', detail: 'We will contact you shortly!', life: 3000 });
+    form.value = { name: '', email: '', phone: '', vehicle_id: null };
+  } catch (err) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong. Try again.', life: 3000 });
+  } finally {
+    submitting.value = false;
+  }
+};
 
 
 onUnmounted(() => {
@@ -144,8 +181,7 @@ const filterByModel = (modelName: string) => {
 </script>
 
 <template>
-
-  <!-- Add this right after the opening <template> tag -->
+  <PrimeToast />
   <div class="hero-section   overflow-hidden">
     <!-- Background Images with Transition -->
     <transition name="fade" mode="out-in">
@@ -173,24 +209,6 @@ const filterByModel = (modelName: string) => {
         </div>
       </div>
     </transition>
-
-
-    <!-- Overlay Content - Positioned bottom right with 4rem offset -->
-    <!-- <div class="z-10 absolute text-center" style="bottom:15rem">
-      <div class=" text-white">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-fade-in-up">
-          Premium Audi Selections
-        </h1>
-        <p class="text-xl md:text-2xl mb-8 animate-fade-in-up delay-100">
-          Experience luxury performance with our curated collection
-        </p>
-        <PrimeButton label="Browse Inventory" class="p-button-lg animate-fade-in-up delay-200"
-          @click="$router.push({ name: 'inventory' })" />
-      </div>
-    </div> -->
-
-    <!-- Indicator Dots - Centered at bottom -->
-
   </div>
 
   <!-- Featured Vehicles -->
@@ -269,32 +287,43 @@ const filterByModel = (modelName: string) => {
   </div>
   <div class="surface-section px-3 md:px-6 lg:px-8">
     <div class="grid">
-
-
       <!-- Callback form -->
       <div class="col-12 md:col-6 lg:col-6">
         <PrimeCard>
           <template #title>
-
-
+            <p class="text-gray-500" style="padding: 0 10px;">
+              Please fill out your details and select a vehicle for a call back
+            </p>
           </template>
           <template #content>
             <div class="mb-4">
-              <InputText placeholder="Your Name" class="w-full" />
+              <InputText placeholder="Your Name" class="w-full" v-model="form.name" />
             </div>
             <div class="mb-4">
-              <InputText placeholder="Email Address" class="w-full" />
+              <InputText placeholder="Email Address" class="w-full" v-model="form.email" />
             </div>
             <div class="mb-4">
-              <InputText placeholder="Phone Number" class="w-full" />
+              <InputText placeholder="Phone Number" class="w-full" v-model="form.phone" />
             </div>
             <div class="mb-4">
-              <Dropdown v-model="vehicle_model" :options="vehicleOptions" placeholder="Selected Vehicle" class="w-full"
-                :disabled="true" />
+              <!-- <Dropdown
+  :v-model="vehicleOptions.find(opt => opt.value === form.vehicle_id)?.label || 'Unknown Vehicle'"
+  :options="vehicleOptions"
+  placeholder="Selected Vehicle"
+  class="w-full"
+  :disabled="true"
+/> -->
+<p class="text-md text-gray-600 mt-2" v-if="form.vehicle_id">
+  Selected: {{
+    vehicleOptions.find(opt => opt.value === form.vehicle_id)?.label || 'Unknown Vehicle'
+  }}
+</p>
+
             </div>
             <div class="mb-4">
               <PrimeButton label="Request Appointment" class="w-full bg-black text-white font-semibold"
-                severity="contrast" />
+                severity="contrast" :loading="submitting" @click="submitTestDriveRequest()" />
+
             </div>
           </template>
         </PrimeCard>
@@ -306,7 +335,14 @@ const filterByModel = (modelName: string) => {
           style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
           <div v-for="(car, index) in vehicles" :key="car.id" class="flex-shrink-0"
             style="scroll-snap-align: start; width: 22rem;">
-            <PrimeCard style="width: 100%; overflow: hidden;">
+            <PrimeCard
+  :class="{
+    'ring-2 ring-green-500': form.vehicle_id === car.id,
+    'hover-card': true
+  }"
+  style="width: 100%; overflow: hidden;"
+>
+
               <template #header>
                 <img :src="car.images?.[0] || '/src/assets/img/default.jpg'" :alt="car.make + ' ' + car.model"
                   class="w-full h-40 object-cover border-top-round-lg" />
@@ -320,8 +356,15 @@ const filterByModel = (modelName: string) => {
                 </p>
               </template>
               <template #footer>
-                <PrimeButton label="Select This Car" size="small" @click="vehicle_model = car.id" class="w-full"
-                  :outlined="vehicle_model !== car.id" :severity="vehicle_model === car.id ? 'success' : 'secondary'" />
+               <PrimeButton
+  label="Select This Car"
+  size="small"
+  @click="form.vehicle_id = car.id"
+  class="w-full"
+  :outlined="form.vehicle_id !== car.id"
+  :severity="form.vehicle_id === car.id ? 'success' : 'secondary'"
+/>
+
               </template>
             </PrimeCard>
           </div>
