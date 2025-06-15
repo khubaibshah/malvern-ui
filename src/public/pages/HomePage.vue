@@ -162,19 +162,13 @@ const filterByModel = (modelName: string) => {
           </h1>
           <PrimeButton label="Browse Vehicles" class="mb-4" severity="contrast"
             @click="$router.push({ name: 'car-search' })" />
-         <div class="flex justify-center gap-3 mt-6">
-  <button
-    v-for="(image, index) in images"
-    :key="index"
-    @click="currentIndex = index"
-    class="dot-button"
-    :class="{
-      'dot-active': currentIndex === index,
-      'dot-inactive': currentIndex !== index
-    }"
-    aria-label="Slide navigation button"
-  />
-</div>
+          <div class="flex justify-center gap-3 mt-6">
+            <button v-for="(image, index) in images" :key="index" @click="currentIndex = index" class="dot-button"
+              :class="{
+                'dot-active': currentIndex === index,
+                'dot-inactive': currentIndex !== index
+              }" aria-label="Slide navigation button" />
+          </div>
 
         </div>
       </div>
@@ -405,31 +399,30 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
-
-
 @media (max-width: 768px) {
   .dot-button {
-  width: 16px;
-  height: 16px;
-  border-radius: 9999px;
-  border: 2px solid white;
-  background-color: transparent;
-  transition: all 0.3s ease;
-  left:10rem;
-}
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    border: 2px solid white;
+    background-color: transparent;
+    transition: all 0.3s ease;
+    left: 10rem;
+  }
 
-.dot-button:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-}
+  .dot-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
 
-.dot-active {
-  background-color: white;
-  transform: scale(1.2);
-}
+  .dot-active {
+    background-color: white;
+    transform: scale(1.2);
+  }
 
-.dot-inactive {
-  background-color: transparent;
-}
+  .dot-inactive {
+    background-color: transparent;
+  }
+
   .hero-section {
     position: relative;
     width: 100%;
@@ -459,26 +452,27 @@ const filterByModel = (modelName: string) => {
 
 @media (min-width: 768px) {
   .dot-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 9999px;
-  border: 2px solid white;
-  background-color: transparent;
-  transition: all 0.3s ease;
-}
+    width: 25px;
+    height: 25px;
+    border-radius: 9999px;
+    border: 2px solid white;
+    background-color: transparent;
+    transition: all 0.3s ease;
+  }
 
-.dot-button:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-}
+  .dot-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
 
-.dot-active {
-  background-color: white;
-  transform: scale(1.2);
-}
+  .dot-active {
+    background-color: white;
+    transform: scale(1.2);
+  }
 
-.dot-inactive {
-  background-color: transparent;
-}
+  .dot-inactive {
+    background-color: transparent;
+  }
+
   .hero-section {
     position: relative;
     width: 100%;

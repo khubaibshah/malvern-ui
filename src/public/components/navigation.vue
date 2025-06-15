@@ -88,11 +88,7 @@ const closeMobileMenu = () => {
 </script>
 
 <style scoped>
-.logo-img {
-  margin-top: 5px;
-  width: 90px;
-  transform: scale(1.4);
-}
+
 
 .menu-container {
   position: absolute;
@@ -110,7 +106,21 @@ const closeMobileMenu = () => {
   margin-bottom: 0.5rem;
 }
 
+@media (max-width: 768px) {
+.logo-img {
+  position: absolute;
+  top: 0px;
+  left: 26px;
+  width: 83px;
+  transform: scale(1.4);
+}
+
+}
 @media (min-width: 1024px) {
+    .logo-img{
+    width: 100px;
+    height: auto;
+  }
   .menu-container {
     position: static;
     box-shadow: none;
