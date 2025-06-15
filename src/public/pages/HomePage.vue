@@ -148,28 +148,21 @@ const filterByModel = (modelName: string) => {
   <div class="hero-section   overflow-hidden">
     <!-- Background Images with Transition -->
     <transition name="fade" mode="out-in">
-  <div :key="currentIndex" class="hero-slide relative w-full h-full">
-    <!-- Background Image -->
-    <img
-      :src="currentSlide.itemImageSrc"
-      :alt="currentSlide.alt"
-      class="w-full h-full object-cover absolute top-0 left-0 z-0"
-    />
+      <div :key="currentIndex" class="hero-slide relative w-full h-full">
+        <!-- Background Image -->
+        <img :src="currentSlide.itemImageSrc" :alt="currentSlide.alt"
+          class="w-full h-full object-cover absolute top-0 left-0 z-0" />
 
-    <!-- Overlay Content -->
-    <div class="z-10 absolute overlay-content text-white">
-      <h1 class="text-4xl md:text-6xl font-bold mb-4 animate-fade-in-up" style="font-family: 'Montserrat', sans-serif;">
-        {{ slideText.title }}
-      </h1>
-      <PrimeButton
-        label="Browse Vehicles"
-        
-        severity="contrast"
-        @click="$router.push({ name: 'car-search' })"
-      />
-    </div>
-  </div>
-</transition>
+        <!-- Overlay Content -->
+        <div class="z-10 absolute overlay-content text-white">
+          <h1 class="text-4xl md:text-6xl font-bold mb-4 animate-fade-in-up"
+            style="font-family: 'Montserrat', sans-serif;">
+            {{ slideText.title }}
+          </h1>
+          <PrimeButton label="Browse Vehicles" severity="contrast" @click="$router.push({ name: 'car-search' })" />
+        </div>
+      </div>
+    </transition>
 
 
     <!-- Overlay Content - Positioned bottom right with 4rem offset -->
@@ -474,7 +467,7 @@ const filterByModel = (modelName: string) => {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 1.5s ease;
+  transition: opacity 1.1s ease;
 }
 
 .fade-enter-from,
@@ -493,7 +486,7 @@ const filterByModel = (modelName: string) => {
 }
 
 .delay-200 {
-  animation-delay: 0.2s;
+  animation-delay: 0.1s;
 }
 
 @keyframes fadeInUp {
