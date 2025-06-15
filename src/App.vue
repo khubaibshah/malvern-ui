@@ -6,6 +6,7 @@ import Footer from './public/components/Footer.vue';
 <template>
 <Nav />
   <div class="page-content">
+    <PrimeScrollTop />
     <router-view />
   </div>
 <Footer />

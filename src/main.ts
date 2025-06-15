@@ -52,6 +52,8 @@ import Dropdown from 'primevue/dropdown';
 import Galleria from 'primevue/galleria';
 import AnimateOnScroll from 'primevue/animateonscroll';
 
+import ScrollTop from 'primevue/scrolltop';
+
 import Skeleton from 'primevue/skeleton';
 
 
@@ -115,7 +117,7 @@ app.component('PrimeMegaMenu', MegaMenu)
 app.component('PrimeSlider', Slider)
 app.component('PrimeGalleria', Galleria)
 app.component('PrimeSkeleton', Skeleton)
-// app.component('PrimeButtonGroup', ButtonGroup)
+app.component('PrimeScrollTop', ScrollTop)
 
 
 app.config.globalProperties.$filters = {

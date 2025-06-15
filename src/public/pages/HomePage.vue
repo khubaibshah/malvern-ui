@@ -144,6 +144,7 @@ const filterByModel = (modelName: string) => {
 </script>
 
 <template>
+
   <!-- Add this right after the opening <template> tag -->
   <div class="hero-section   overflow-hidden">
     <!-- Background Images with Transition -->
@@ -159,7 +160,22 @@ const filterByModel = (modelName: string) => {
             style="font-family: 'Montserrat', sans-serif;">
             {{ slideText.title }}
           </h1>
-          <PrimeButton label="Browse Vehicles" severity="contrast" @click="$router.push({ name: 'car-search' })" />
+          <PrimeButton label="Browse Vehicles" class="mb-4" severity="contrast"
+            @click="$router.push({ name: 'car-search' })" />
+         <div class="flex justify-center gap-3 mt-6">
+  <button
+    v-for="(image, index) in images"
+    :key="index"
+    @click="currentIndex = index"
+    class="dot-button"
+    :class="{
+      'dot-active': currentIndex === index,
+      'dot-inactive': currentIndex !== index
+    }"
+    aria-label="Slide navigation button"
+  />
+</div>
+
         </div>
       </div>
     </transition>
@@ -180,13 +196,7 @@ const filterByModel = (modelName: string) => {
     </div> -->
 
     <!-- Indicator Dots - Centered at bottom -->
-    <!-- <div class="flex  gap-2 z-20">
-      <button v-for="(image, index) in images" :key="index" @click="currentIndex = index"
-        class="w-3 h-3 rounded-full transition-all duration-300" :class="{
-          'bg-white scale-125': currentIndex === index,
-          'bg-white bg-opacity-50': currentIndex !== index
-        }" aria-label="Go to slide"></button>
-    </div> -->
+
   </div>
 
   <!-- Featured Vehicles -->
@@ -257,7 +267,7 @@ const filterByModel = (modelName: string) => {
   </div>
 
   <!-- call back request form -->
-    <div class="text-center px-3 mb-4">
+  <div class="text-center px-3 mb-4">
     <h2 class="text-3xl font-bold mb-2 text-gray-700">Schedule a Test Drive</h2>
     <p class="text-gray-500" style="padding: 0 10px;">
       Fill out the form below to request a test drive appointment for your selected vehicle.
@@ -395,7 +405,31 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+
+
 @media (max-width: 768px) {
+  .dot-button {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  border: 2px solid white;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  left:10rem;
+}
+
+.dot-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.dot-active {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+.dot-inactive {
+  background-color: transparent;
+}
   .hero-section {
     position: relative;
     width: 100%;
@@ -424,6 +458,27 @@ const filterByModel = (modelName: string) => {
 }
 
 @media (min-width: 768px) {
+  .dot-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  border: 2px solid white;
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.dot-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.dot-active {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+.dot-inactive {
+  background-color: transparent;
+}
   .hero-section {
     position: relative;
     width: 100%;
