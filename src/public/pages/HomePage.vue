@@ -22,6 +22,13 @@ const loading = ref(true)
 
 
 const vehicleOptions = ref([]);
+const slideText = computed(() => {
+  return [
+    { title: 'Stanley Car Sales', subtitle: 'Premium Pre-Owned Vehicles · Trusted Service' },
+    { title: 'Find Your Dream Supercar', subtitle: 'Unmatched Selection, Unbeatable Deals' },
+    { title: 'Drive Luxury Today', subtitle: 'Your Next Adventure Starts Here' }
+  ][currentIndex.value]
+})
 
 const images = ref([
   {
@@ -149,12 +156,12 @@ const filterByModel = (modelName: string) => {
       <div class="text-white ">
         <h1 class="text-4xl md:text-6xl font-bold mb-4 animate-fade-in-up"
           style="font-family: 'Montserrat', sans-serif;">
-          Stanley Car Sales
+          {{ slideText.title }}
         </h1>
-        <p class="text-xl md:text-3xl mb-8 animate-fade-in-up delay-100"
+        <!-- <p class="text-xl md:text-3xl mb-8 animate-fade-in-up delay-100"
           style="font-family: 'Open Sans', sans-serif; font-weight: 300;">
-          Premium Pre-Owned Vehicles · Exceptional Value · Trusted Service
-        </p>
+          {{ slideText.subtitle }}
+        </p> -->
         <PrimeButton label="Browse Vehicles" class="p-button-lg animate-fade-in-up delay-200" severity="contrast"
           @click="$router.push({ name: 'car-search' })" />
       </div>
