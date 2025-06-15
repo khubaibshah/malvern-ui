@@ -26,19 +26,19 @@ const variantOptions = ref()
 const images = ref([
   {
     itemImageSrc: '/src/assets/img/homepage/homepagelambo1.jpg',
-    thumbnailImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=200&q=30',
+    thumbnailImageSrc: '/src/assets/img/homepage/homepagelambo1.jpg',
 
     alt: 'lambo'
   },
   {
     itemImageSrc: '/src/assets/img/homepage/porche.jpg',
-    thumbnailImageSrc: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=200&q=30',
-    alt: 'Audi RS5 sportback'
+    thumbnailImageSrc: '/src/assets/img/homepage/porche.jpg',
+    alt: 'porche gt3 rs'
   },
   {
     itemImageSrc: '/src/assets/img/homepage/bug.jpg',
-    thumbnailImageSrc: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=200&q=30',
-    alt: 'Audi e-tron electric SUV'
+    thumbnailImageSrc: '/src/assets/img/homepage/bug.jpg',
+    alt: 'buggatini chiron'
   },
   // {
   //   itemImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=60',
