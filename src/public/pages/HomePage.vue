@@ -190,7 +190,7 @@ const filterByModel = (modelName: string) => {
   </div>
 
   <!-- Featured Vehicles -->
-  <div class="text-center mb-8">
+  <div class="text-center px-3 mb-8">
     <h2 class="text-3xl font-bold mb-2 text-gray-700" style="margin-top: 4rem;">Our Featured Models</h2>
     <p class="text-gray-500" style="padding: 0 10px;">
       Experience the pinnacle of automotive excellence with our curated selection of premium vehicles
@@ -257,7 +257,7 @@ const filterByModel = (modelName: string) => {
   </div>
 
   <!-- call back request form -->
-  <div class="text-center mb-8">
+  <div class="text-center  px-3 mb-8">
     <h2 class="text-3xl font-bold mb-2 text-gray-700" style="margin-top: 4rem;">Schedule a Test Drive</h2>
 
     <!-- <h3 class="text-xl font-bold">Schedule a Test Drive</h3> -->
