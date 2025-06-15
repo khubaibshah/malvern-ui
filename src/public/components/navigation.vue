@@ -53,7 +53,7 @@
           <PrimeButton label="+44 1234 567890" icon="pi pi-phone" severity="contrast" class="text-sm" raised />
         </li>
         <li class="block lg:hidden flex items-center">
-          <PrimeButton label="info@luxurycars.com" icon="pi pi-envelope" iconPos="left" severity="contrast"
+          <PrimeButton label="sales@scscarsales.co.uk" icon="pi pi-envelope" iconPos="left" severity="contrast"
             class="text-sm" raised />
         </li>
       </ul>

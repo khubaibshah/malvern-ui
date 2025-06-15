@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from "vue-router";
 import { useToast } from 'primevue/usetoast'
 import axios from 'axios'
@@ -25,26 +25,26 @@ const modelOptions = ref()
 const variantOptions = ref()
 const images = ref([
   {
-    itemImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=60',
+    itemImageSrc: '/src/assets/img/homepage/homepagelambo1.jpg',
     thumbnailImageSrc: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=200&q=30',
 
-    alt: 'Audi Q8 in showroom'
+    alt: 'lambo'
   },
   {
-    itemImageSrc: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=60',
+    itemImageSrc: '/src/assets/img/homepage/porche.jpg',
     thumbnailImageSrc: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=200&q=30',
     alt: 'Audi RS5 sportback'
   },
   {
-    itemImageSrc: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=1200&q=60',
+    itemImageSrc: '/src/assets/img/homepage/bug.jpg',
     thumbnailImageSrc: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=200&q=30',
     alt: 'Audi e-tron electric SUV'
   },
-  {
-    itemImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=60',
-    thumbnailImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=200&q=30',
-    alt: 'Audi A5 coupe'
-  }
+  // {
+  //   itemImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=60',
+  //   thumbnailImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=200&q=30',
+  //   alt: 'Audi A5 coupe'
+  // }
 ]);
 
 const responsiveOptions = ref([
@@ -67,8 +67,20 @@ const testimonials = ref([
     avatar: "/src/assets/img/avatar2.jpg"
   }
 ]);
+const currentIndex = ref(0);
+const currentSlide = computed(() => images.value[currentIndex.value]);
+
+let interval: any = null;
+
+
+onUnmounted(() => {
+  clearInterval(interval);
+});
 
 onMounted(async () => {
+  interval = setInterval(() => {
+    currentIndex.value = (currentIndex.value + 1) % images.value.length;
+  }, 5000);
   // Animate your SVGs etc.
   animate(svg.createDrawable('.line'), {
     draw: ['0 0', '0 1', '1 1'],
@@ -126,33 +138,52 @@ const filterByModel = (modelName: string) => {
 </script>
 
 <template>
-  <!-- Hero Section -->
-  <PrimeGalleria :value="images" :numVisible="5" :circular="true" :autoPlay="true" :showThumbnails="false"
-    :showItemNavigators="true" :showItemNavigatorsOnHover="true">
-    <template #item="slotProps">
-      <div class="relative w-full">
-        <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" class="w-full object-cover"
-          style="width: 100%; object-fit: cover; height: 52rem; display: block;" />
-        <div class="absolute inset-0 bg-black bg-opacity-40 z-10 flex items-center justify-start hero-galleria">
-          <div class="text-white px-6 md:px-16 max-w-xl">
-            <h1 class="text-5xl font-extrabold leading-tight mb-4 fade-slide" style="font-family: 'Inter', sans-serif;">
-              STANLEY<br />CAR SALES
-            </h1>
-            <p class="text-lg text-white mb-8" style="font-family: 'Inter', sans-serif;">
-              Premium vehicles at competitive prices
-            </p>
-            <div class="flex flex-col gap-4">
-              <PrimeButton severity="secondary" label="Discover More"
-                class="w-full rounded-full bg-white text-black font-large  border-none w-full" variant="outlined"
-                size="large" />
-              <PrimeButton severity="contrast" label="Find & Buy" class="w-full" variant="outlined" size="large"
-                @click="router.push({ name: 'car-search' })" />
-            </div>
-          </div>
-        </div>
+  <!-- Add this right after the opening <template> tag -->
+  <div class="hero-section   overflow-hidden">
+    <!-- Background Images with Transition -->
+    <transition name="fade" mode="out-in">
+      <img :key="currentIndex" :src="currentSlide.itemImageSrc" :alt="currentSlide.alt"
+        class=" w-full object-cover transition-opacity duration-1000 test" />
+    </transition>
+
+    <div class="z-10 absolute overlay-content">
+      <div class="text-white ">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4 animate-fade-in-up"
+          style="font-family: 'Montserrat', sans-serif;">
+          Stanley Car Sales
+        </h1>
+        <p class="text-xl md:text-3xl mb-8 animate-fade-in-up delay-100"
+          style="font-family: 'Open Sans', sans-serif; font-weight: 300;">
+          Premium Pre-Owned Vehicles · Exceptional Value · Trusted Service
+        </p>
+        <PrimeButton label="Browse Inventory" class="p-button-lg animate-fade-in-up delay-200" severity="contrast"
+          @click="$router.push({ name: 'car-search' })" />
       </div>
-    </template>
-  </PrimeGalleria>
+    </div>
+
+    <!-- Overlay Content - Positioned bottom right with 4rem offset -->
+    <!-- <div class="z-10 absolute text-center" style="bottom:15rem">
+      <div class=" text-white">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-fade-in-up">
+          Premium Audi Selections
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 animate-fade-in-up delay-100">
+          Experience luxury performance with our curated collection
+        </p>
+        <PrimeButton label="Browse Inventory" class="p-button-lg animate-fade-in-up delay-200"
+          @click="$router.push({ name: 'inventory' })" />
+      </div>
+    </div> -->
+
+    <!-- Indicator Dots - Centered at bottom -->
+    <!-- <div class="flex  gap-2 z-20">
+      <button v-for="(image, index) in images" :key="index" @click="currentIndex = index"
+        class="w-3 h-3 rounded-full transition-all duration-300" :class="{
+          'bg-white scale-125': currentIndex === index,
+          'bg-white bg-opacity-50': currentIndex !== index
+        }" aria-label="Go to slide"></button>
+    </div> -->
+  </div>
 
   <!-- Featured Vehicles -->
   <div class="text-center mb-8">
@@ -362,6 +393,112 @@ const filterByModel = (modelName: string) => {
 </template>
 
 <style scoped>
+@media (max-width: 768px) {
+  .hero-section {
+    position: relative;
+    width: 100%;
+    height: 42vh;
+    max-height: 800px;
+  }
+
+  .hero-section img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    object-fit: cover;
+    height: 22rem;
+  }
+}
+
+.overlay-content {
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 1rem;
+  /* max-width: 20rem; */
+  text-align: left;
+  width: 23rem;
+}
+
+@media (min-width: 768px) {
+  .hero-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    /* max-height: 800px; */
+  }
+
+  .hero-section img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 91vh;
+    object-fit: cover;
+  }
+
+  .overlay-content {
+    bottom: 23rem;
+    left: 15rem;
+    transform: none;
+    padding: 0;
+    text-align: left;
+    width: 23rem;
+  }
+}
+
+
+
+
+/* Dots container */
+.flex.justify-center.gap-2 {
+
+  gap: 0.5rem;
+  z-index: 20;
+  /* Ensure dots stay above other elements */
+}
+
+/* Individual dot styling */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Animation classes */
+.animate-fade-in-up {
+  animation: fadeInUp 1s ease-out forwards;
+  opacity: 0;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
 .fade-slide {
   opacity: 0;
   transform: translateY(20px);
@@ -387,43 +524,6 @@ const filterByModel = (modelName: string) => {
 .hover-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 30px 40px rgba(0, 0, 0, 0.15);
-}
 
-.tile-bg {
-  background-color: black;
-}
-
-.hero-galleria {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  /* lower than PrimeVue's nav buttons */
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  bottom: 2rem;
-  left: 6rem;
-}
-
-::v-deep(.p-galleria-item-next),
-::v-deep(.p-galleria-item-prev) {
-  z-index: 5;
-}
-
-::v-deep(.p-galleria-item-next),
-::v-deep(.p-galleria-item-prev) {
-  pointer-events: auto;
-}
-
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .hero-galleria {
-    left: 0 !important;
-    justify-content: center;
-    /* center text if needed */
-    text-align: center;
-    /* optional for headline/p */
-  }
 }
 </style>
