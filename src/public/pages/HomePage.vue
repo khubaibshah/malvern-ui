@@ -7,6 +7,11 @@ import { animate, svg, stagger } from 'animejs';
 import Carousel from 'primevue/carousel';
 import { useVehicleStore } from '@/stores/vehicleData'
 
+//hompage images
+import LamboImage from '@/assets/img/homepage/homepagelambo1.jpg'
+import PorscheImage from '@/assets/img/homepage/porche.jpg'
+import BugattiImage from '@/assets/img/homepage/bug.jpg'
+
 const vehicleStore = useVehicleStore()
 const router = useRouter();
 const toast = useToast();
@@ -18,34 +23,28 @@ const loading = ref(true)
 
 const vehicleOptions = ref([]);
 
+const images = ref([
+  {
+    itemImageSrc: LamboImage,
+    thumbnailImageSrc: LamboImage,
+    alt: 'lambo'
+  },
+  {
+    itemImageSrc: PorscheImage,
+    thumbnailImageSrc: PorscheImage,
+    alt: 'porsche gt3 rs'
+  },
+  {
+    itemImageSrc: BugattiImage,
+    thumbnailImageSrc: BugattiImage,
+    alt: 'bugatti chiron'
+  }
+])
 
 const featuredVehicles = ref([]);
 const makeOptions = ref()
 const modelOptions = ref()
 const variantOptions = ref()
-const images = ref([
-  {
-    itemImageSrc: '/src/assets/img/homepage/homepagelambo1.jpg',
-    thumbnailImageSrc: '/src/assets/img/homepage/homepagelambo1.jpg',
-
-    alt: 'lambo'
-  },
-  {
-    itemImageSrc: '/src/assets/img/homepage/porche.jpg',
-    thumbnailImageSrc: '/src/assets/img/homepage/porche.jpg',
-    alt: 'porche gt3 rs'
-  },
-  {
-    itemImageSrc: '/src/assets/img/homepage/bug.jpg',
-    thumbnailImageSrc: '/src/assets/img/homepage/bug.jpg',
-    alt: 'buggatini chiron'
-  },
-  // {
-  //   itemImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=60',
-  //   thumbnailImageSrc: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=200&q=30',
-  //   alt: 'Audi A5 coupe'
-  // }
-]);
 
 const responsiveOptions = ref([
   { breakpoint: '1024px', numVisible: 3 },
