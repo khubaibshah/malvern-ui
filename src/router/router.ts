@@ -4,8 +4,6 @@ import HomePage from '@/public/pages/HomePage.vue'
 import CarDetails from '@/public/pages/CarDetails.vue'
 import VehicleDetails from '@/public/pages/VehicleDetails.vue'
 import bookJob from '@/public/pages/bookJobs.vue'
-// import payment from '@/public/pages/Payment.vue'
-import SCSCarsVue from '@/public/pages/SCSCars.vue'
 import vehicleSearch from '@/public/pages/vehicleSearch.vue'
 import enquiryForm from '@/public/components/enquiryForm.vue'
 
@@ -36,11 +34,7 @@ const router = createRouter({
       name: 'vehicle-details',
       component: VehicleDetails
     },
-    {
-      path: '/scscars',
-      name: 'scscars',
-      component: SCSCarsVue
-    },
+
     {
       path: '/enquire/:vehicleId',
       name: 'enquiry-form',
@@ -51,11 +45,7 @@ const router = createRouter({
       name: 'bookJob',
       component: bookJob
     },
-    // {
-    //   path: '/payment',
-    //   name: 'payment',
-    //   component: payment
-    // }
+
   ]
 })
 
