@@ -148,24 +148,29 @@ const filterByModel = (modelName: string) => {
   <div class="hero-section   overflow-hidden">
     <!-- Background Images with Transition -->
     <transition name="fade" mode="out-in">
-      <img :key="currentIndex" :src="currentSlide.itemImageSrc" :alt="currentSlide.alt"
-        class=" w-full object-cover transition-opacity duration-1000 test" />
-    </transition>
+  <div :key="currentIndex" class="hero-slide relative w-full h-full">
+    <!-- Background Image -->
+    <img
+      :src="currentSlide.itemImageSrc"
+      :alt="currentSlide.alt"
+      class="w-full h-full object-cover absolute top-0 left-0 z-0"
+    />
 
-    <div class="z-10 absolute overlay-content">
-      <div class="text-white ">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4 animate-fade-in-up"
-          style="font-family: 'Montserrat', sans-serif;">
-          {{ slideText.title }}
-        </h1>
-        <!-- <p class="text-xl md:text-3xl mb-8 animate-fade-in-up delay-100"
-          style="font-family: 'Open Sans', sans-serif; font-weight: 300;">
-          {{ slideText.subtitle }}
-        </p> -->
-        <PrimeButton label="Browse Vehicles" class="p-button-lg animate-fade-in-up delay-200" severity="contrast"
-          @click="$router.push({ name: 'car-search' })" />
-      </div>
+    <!-- Overlay Content -->
+    <div class="z-10 absolute overlay-content text-white">
+      <h1 class="text-4xl md:text-6xl font-bold mb-4 animate-fade-in-up" style="font-family: 'Montserrat', sans-serif;">
+        {{ slideText.title }}
+      </h1>
+      <PrimeButton
+        label="Browse Vehicles"
+        
+        severity="contrast"
+        @click="$router.push({ name: 'car-search' })"
+      />
     </div>
+  </div>
+</transition>
+
 
     <!-- Overlay Content - Positioned bottom right with 4rem offset -->
     <!-- <div class="z-10 absolute text-center" style="bottom:15rem">
