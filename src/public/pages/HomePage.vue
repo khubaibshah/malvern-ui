@@ -90,10 +90,10 @@ const submitTestDriveRequest = async () => {
   console.log('Submitting form:', form.value); // <-- add this
 
 
-      if (!form.value.name || !form.value.email || !form.value.phone || !form.value.vehicle_id) {
-      toast.add({ severity: 'warn', summary: 'Incomplete', detail: 'Please fill out all fields and select a vehicle to schedule a test drive', life: 3000 });
-      return;
-    }
+  if (!form.value.name || !form.value.email || !form.value.phone || !form.value.vehicle_id) {
+    toast.add({ severity: 'warn', summary: 'Incomplete', detail: 'Please fill out all fields and select a vehicle to schedule a test drive', life: 3000 });
+    return;
+  }
 
   submitting.value = true;
 
@@ -313,11 +313,11 @@ const filterByModel = (modelName: string) => {
   class="w-full"
   :disabled="true"
 /> -->
-<p class="text-md text-gray-600 mt-2" v-if="form.vehicle_id">
-  Selected: {{
-    vehicleOptions.find(opt => opt.value === form.vehicle_id)?.label || 'Unknown Vehicle'
-  }}
-</p>
+              <p class="text-md text-gray-600 mt-2" v-if="form.vehicle_id">
+                Selected: {{
+                  vehicleOptions.find(opt => opt.value === form.vehicle_id)?.label || 'Unknown Vehicle'
+                }}
+              </p>
 
             </div>
             <div class="mb-4">
@@ -335,13 +335,10 @@ const filterByModel = (modelName: string) => {
           style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
           <div v-for="(car, index) in vehicles" :key="car.id" class="flex-shrink-0"
             style="scroll-snap-align: start; width: 22rem;">
-            <PrimeCard
-  :class="{
-    'ring-2 ring-green-500': form.vehicle_id === car.id,
-    'hover-card': true
-  }"
-  style="width: 100%; overflow: hidden;"
->
+            <PrimeCard :class="{
+              'ring-2 ring-green-500': form.vehicle_id === car.id,
+              'hover-card': true
+            }" style="width: 100%; overflow: hidden;">
 
               <template #header>
                 <img :src="car.images?.[0] || '/src/assets/img/default.jpg'" :alt="car.make + ' ' + car.model"
@@ -356,14 +353,9 @@ const filterByModel = (modelName: string) => {
                 </p>
               </template>
               <template #footer>
-               <PrimeButton
-  label="Select This Car"
-  size="small"
-  @click="form.vehicle_id = car.id"
-  class="w-full"
-  :outlined="form.vehicle_id !== car.id"
-  :severity="form.vehicle_id === car.id ? 'success' : 'secondary'"
-/>
+                <PrimeButton label="Select This Car" size="small" @click="form.vehicle_id = car.id" class="w-full"
+                  :outlined="form.vehicle_id !== car.id"
+                  :severity="form.vehicle_id === car.id ? 'success' : 'secondary'" />
 
               </template>
             </PrimeCard>

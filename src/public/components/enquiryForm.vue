@@ -78,7 +78,7 @@
       </div>
     </div> -->
 
-        <Toast />
+        <PrimeToast />
     </div>
 </template>
 
@@ -88,7 +88,6 @@ import { useToast } from 'primevue/usetoast';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
-import Toast from 'primevue/toast';
 import axios from 'axios';
 import { useVehicleStore } from '@/stores/vehicleData';
 import { formatEngineSize } from '@/utils/engineSizeFormat';

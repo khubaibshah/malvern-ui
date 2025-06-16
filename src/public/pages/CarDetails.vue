@@ -5,28 +5,17 @@ import VehicleService from "@/services/VehicleService";
 import { onMounted, ref } from "vue";
 const vehicleData = useVehicleStore()
 const dvsadata = ref(null)
-const getVehicleData = vehicleData.getVehicleData
-console.log('dsadfasdf',getVehicleData);
+const getVehicleData = vehicleData.getVehicleData;
+
 const emit = defineEmits(['showHomePage']); // Define the emit function to use event emitting
 
 const router = useRouter();
-
-vehicleData.setVehicleReg(getVehicleData.registrationNumber)
 const showHomePage = () => {
+
   emit('showHomePage'); // Emit the 'showHomePage' event
   router.push('/'); // Navigate to the main page
 };
 
-
-const getDvsa = async () => {
-  try {
-    const response = await VehicleService.getDvsaVehicleByReg(getVehicleData.registrationNumber);
-    console.log('here response new api',response)
-    dvsadata.value = response; // Assign the response data
-  } catch (error) {
-    console.error(error);
-  }
-};
 
 onMounted(() => {
   // getDvsa();

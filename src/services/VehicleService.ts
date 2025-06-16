@@ -52,7 +52,7 @@ class VehicleService {
   };
   getDvsaVehicleByReg = async (registrationNumber: any) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/dvsa-vehicle-details/${registrationNumber}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/dvsa-vehicle-details-scs/${registrationNumber}`);
 
       console.log('Fetched vehicle data by Registration from dvsa data:', response.data);
       return response.data;
