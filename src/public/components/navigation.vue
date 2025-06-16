@@ -43,6 +43,15 @@
             <span>Find & Buy</span>
           </router-link>
         </li>
+        <li>
+          <router-link
+            :to="{ name: 'vehicle-search' }"
+            @click="closeMobileMenu"
+            class="flex items-center gap-2 px-4 py-3 lg:py-2 hover:bg-gray-100 rounded-md transition duration-150 cursor-pointer no-underline text-black font-medium"
+          >
+            <span>Sell your car</span>
+          </router-link>
+        </li>
         <!-- add more menu items here if need -->
         
         <!-- Mobile-only items -->
