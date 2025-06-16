@@ -15,7 +15,7 @@ const showCarDetails = ref(false); // Reactive variable to control whether to sh
 const registrationNumber = ref(''); // Reactive variable to store the registration number input
 const vehicleStore = useVehicleStore();
 const isLocked = ref(false); // Controls read-only state
-
+const partEx = ref(false); // Default sale type
 const resetForm = () => {
   vehData.value = {
     registration: '',
@@ -28,6 +28,7 @@ const resetForm = () => {
     fuelType: '',
     engineSize: '',
     primaryColour: '',
+    partEx: false,
   };
 
   form.value = {
@@ -51,6 +52,7 @@ const vehData = ref({
   fuelType: '',
   engineSize: '',
   primaryColour: '',
+  partEx: false,
 });
 // default is null, only gets populated after API call
 
@@ -60,10 +62,34 @@ const form = ref({
   postcode: '',
   phone: '',
 });
+const formErrors = ref({
+  fullName: false,
+  email: false,
+  postcode: false,
+  phone: false,
+});
 
 
 
 const submitSellRequest = async () => {
+  // Reset all errors
+  formErrors.value = {
+    fullName: !form.value.fullName,
+    email: !form.value.email,
+    postcode: !form.value.postcode,
+    phone: !form.value.phone,
+  };
+
+  // If any are true, stop submission
+  if (Object.values(formErrors.value).some(v => v)) {
+    toast.add({
+      severity: 'error',
+      summary: 'Missing Fields',
+      detail: 'Please complete all required fields.',
+      life: 4000,
+    });
+    return;
+  }
   try {
     const payload = {
       ...form.value,
@@ -113,7 +139,7 @@ const transformToUpperCase = () => {
 <template>
   <PrimeToast />
   <div class="surface-section p-5 md:p-6 lg:p-8 shadow-md rounded-xl">
-    <h2 class="text-3xl font-semibold mb-4">Sell Your Car</h2>
+    <h2 class="text-3xl font-semibold mb-4">Trade In or Sell – Get the Best Offer for Your Car</h2>
     <PrimeDivider class="mb-4" />
     <div class="grid">
       <div class="col-12 md:col-6 lg:col-6">
@@ -131,6 +157,8 @@ const transformToUpperCase = () => {
               <div class="col-12">
                 <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
                 <InputText id="fullName" v-model="form.fullName" class="w-full" placeholder="John Smith" />
+                <PrimeInlineMessage v-if="formErrors.fullName" severity="error">Full name is required
+                </PrimeInlineMessage>
               </div>
 
               <div class="col-12">
@@ -154,6 +182,13 @@ const transformToUpperCase = () => {
       <div class="col-12 md:col-6 lg:col-6">
         <!-- <PrimeFieldset legend="What is your car registration? *"> -->
         <div class="p-4 border-round shadow-2 bg-white mb-4">
+          <h3 class="text-xl text-gray-600 font-bold ">Part Ex?</h3>
+          <!-- <p class="text-md text-gray-600 font-bold mb-4">
+            Do you have a vehicle to part exchange?
+          </p> -->
+          <PrimeToggleButton v-model="vehData.partEx" class="w-6rem" onLabel="Yes" offLabel="No" severity="contrast" />
+        </div>
+        <div class="p-4 border-round shadow-2 bg-white mb-4">
           <h3 class="text-xl text-gray-600 font-medium ">Enter Registration</h3>
           <InputGroup class="w-full h-4rem flex justify-center mb-3">
             <InputGroupAddon style="background-color: #00309a; color: #fbe90a">
@@ -163,11 +198,11 @@ const transformToUpperCase = () => {
               placeholder="REG" inputClass="'bg-transparent text-900 border-400 border-blue-500'"
               class="text-5xl w-full text-100 font-bold" @input="transformToUpperCase" />
           </InputGroup>
-          <PrimeButton  severity="contrast" label="Generate Vehicle Details" @click="getDvsa" class="w-full flex justify-content-end mt-2"
-            v-styleclass="{
+          <PrimeButton severity="contrast" label="Generate Vehicle Details" @click="getDvsa"
+            class="w-full flex justify-content-end mt-2" v-styleclass="{
               selector: '.carDetailsForm',
               enterActiveClass: 'my-fadein',
-            }"  />
+            }" />
         </div>
         <div class="p-4 border-round shadow-2 bg-white mb-4">
           <h3 class="text-xl text-gray-600 font-medium">Vehicle Details</h3>
@@ -225,7 +260,7 @@ const transformToUpperCase = () => {
                 @click="resetForm" />
             </div>
             <div class="col-6">
-              <PrimeButton  severity="contrast" label="Submit" class="w-full bg-black text-white font-semibold"
+              <PrimeButton severity="contrast" label="Submit" class="w-full bg-black text-white font-semibold"
                 @click="submitSellRequest" />
             </div>
           </div>

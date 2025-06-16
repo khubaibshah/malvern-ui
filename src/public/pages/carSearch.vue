@@ -5,7 +5,7 @@
       <!-- <PrimeToast /> -->
       <div
         class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
-        <div class="text-3xl font-medium text-900 mb-3">Available Vehicles</div>
+        <div class="text-3xl font-medium text-900 mb-3" style="margin-left:3px;">Available Vehicles</div>
         <div class="text-500">Filter Vehicles based on your search criteria.</div>
       </div>
     </div>
