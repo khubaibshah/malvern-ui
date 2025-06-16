@@ -163,11 +163,11 @@ const transformToUpperCase = () => {
               placeholder="REG" inputClass="'bg-transparent text-900 border-400 border-blue-500'"
               class="text-5xl w-full text-100 font-bold" @input="transformToUpperCase" />
           </InputGroup>
-          <PrimeButton label="Generate Vehicle Details" @click="getDvsa" class="w-full flex justify-content-end mt-2"
+          <PrimeButton  severity="contrast" label="Generate Vehicle Details" @click="getDvsa" class="w-full flex justify-content-end mt-2"
             v-styleclass="{
               selector: '.carDetailsForm',
               enterActiveClass: 'my-fadein',
-            }" severity="contrast" />
+            }"  />
         </div>
         <div class="p-4 border-round shadow-2 bg-white mb-4">
           <h3 class="text-xl text-gray-600 font-medium">Vehicle Details</h3>
@@ -225,7 +225,7 @@ const transformToUpperCase = () => {
                 @click="resetForm" />
             </div>
             <div class="col-6">
-              <PrimeButton label="Submit Your Car for Sale" class="w-full bg-black text-white font-semibold"
+              <PrimeButton  severity="contrast" label="Submit Your Car for Sale" class="w-full bg-black text-white font-semibold"
                 @click="submitSellRequest" />
             </div>
           </div>
