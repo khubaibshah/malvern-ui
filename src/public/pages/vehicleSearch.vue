@@ -225,7 +225,7 @@ const transformToUpperCase = () => {
                 @click="resetForm" />
             </div>
             <div class="col-6">
-              <PrimeButton  severity="contrast" label="Submit Your Car for Sale" class="w-full bg-black text-white font-semibold"
+              <PrimeButton  severity="contrast" label="Submit" class="w-full bg-black text-white font-semibold"
                 @click="submitSellRequest" />
             </div>
           </div>
