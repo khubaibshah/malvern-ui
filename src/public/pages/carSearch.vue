@@ -73,7 +73,7 @@
                 <!-- Image Carousel (or first image preview) -->
                 <div class="relative">
                   <img v-if="item.images && item.images.length > 0" :src="item.images[0]" alt="car"
-                    class="w-full border-round" style="height: 180px; object-fit: cover;" />
+                    class="w-full border-round" style="object-fit: cover;" />
                   <div v-else
                     class="h-[180px] w-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
                     No Image
