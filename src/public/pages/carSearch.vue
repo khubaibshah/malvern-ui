@@ -36,7 +36,7 @@
         </div>
 
         <!-- MODAL -->
-        <FilterModel v-model:visible="showFilters" @applyFilters="fetchFilteredVehicles" />
+        <FilterModel ref="filterModelRef" v-model:visible="showFilters" @applyFilters="fetchFilteredVehicles" />
         <!-- <PrimeDialog v-model:visible="advancedFilters" header="Advanced Filters" maximizable :maximized="true" modal
           :style="{ width: '100vw', height: '100vh' }" :breakpoints="{ '1199px': '100vw', '575px': '100vw' }">
           <p class="m-0">
@@ -135,7 +135,7 @@ import { useVehicleStore } from '@/stores/vehicleData' // adjust path as needed
 const vehicleStore = useVehicleStore()
 
 
-
+const filterModelRef = ref(null);
 const toast = useToast()
 const vehicles = ref([])
 const layout = ref('grid')
@@ -259,8 +259,21 @@ const clearFilters = () => {
   vehicle_make.value = null
   vehicle_model.value = null
   vehicle_variant.value = null
-  toast.add({ severity: 'info', summary: 'Filters Cleared', detail: 'All filters have been reset.', life: 2000 })
+
+  // Reset filters inside the modal
+  filterModelRef.value?.resetFilters()
+
+  // Also clear any filtered results and re-fetch full list (optional)
+  fetchFilteredVehicles({}) // empty filters
+
+  toast.add({
+    severity: 'info',
+    summary: 'Filters Cleared',
+    detail: 'All filters have been reset.',
+    life: 2000
+  })
 }
+
 </script>
 
 <style scoped>

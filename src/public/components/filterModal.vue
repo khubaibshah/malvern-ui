@@ -102,7 +102,7 @@
 </template>
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { ref, defineExpose } from 'vue';
 
 
 defineProps({
@@ -226,7 +226,9 @@ const resetFilters = () => {
     selectedColor.value = '';
 };
 
-
+defineExpose({
+  resetFilters
+})
 // const applyFilters = () => {
 //     // Your filter application logic here
 //     advancedFilters.value = false;
