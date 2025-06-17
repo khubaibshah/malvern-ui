@@ -148,6 +148,8 @@ const modelOptions = ref([])
 const variantOptions = ref([])
 const loading = ref(true)
 const showFilters = ref(false);
+
+
 const prepareDropdowns = () => {
   const makes = new Set();
   const models = new Set();
