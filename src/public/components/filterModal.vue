@@ -8,7 +8,8 @@
                 <div class="flex flex-column gap-3">
                     <PrimeButton v-for="category in filterCategories" :key="category" :label="category"
                         class="p-button-text text-left justify-content-start"
-                        :class="{ 'text-primary': activeCategory === category }" @click="activeCategory = category" severity="contrast"/>
+                        :class="{ 'text-primary': activeCategory === category }" @click="activeCategory = category"
+                        severity="contrast" />
                 </div>
             </div>
 
@@ -18,7 +19,8 @@
                 <div v-if="activeCategory === 'Price'" class="mb-6">
                     <h3 class="text-xl font-bold mb-4">Price Range</h3>
 
-                    <PrimeSlider v-model="priceRange" :min="0" :max="150000" :step="1000" range class="mb-2" severity="contrast"/>
+                    <PrimeSlider v-model="priceRange" :min="0" :max="150000" :step="1000" range class="mb-2"
+                        severity="secondary" />
 
                     <!-- Show the dynamic range below the slider -->
                     <div class="text-sm text-gray-600 mb-2">
@@ -27,9 +29,9 @@
 
                     <div class="flex justify-content-between">
                         <PrimeInputNumber v-model="priceRange[0]" mode="currency" currency="GBP" locale="en-UK"
-                            class="w-6" severity="contrast"/>
+                            class="w-6" severity="contrast" />
                         <PrimeInputNumber v-model="priceRange[1]" mode="currency" currency="GBP" locale="en-UK"
-                            class="w-6" severity="contrast"/>
+                            class="w-6" severity="contrast" />
                     </div>
                 </div>
 
@@ -41,7 +43,7 @@
                         <div class="col-6 md:col-3" v-for="mileage in mileageOptions" :key="mileage.value">
                             <PrimeButton :label="mileage.label" class="w-full mb-2"
                                 :class="{ 'p-button-outlined': selectedMileage !== mileage.value }"
-                                @click="selectedMileage = mileage.value" severity="contrast"/>
+                                @click="selectedMileage = mileage.value" severity="contrast" />
                         </div>
                     </div>
                 </div>
@@ -53,7 +55,7 @@
                         <div class="col-6 md:col-3" v-for="type in vehicleTypes" :key="type">
                             <PrimeButton :label="type" class="w-full mb-2"
                                 :class="{ 'p-button-outlined': !selectedTypes.includes(type) }"
-                                @click="toggleVehicleType(type)" severity="contrast"/>
+                                @click="toggleVehicleType(type)" severity="contrast" />
                         </div>
                     </div>
                 </div>
@@ -76,18 +78,21 @@
                     <div class="flex flex-wrap gap-2">
                         <div v-for="color in colors" :key="color.name"
                             class="color-option border-circle w-3rem h-3rem flex align-items-center justify-content-center cursor-pointer"
-                            :style="{ backgroundColor: color.code }" @click="selectedColor = color.name">
+                            :class="{ selected: selectedColor === color.name }" :style="{ backgroundColor: color.code }"
+                            @click="selectedColor = color.name" style="border-block-color: grey;">
                             <i v-if="selectedColor === color.name" class="pi pi-check text-white"></i>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
         <!-- Footer with Action Buttons -->
         <template #footer>
             <div class="flex justify-content-between w-full">
-                <PrimeButton label="Reset All" icon="pi pi-refresh" class="p-button-text" @click="resetFilters" severity="contrast"/>
+                <PrimeButton label="Reset All" icon="pi pi-refresh" class="p-button-text" @click="resetFilters"
+                    severity="contrast" />
                 <div class="flex gap-2">
                     <PrimeButton label="Cancel" icon="pi pi-times" class="p-button-text"
                         @click="$emit('update:visible', false)" />
@@ -227,15 +232,24 @@ const resetFilters = () => {
 };
 
 defineExpose({
-  resetFilters
+    resetFilters
 })
-// const applyFilters = () => {
-//     // Your filter application logic here
-//     advancedFilters.value = false;
-// };
+
 </script>
 
 <style scoped>
+.color-option {
+    border: 2px solid #ccc;
+    /* Default border for visibility (incl. white) */
+    transition: all 0.2s ease;
+}
+
+.color-option.selected {
+    border: 3px solid var(--primary-color);
+    /* Highlight selected color */
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
 .color-option {
     transition: all 0.2s;
     border: 2px solid transparent;
