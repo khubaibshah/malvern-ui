@@ -8,7 +8,7 @@
                 <div class="flex flex-column gap-3">
                     <PrimeButton v-for="category in filterCategories" :key="category" :label="category"
                         class="p-button-text text-left justify-content-start"
-                        :class="{ 'text-primary': activeCategory === category }" @click="activeCategory = category" />
+                        :class="{ 'text-primary': activeCategory === category }" @click="activeCategory = category" severity="contrast"/>
                 </div>
             </div>
 
@@ -18,7 +18,7 @@
                 <div v-if="activeCategory === 'Price'" class="mb-6">
                     <h3 class="text-xl font-bold mb-4">Price Range</h3>
 
-                    <PrimeSlider v-model="priceRange" :min="0" :max="150000" :step="1000" range class="mb-2" />
+                    <PrimeSlider v-model="priceRange" :min="0" :max="150000" :step="1000" range class="mb-2" severity="contrast"/>
 
                     <!-- Show the dynamic range below the slider -->
                     <div class="text-sm text-gray-600 mb-2">
@@ -27,9 +27,9 @@
 
                     <div class="flex justify-content-between">
                         <PrimeInputNumber v-model="priceRange[0]" mode="currency" currency="GBP" locale="en-UK"
-                            class="w-6" />
+                            class="w-6" severity="contrast"/>
                         <PrimeInputNumber v-model="priceRange[1]" mode="currency" currency="GBP" locale="en-UK"
-                            class="w-6" />
+                            class="w-6" severity="contrast"/>
                     </div>
                 </div>
 
@@ -41,7 +41,7 @@
                         <div class="col-6 md:col-3" v-for="mileage in mileageOptions" :key="mileage.value">
                             <PrimeButton :label="mileage.label" class="w-full mb-2"
                                 :class="{ 'p-button-outlined': selectedMileage !== mileage.value }"
-                                @click="selectedMileage = mileage.value" />
+                                @click="selectedMileage = mileage.value" severity="contrast"/>
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                         <div class="col-6 md:col-3" v-for="type in vehicleTypes" :key="type">
                             <PrimeButton :label="type" class="w-full mb-2"
                                 :class="{ 'p-button-outlined': !selectedTypes.includes(type) }"
-                                @click="toggleVehicleType(type)" />
+                                @click="toggleVehicleType(type)" severity="contrast"/>
                         </div>
                     </div>
                 </div>
@@ -87,11 +87,11 @@
         <!-- Footer with Action Buttons -->
         <template #footer>
             <div class="flex justify-content-between w-full">
-                <PrimeButton label="Reset All" icon="pi pi-refresh" class="p-button-text" @click="resetFilters" />
+                <PrimeButton label="Reset All" icon="pi pi-refresh" class="p-button-text" @click="resetFilters" severity="contrast"/>
                 <div class="flex gap-2">
                     <PrimeButton label="Cancel" icon="pi pi-times" class="p-button-text"
                         @click="$emit('update:visible', false)" />
-                    <PrimeButton label="Apply Filters" icon="pi pi-check" @click="applyFilters" />
+                    <PrimeButton label="Apply Filters" icon="pi pi-check" @click="applyFilters" severity="contrast" />
 
                 </div>
             </div>
