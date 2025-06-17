@@ -63,7 +63,8 @@
                     <h3 class="text-xl font-bold mb-4">Features</h3>
                     <div class="grid">
                         <div class="col-6 md:col-4" v-for="feature in features" :key="feature">
-                            <PrimeCheckbox v-model="selectedFeatures" :inputId="feature" name="feature" :value="feature" />
+                            <PrimeCheckbox v-model="selectedFeatures" :inputId="feature" name="feature"
+                                :value="feature" />
                             <label :for="feature" class="ml-2">{{ feature }}</label>
                         </div>
                     </div>
@@ -116,31 +117,31 @@ const emit = defineEmits(['update:visible', 'applyFilters']);
 
 
 const applyFilters = () => {
-  const filters: Record<string, any> = {};
+    const filters: Record<string, any> = {};
 
-  if (priceRange.value[0] !== 0 || priceRange.value[1] !== 150000) {
-    filters.price_min = priceRange.value[0];
-    filters.price_max = priceRange.value[1];
-  }
+    if (priceRange.value[0] !== 0 || priceRange.value[1] !== 150000) {
+        filters.price_min = priceRange.value[0];
+        filters.price_max = priceRange.value[1];
+    }
 
-  if (selectedMileage.value && selectedMileage.value > 0) {
-    filters.mileage = selectedMileage.value;
-  }
+    if (selectedMileage.value && selectedMileage.value > 0) {
+        filters.mileage = selectedMileage.value;
+    }
 
-  if (selectedTypes.value.length > 0) {
-filters.types = selectedTypes.value;
-  }
+    if (selectedTypes.value.length > 0) {
+        filters.types = selectedTypes.value;
+    }
 
-  if (selectedFeatures.value.length > 0) {
-    filters.features = selectedFeatures.value;
-  }
+    if (selectedFeatures.value.length > 0) {
+        filters.features = selectedFeatures.value;
+    }
 
-  if (selectedColor.value) {
-    filters.color = selectedColor.value;
-  }
+    if (selectedColor.value) {
+        filters.color = selectedColor.value;
+    }
 
-  emit('applyFilters', filters);
-  emit('update:visible', false);
+    emit('applyFilters', filters);
+    emit('update:visible', false);
 };
 
 
@@ -149,8 +150,8 @@ filters.types = selectedTypes.value;
 const activeCategory = ref('Price');
 
 // Filter data
-const priceRange = ref([20000, 80000]);
-const selectedMileage = ref(50000);
+const priceRange = ref([0, 150000]); // Default range from 0 to 150000
+const selectedMileage = ref(0);
 const selectedTypes = ref<string[]>([]);
 const selectedFeatures = ref<string[]>([]);
 const selectedColor = ref('');
@@ -218,12 +219,13 @@ const toggleVehicleType = (type: string) => {
 };
 
 const resetFilters = () => {
-    priceRange.value = [20000, 80000];
-    selectedMileage.value = 50000;
+    priceRange.value = [0, 150000]; // ← now neutral, won't trigger unless changed
+    selectedMileage.value = 0;      // ← 0 = any mileage
     selectedTypes.value = [];
     selectedFeatures.value = [];
     selectedColor.value = '';
 };
+
 
 // const applyFilters = () => {
 //     // Your filter application logic here
