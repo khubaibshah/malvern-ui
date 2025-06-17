@@ -4,7 +4,7 @@ import HomePage from "@/public/pages/HomePage.vue";
 import CarDetails from "@/public/pages/CarDetails.vue";
 import VehicleDetails from "@/public/pages/VehicleDetails.vue";
 import bookJob from "@/public/pages/bookJobs.vue";
-import vehicleSearch from "@/public/pages/vehicleSearch.vue";
+import vehicleSale from "@/public/pages/VehicleSale.vue";
 import enquiryForm from "@/public/components/enquiryForm.vue";
 import NotFound from "@/public/components/NotFound.vue";
 const router = createRouter({
@@ -20,9 +20,9 @@ const router = createRouter({
       component: HomePage,
     },
     {
-      path: "/vehicle-search",
-      name: "vehicle-search",
-      component: vehicleSearch,
+      path: "/vehicle-sale",
+      name: "vehicle-sale",
+      component: vehicleSale,
     },
     {
       path: "/car-search",

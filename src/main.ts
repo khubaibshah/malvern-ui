@@ -53,9 +53,8 @@ import Galleria from 'primevue/galleria';
 import AnimateOnScroll from 'primevue/animateonscroll';
 import ToggleButton from 'primevue/togglebutton';
 import InlineMessage from 'primevue/inlinemessage';
-
+import InputNumber from 'primevue/inputnumber';
 import ScrollTop from 'primevue/scrolltop';
-
 import Skeleton from 'primevue/skeleton';
 
 
@@ -122,6 +121,7 @@ app.component('PrimeSkeleton', Skeleton)
 app.component('PrimeScrollTop', ScrollTop)
 app.component('PrimeToggleButton', ToggleButton);
 app.component('PrimeInlineMessage', InlineMessage);
+app.component('Primeinputnumber', InputNumber);
 
 
 app.config.globalProperties.$filters = {

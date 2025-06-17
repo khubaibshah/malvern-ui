@@ -17,14 +17,22 @@
                 <!-- Price Range -->
                 <div v-if="activeCategory === 'Price'" class="mb-6">
                     <h3 class="text-xl font-bold mb-4">Price Range</h3>
+
                     <PrimeSlider v-model="priceRange" :min="0" :max="150000" :step="1000" range class="mb-2" />
+
+                    <!-- Show the dynamic range below the slider -->
+                    <div class="text-sm text-gray-600 mb-2">
+                        Selected Range: £{{ priceRange[0].toLocaleString() }} – £{{ priceRange[1].toLocaleString() }}
+                    </div>
+
                     <div class="flex justify-content-between">
-                        <InputNumber v-model="priceRange[0]" mode="currency" currency="GBP" locale="en-UK"
+                        <PrimeInputNumber v-model="priceRange[0]" mode="currency" currency="GBP" locale="en-UK"
                             class="w-6" />
-                        <InputNumber v-model="priceRange[1]" mode="currency" currency="GBP" locale="en-UK"
+                        <PrimeInputNumber v-model="priceRange[1]" mode="currency" currency="GBP" locale="en-UK"
                             class="w-6" />
                     </div>
                 </div>
+
 
                 <!-- Mileage -->
                 <div v-if="activeCategory === 'Mileage'" class="mb-6">
@@ -55,7 +63,7 @@
                     <h3 class="text-xl font-bold mb-4">Features</h3>
                     <div class="grid">
                         <div class="col-6 md:col-4" v-for="feature in features" :key="feature">
-                            <Checkbox v-model="selectedFeatures" :inputId="feature" name="feature" :value="feature" />
+                            <PrimeCheckbox v-model="selectedFeatures" :inputId="feature" name="feature" :value="feature" />
                             <label :for="feature" class="ml-2">{{ feature }}</label>
                         </div>
                     </div>
@@ -82,7 +90,7 @@
                 <div class="flex gap-2">
                     <PrimeButton label="Cancel" icon="pi pi-times" class="p-button-text"
                         @click="$emit('update:visible', false)" />
-                    <PrimeButton label="Apply Filters" icon="pi pi-check" @click="$emit('update:visible', false)" />
+                    <PrimeButton label="Apply Filters" icon="pi pi-check" @click="applyFilters" />
 
                 </div>
             </div>
@@ -102,8 +110,40 @@ defineProps({
         required: true
     }
 });
+const emit = defineEmits(['update:visible', 'applyFilters']);
+// defineEmits(['update:visible', 'applyFilters'])
 
-defineEmits(['update:visible']);
+
+
+const applyFilters = () => {
+  const filters: Record<string, any> = {};
+
+  if (priceRange.value[0] !== 0 || priceRange.value[1] !== 150000) {
+    filters.price_min = priceRange.value[0];
+    filters.price_max = priceRange.value[1];
+  }
+
+  if (selectedMileage.value && selectedMileage.value > 0) {
+    filters.mileage = selectedMileage.value;
+  }
+
+  if (selectedTypes.value.length > 0) {
+filters.types = selectedTypes.value;
+  }
+
+  if (selectedFeatures.value.length > 0) {
+    filters.features = selectedFeatures.value;
+  }
+
+  if (selectedColor.value) {
+    filters.color = selectedColor.value;
+  }
+
+  emit('applyFilters', filters);
+  emit('update:visible', false);
+};
+
+
 
 // const advancedFilters = ref(false);
 const activeCategory = ref('Price');
@@ -185,10 +225,10 @@ const resetFilters = () => {
     selectedColor.value = '';
 };
 
-const applyFilters = () => {
-    // Your filter application logic here
-    advancedFilters.value = false;
-};
+// const applyFilters = () => {
+//     // Your filter application logic here
+//     advancedFilters.value = false;
+// };
 </script>
 
 <style scoped>

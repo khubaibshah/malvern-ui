@@ -36,7 +36,7 @@
         </div>
 
         <!-- MODAL -->
-        <FilterModel v-model:visible="showFilters" />
+        <FilterModel v-model:visible="showFilters" @applyFilters="fetchFilteredVehicles" />
         <!-- <PrimeDialog v-model:visible="advancedFilters" header="Advanced Filters" maximizable :maximized="true" modal
           :style="{ width: '100vw', height: '100vh' }" :breakpoints="{ '1199px': '100vw', '575px': '100vw' }">
           <p class="m-0">
@@ -180,6 +180,43 @@ onMounted(async () => {
 
   loading.value = false
 })
+
+const fetchFilteredVehicles = async (filters: any) => {
+  console.log('Applying filters:', filters);
+  try {
+    const params: any = {};
+
+    if (filters.price_min !== undefined && filters.price_max !== undefined) {
+      params.price_min = filters.price_min;
+      params.price_max = filters.price_max;
+    }
+
+    if (filters.mileage !== undefined) {
+      params.mileage = filters.mileage;
+    }
+
+    if (filters.types && Array.isArray(filters.types)) {
+      params.types = filters.types.join(',');
+    }
+
+    if (filters.features && Array.isArray(filters.features)) {
+      params.features = filters.features.join(',');
+    }
+
+    if (filters.color) {
+      params.color = filters.color;
+    }
+
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/advanced-filters`, {
+      params
+    });
+
+    vehicles.value = response.data.cars;
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to apply filters', life: 3000 });
+  }
+};
+
 
 
 

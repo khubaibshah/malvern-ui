@@ -39,7 +39,6 @@ const resetForm = () => {
   };
 
   registrationNumber.value = '';
-  isLocked.value = false;
 };
 const vehData = ref({
   registration: '',
@@ -54,8 +53,9 @@ const vehData = ref({
   primaryColour: '',
   partEx: false,
 });
-// default is null, only gets populated after API call
 
+
+// default is null, only gets populated after API call
 const form = ref({
   fullName: '',
   email: '',
@@ -70,7 +70,7 @@ const formErrors = ref({
 });
 
 
-
+//make post request to the backend to submit the form
 const submitSellRequest = async () => {
   // Reset all errors
   formErrors.value = {
@@ -114,7 +114,6 @@ const submitSellRequest = async () => {
     });
   }
 };
-
 
 // Method to make a request to the backend and display the details for vehicle details 
 const getDvsa = async () => {
