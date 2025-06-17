@@ -88,9 +88,12 @@
 
                 <!-- Car Info -->
                 <div class="mt-3">
-                  <div class="text-lg font-bold text-900 mb-1">
+                  <div class="text-xl font-medium text-gray-700 mb-3 font-medium"
+                    style="font-family: 'Inter', sans-serif;">
                     {{ item.make }} {{ item.model }}
                   </div>
+
+                  <PrimeDivider class="mb-2" />
                   <div class="text-sm text-600 mb-1">
                     {{ item.variant || 'Variant Info' }}
                   </div>
