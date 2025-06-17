@@ -148,41 +148,46 @@ const modelOptions = ref([])
 const variantOptions = ref([])
 const loading = ref(true)
 const showFilters = ref(false);
+const prepareDropdowns = () => {
+  const makes = new Set();
+  const models = new Set();
+  const variants = new Set();
+
+  vehicles.value.forEach((v: any) => {
+    if (v.make) makes.add(v.make);
+    if (v.model) models.add(v.model);
+    if (v.variant) variants.add(v.variant);
+  });
+
+  makeOptions.value = [...makes].map(m => ({ label: m, value: m }));
+  modelOptions.value = [...models].map(m => ({ label: m, value: m }));
+  variantOptions.value = [...variants].map(v => ({ label: v, value: v }));
+};
 
 onMounted(async () => {
   if (vehicleStore.vehiclesLoaded) {
-    vehicles.value = vehicleStore.getVehicles
+    vehicles.value = vehicleStore.getVehicles;
+    loading.value = false; // ✅ <- this is needed
   } else {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-all-vehicles`)
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/advanced-filters`);
       if (response.status === 200) {
-        vehicleStore.setVehicles(response.data.cars || [])
-        vehicles.value = vehicleStore.getVehicles
+        vehicleStore.setVehicles(response.data.cars || []);
+        vehicles.value = vehicleStore.getVehicles;
+        loading.value = false; // ✅ <- also here after async success
       }
     } catch (error) {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load car data', life: 3000 })
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load vehicle data', life: 3000 });
+      loading.value = false; // ✅ <- to unblock the UI even if it fails
     }
   }
 
-  const makes = new Set()
-  const models = new Set()
-  const variants = new Set()
+  prepareDropdowns();
+});
 
-  vehicles.value.forEach((v: any) => {
-    if (v.make) makes.add(v.make)
-    if (v.model) models.add(v.model)
-    if (v.variant) variants.add(v.variant)
-  })
 
-  makeOptions.value = [...makes].map(m => ({ label: m, value: m }))
-  modelOptions.value = [...models].map(m => ({ label: m, value: m }))
-  variantOptions.value = [...variants].map(v => ({ label: v, value: v }))
-
-  loading.value = false
-})
 
 const fetchFilteredVehicles = async (filters: any) => {
-  console.log('Applying filters:', filters);
   try {
     const params: any = {};
 
@@ -207,15 +212,17 @@ const fetchFilteredVehicles = async (filters: any) => {
       params.color = filters.color;
     }
 
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/advanced-filters`, {
-      params
-    });
-
-    vehicles.value = response.data.cars;
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/advanced-filters`, { params });
+    if (response.status === 200) {
+      vehicleStore.setVehicles(response.data.cars || []);
+      vehicles.value = vehicleStore.getVehicles;
+      prepareDropdowns(); // update dropdowns after filters
+    }
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to apply filters', life: 3000 });
   }
 };
+
 
 
 
