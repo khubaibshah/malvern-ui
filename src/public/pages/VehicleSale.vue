@@ -104,7 +104,7 @@ const submitSellRequest = async () => {
     toast.add({
       severity: 'success',
       summary: 'Submitted!',
-      detail: 'Your car details have been received.',
+      detail: 'Your car details have been received. You will be contacted shortly.',
       life: 4000,
     });
   } catch (err) {
@@ -124,10 +124,17 @@ const getDvsa = async () => {
     vehData.value = response;
     isLocked.value = true; // Lock the inputs
     showCarDetails.value = true;
-    vehicleStore.setVehicleData(response)
+    vehicleStore.setVehicleData(response) 
+
   } catch (error) {
-    console.log('sdvczxv', error)
-    console.error(error);
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to retrieve vehicle details. Please check the registration number.',
+      life: 4000,
+    });
+    // console.log('sdvczxv', error)
+    // console.error(error);
   }
 };
 
