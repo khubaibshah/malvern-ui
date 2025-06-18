@@ -28,7 +28,7 @@ const resetForm = () => {
     fuelType: '',
     engineSize: '',
     primaryColour: '',
-    partEx: false,
+    partEx: partEx.value,
   };
 
   form.value = {
@@ -51,7 +51,7 @@ const vehData = ref({
   fuelType: '',
   engineSize: '',
   primaryColour: '',
-  partEx: false,
+  partEx: partEx.value, // Default partEx value
 });
 
 
@@ -94,8 +94,10 @@ const submitSellRequest = async () => {
     const payload = {
       ...form.value,
       registration: vehData.value?.registration,
-      vehicle: vehData.value, // Optional: full DVLA response if you want it
+      vehicle: vehData.value,
+      partEx: vehData.value?.partEx ?? false, // <-- explicitly include
     };
+
 
     await axios.post(`${import.meta.env.VITE_API_BASE_URL}/scs/sell-your-car`, payload);
 
