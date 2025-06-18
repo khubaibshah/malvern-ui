@@ -69,54 +69,47 @@
         <div class="grid" v-else-if="filteredVehicles.length > 0">
           <div v-for="(item, index) in filteredVehicles" :key="index" class="col-12 sm:col-6 lg:col-4 p-2">
             <RouterLink :to="{ name: 'vehicle-details', params: { id: item.id } }" class="no-underline">
-              <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative cursor-pointer">
-                <!-- Image Carousel (or first image preview) -->
-                <div class="relative">
-                  <img v-if="item.images && item.images.length > 0" :src="item.images[0]" alt="car"
-                    class="w-full border-round" style="object-fit: cover;" />
-                  <div v-else
-                    class="h-[180px] w-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                    No Image
-                  </div>
+              <!-- <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative cursor-pointer"> -->
+              <!-- Image Carousel (or first image preview) -->
+              <div class="relative">
+                <PrimeCard style="overflow: hidden" class="mb-4">
+                  <template #header>
+                    <img v-if="item.images && item.images.length > 0" :src="item.images[0]" alt="car"
+                      class="w-full border-round" style="object-fit: cover;" />
+                    <div v-else
+                      class="h-[180px] w-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                      No Image
+                    </div>
+                  </template>
+                  <template #title>
+                    <h3 class="text-sm font-bold text-800 mb-1">{{ item.make }} {{ item.model }}</h3>
+                  </template>
+                  <template #subtitle>
+                    <div class="text-sm text-gray-500 mb-1">
+                      {{ item.variant || 'No Variant' }} • {{ item.year || 'N/A' }}
 
-                  <!-- Registration Plate Badge -->
-                  <div
-                    class="absolute bottom-0 right-0 bg-white text-black text-xs font-semibold px-2 py-1 border-round m-2 shadow">
-                    £{{ item.price?.toLocaleString() || '£N/A' }}
-                  </div>
+                    </div>
+                  </template>
+                  <template #content>
+                    <div class="flex gap-2 flex-wrap mt-2">
+                  <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
+                    {{ item.mileage?.toLocaleString() || '0' }} miles
+                  </span>
+                  <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
+                    {{ item.year || 'Year' }}
+                  </span>
                 </div>
 
-                <!-- Car Info -->
-                <div class="mt-3">
-                  <div class="text-xl font-medium text-gray-700 mb-3 font-medium"
-                    style="font-family: 'Inter', sans-serif;">
-                    {{ item.make }} {{ item.model }}
-                  </div>
-
-                  <PrimeDivider class="mb-2" />
-                  <div class="text-sm text-600 mb-1">
-                    {{ item.variant || 'Variant Info' }}
-                  </div>
-                  <!-- <div class="text-xs text-gray-500 mb-2 truncate">
-                    {{ item.description || 'No description provided' }}
-                  </div> -->
-
-                  <!-- Badges -->
-                  <div class="flex gap-2 flex-wrap mt-2">
-                    <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
-                      {{ item.mileage?.toLocaleString() || '0' }} miles
-                    </span>
-                    <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
-                      {{ item.year || 'Year' }}
-                    </span>
-                  </div>
-
-                  <!-- Price -->
-                  <div class="text-xl text-green-600 font-bold mt-2">
-                    £{{ item.price?.toLocaleString() || 'N/A' }}
-                  </div>
+                  </template>
+                  <template #footer>
+                    <div class="flex gap-3 mt-1">
+                     <div class="text-xl text-green-400 font-bold mt-2">
+                  £{{ item.price?.toLocaleString() || 'N/A' }}
                 </div>
-              </div>
+                    </div>
+                  </template>
+                </PrimeCard>
+                </div>
             </RouterLink>
           </div>
         </div>
