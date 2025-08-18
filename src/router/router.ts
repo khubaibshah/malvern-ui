@@ -1,12 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
-import carSearch from "@/public/pages/carSearch.vue";
+import VehicleSearch from "@/public/pages/VehicleSearch.vue";
 import HomePage from "@/public/pages/HomePage.vue";
-import CarDetails from "@/public/pages/CarDetails.vue";
+
 import VehicleDetails from "@/public/pages/VehicleDetails.vue";
-import bookJob from "@/public/pages/bookJobs.vue";
 import vehicleSale from "@/public/pages/VehicleSale.vue";
 import enquiryForm from "@/public/components/enquiryForm.vue";
 import NotFound from "@/public/components/NotFound.vue";
+import PrivacyPolicy from "@/views/PrivacyPolicy.vue";
+import TermsOfService from "@/views/TermsOfService.vue";
+import Sitemap from "@/views/Sitemap.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, from, savedPosition) {
@@ -27,7 +29,7 @@ const router = createRouter({
     {
       path: "/car-search",
       name: "car-search",
-      component: carSearch,
+      component: VehicleSearch,
     },
     {
       path: "/vehicle/:id",
@@ -40,12 +42,24 @@ const router = createRouter({
       name: "enquiry-form",
       component: enquiryForm,
     },
+
     {
-      path: "/bookJob",
-      name: "bookJob",
-      component: bookJob,
+    path: '/privacy-policy',
+    name: 'privacy-policy',
+    component: PrivacyPolicy,
     },
 
+    {
+      path: '/terms-of-service',
+      name: 'terms-of-service',
+      component: TermsOfService,
+    },
+
+    {
+      path: '/sitemap',
+      name: 'sitemap',
+      component: Sitemap,
+    },
     // router/index.js or router.ts
     {
       path: "/:catchAll(.*)",

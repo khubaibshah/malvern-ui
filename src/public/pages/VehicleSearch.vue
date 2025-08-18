@@ -47,8 +47,6 @@
         </PrimeDialog> -->
 
       </div>
-
-
       <div class="col-12 md:col-12 mt-2">
         <div class="flex justify-content-between mb-4">
         </div>
@@ -86,30 +84,30 @@
                   </template>
                   <template #subtitle>
                     <div class="text-sm text-gray-500 mb-1">
-                      {{ item.variant || 'No Variant' }} • {{ item.year || 'N/A' }}
+                      {{ item.variant || 'No Variant' }} • {{ item.year || 'N/A' }} • {{ item.body_style || 'N/A' }}
 
                     </div>
                   </template>
                   <template #content>
                     <div class="flex gap-2 flex-wrap mt-2">
-                  <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
-                    {{ item.mileage?.toLocaleString() || '0' }} miles
-                  </span>
-                  <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
-                    {{ item.year || 'Year' }}
-                  </span>
-                </div>
+                      <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
+                        {{ item.mileage?.toLocaleString() || '0' }} miles
+                      </span>
+                      <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
+                        {{ item.year || 'Year' }}
+                      </span>
+                    </div>
 
                   </template>
                   <template #footer>
                     <div class="flex gap-3 mt-1">
-                     <div class="text-xl text-green-400 font-bold mt-2">
-                  £{{ item.price?.toLocaleString() || 'N/A' }}
-                </div>
+                      <div class="text-xl text-green-400 font-bold mt-2">
+                        £{{ item.price?.toLocaleString() || 'N/A' }}
+                      </div>
                     </div>
                   </template>
                 </PrimeCard>
-                </div>
+              </div>
             </RouterLink>
           </div>
         </div>
@@ -127,9 +125,10 @@ import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import FilterModel from '../components/filterModal.vue'
 
-import { useVehicleStore } from '@/stores/vehicleData' // adjust path as needed
-const vehicleStore = useVehicleStore()
+import { useVehicleStore } from '@/stores/vehicleData'
+import VehicleService from '@/services/VehicleService'
 
+const vehicleStore = useVehicleStore()
 
 const filterModelRef = ref(null);
 const toast = useToast()
@@ -163,66 +162,33 @@ const prepareDropdowns = () => {
 };
 
 onMounted(async () => {
-  if (vehicleStore.vehiclesLoaded) {
-    vehicles.value = vehicleStore.getVehicles;
-    loading.value = false; // ✅ <- this is needed
-  } else {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/advanced-filters`);
-      if (response.status === 200) {
-        vehicleStore.setVehicles(response.data.cars || []);
-        vehicles.value = vehicleStore.getVehicles;
-        loading.value = false; // ✅ <- also here after async success
-      }
-    } catch (error) {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load vehicle data', life: 3000 });
-      loading.value = false; // ✅ <- to unblock the UI even if it fails
-    }
+  try {
+    const cars = await VehicleService.loadVehicles();
+    vehicles.value = cars;
+    console.log('Vehicles loaded:', vehicles.value);
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to load vehicle data',
+      life: 3000
+    });
+  } finally {
+    loading.value = false;
+    prepareDropdowns();
   }
-
-  prepareDropdowns();
 });
-
-
 
 const fetchFilteredVehicles = async (filters: any) => {
   try {
-    const params: any = {};
-
-    if (filters.price_min !== undefined && filters.price_max !== undefined) {
-      params.price_min = filters.price_min;
-      params.price_max = filters.price_max;
-    }
-
-    if (filters.mileage !== undefined) {
-      params.mileage = filters.mileage;
-    }
-
-    if (filters.types && Array.isArray(filters.types)) {
-      params.types = filters.types.join(',');
-    }
-
-    if (filters.features && Array.isArray(filters.features)) {
-      params.features = filters.features.join(',');
-    }
-
-    if (filters.color) {
-      params.color = filters.color;
-    }
-
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/advanced-filters`, { params });
-    if (response.status === 200) {
-      vehicleStore.setVehicles(response.data.cars || []);
-      vehicles.value = vehicleStore.getVehicles;
-      prepareDropdowns(); // update dropdowns after filters
-    }
+    const data = await VehicleService.getVehiclesByFilters(filters);
+    vehicleStore.setVehicles(data.cars || []);
+    vehicles.value = vehicleStore.getVehicles;
+    prepareDropdowns();
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to apply filters', life: 3000 });
   }
 };
-
-
-
 
 
 const filteredModelOptions = computed(() => {

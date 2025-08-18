@@ -97,13 +97,10 @@
                     <PrimeButton label="Cancel" icon="pi pi-times" class="p-button-text"
                         @click="$emit('update:visible', false)" />
                     <PrimeButton label="Apply Filters" icon="pi pi-check" @click="applyFilters" severity="contrast" />
-
                 </div>
             </div>
         </template>
     </PrimeDialog>
-
-
 </template>
 <script setup lang="ts">
 

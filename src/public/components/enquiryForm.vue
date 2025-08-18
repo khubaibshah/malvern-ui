@@ -32,7 +32,7 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <PrimeButton label="Submit Enquiry" class="w-full" icon="pi pi-send" @click="handleSubmit"
+                    <PrimeButton label="Submit Enquiry" class="w-full custom-black-button" icon="pi pi-send" @click="handleSubmit"
                         :loading="submitting" />
                 </div>
             </div>

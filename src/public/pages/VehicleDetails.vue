@@ -9,6 +9,8 @@ import { getUkRegistrationLabel } from '@/utils/registration';
 import enquiryForm from '../components/enquiryForm.vue';
 import { useVehicleStore } from '@/stores/vehicleData';
 
+import VehicleService from '@/services/VehicleService'
+
 
 const route = useRoute()
 const car = ref<any>(null)
@@ -79,10 +81,9 @@ const vehicleStore = useVehicleStore();
 const fetchCar = async () => {
   try {
     const id = route.params.id
-    const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-vehicle-by-id/${id}`)
-    car.value = res.data.car
-    console.log('Full car data:', car.value)
+    const data = await VehicleService.getVehicleById(id)
 
+    car.value = data.car
     images.value = Array.isArray(car.value.images) ? car.value.images : []
 
     galleriaItems.value = images.value.map((img: string) => ({
@@ -100,6 +101,7 @@ const fetchCar = async () => {
     loading.value = false
   }
 }
+
 
 
 const registrationLabel = computed(() => {
@@ -199,7 +201,7 @@ onMounted(fetchCar)
               </div>
               <div class="flex items-center gap-2">
                 <i class="fa-solid fa-gear text-lg text-gray-500"></i>
-<span>{{ formattedEngineSize }}</span>
+                <span>{{ formattedEngineSize }}</span>
               </div>
             </div>
 

@@ -1,59 +1,13 @@
 import axios from 'axios';
-import type { VehicleData } from '../interfaces/VehicleData';
-// import type  DVSAVehicleData  from '../interfaces/DvsaVehicleData';
+import { useVehicleStore } from '@/stores/vehicleData'
+import type { Car, GetAllCarsResponse } from '@/interfaces/car.interface'
 
-interface MappedVehicleData {
-  registration_number: string;
-  tax_status: string;
-  mot_status: string;
-  make: string;
-  year_of_manufacture: number;
-  engine_capacity: number;
-  co2_emissions: number;
-  fuel_type: string;
-  marked_for_export: boolean;
-  colour: string;
-  type_approval: string;
-  date_of_last_v5c_issued: string;
-  mot_expiry_date: string;
-  wheelplan: string;
-  month_of_first_registration: number;
-}
 
 class VehicleService {
   
-  // Function to fetch vehicle details from DVLA API
-  getVehicleDetails = async (registrationNumber: string): Promise<VehicleData> => {
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/admin/get-vehicle-details', {
-        registrationNumber: registrationNumber,
-      });
-      
-      // Assuming the response contains the vehicle details
-      console.log(response.data);
-    //   this.saveVehicleData(response.data)
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
-  // Function to fetch a single vehicle by ID
-  getVehicleByReg = async (registrationNumber: any): Promise<VehicleData> => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/vehicle-details/${registrationNumber}`);
-      console.log('Fetched vehicle data by Registration from db:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
   getDvsaVehicleByReg = async (registrationNumber: any) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/dvsa-vehicle-details-scs/${registrationNumber}`);
-
       console.log('Fetched vehicle data by Registration from dvsa data:', response.data);
       return response.data;
     } catch (error) {
@@ -61,6 +15,85 @@ class VehicleService {
       throw error;
     }
   };
+
+  /** 
+   * Get all available vehicles
+   * 
+   * */
+  getAllVehicles = async (): Promise<GetAllCarsResponse> => {
+  try {
+    const response = await axios.get<GetAllCarsResponse>(`${import.meta.env.VITE_API_BASE_URL}/scs/vehicle`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching all vehicles:', error);
+    throw error;
+  }
+  };
+
+  /** Get vehicles by advanced filters */
+  getVehiclesByFilters = async (filters: any) => {
+    const params: any = {};
+
+    if (filters.price_min !== undefined && filters.price_max !== undefined) {
+      params.price_min = filters.price_min;
+      params.price_max = filters.price_max;
+    }
+
+    if (filters.mileage !== undefined) {
+      params.mileage = filters.mileage;
+    }
+
+    if (filters.types?.length) {
+      params.types = filters.types.join(',');
+    }
+
+    if (filters.features?.length) {
+      params.features = filters.features.join(',');
+    }
+
+    if (filters.color) {
+      params.color = filters.color;
+    }
+
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/vehicle/advanced-filters`, {
+      params,
+    });
+
+    return response.data;
+  };
+
+  /** 
+   * Load all vehicles 
+   * 
+   * */
+  loadVehicles = async () => {
+    const vehicleStore = useVehicleStore();
+    if (vehicleStore.vehiclesLoaded) {
+      return vehicleStore.getVehicles;
+    }
+
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/vehicle`);
+      const cars = response.data.cars || [];
+      vehicleStore.setVehicles(cars);
+      return cars;
+    } catch (error) {
+      console.error('Failed to fetch vehicle data:', error);
+      throw error;
+    }
+  };
+
+  getVehicleById = async (vehicleId: number | string) => {
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/vehicles/${vehicleId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch vehicle by ID:', error);
+    throw error;
+  }
+  };
+
 }
+
 
 export default new VehicleService();

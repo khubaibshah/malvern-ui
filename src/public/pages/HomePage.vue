@@ -7,11 +7,11 @@ import { animate, svg, stagger } from 'animejs';
 import Carousel from 'primevue/carousel';
 import { useVehicleStore } from '@/stores/vehicleData'
 
-//hompage images
+//homepage images
 import LamboImage from '@/assets/img/homepage/homepagelambo1.jpg'
 import PorscheImage from '@/assets/img/homepage/porche.jpg'
 import BugattiImage from '@/assets/img/homepage/bug.jpg'
-
+import VehicleService from '@/services/VehicleService'
 const vehicleStore = useVehicleStore()
 const router = useRouter();
 const toast = useToast();
@@ -86,10 +86,6 @@ const currentSlide = computed(() => images.value[currentIndex.value]);
 
 let interval: any = null;
 const submitTestDriveRequest = async () => {
-  console.log('Requesting to:', `${import.meta.env.VITE_API_BASE_URL}/scs/schedule-test-drive`);
-  console.log('Submitting form:', form.value); // <-- add this
-
-
   if (!form.value.name || !form.value.email || !form.value.phone || !form.value.vehicle_id) {
     toast.add({ severity: 'warn', summary: 'Incomplete', detail: 'Please fill out all fields and select a vehicle to schedule a test drive', life: 3000 });
     return;
@@ -98,13 +94,12 @@ const submitTestDriveRequest = async () => {
   submitting.value = true;
 
   try {
-    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/scs/schedule-test-drive`, {
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/scs/lead/schedule-test-drive`, {
       name: form.value.name,
       email: form.value.email,
       phone: form.value.phone,
       vehicle_id: form.value.vehicle_id
     });
-
 
     toast.add({ severity: 'success', summary: 'Request Sent', detail: 'We will contact you shortly!', life: 3000 });
     form.value = { name: '', email: '', phone: '', vehicle_id: null };
@@ -124,7 +119,6 @@ onMounted(async () => {
   interval = setInterval(() => {
     currentIndex.value = (currentIndex.value + 1) % images.value.length;
   }, 5000);
-  // Animate your SVGs etc.
   animate(svg.createDrawable('.line'), {
     draw: ['0 0', '0 1', '1 1'],
     ease: 'inOutQuad',
@@ -134,22 +128,20 @@ onMounted(async () => {
   })
 
   if (!vehicleStore.vehiclesLoaded) {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/scs/get-all-vehicles`)
-      if (response.status === 200) {
-        vehicleStore.setVehicles(response.data.cars || [])
-      }
-    } catch (error) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to load car data',
-        life: 3000
-      })
-    }
+  try {
+    const data = await VehicleService.getAllVehicles()
+    vehicleStore.setVehicles(data.cars || [])
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to load car data',
+      life: 3000
+    })
+  }
   }
 
-  // Use store directly
+  // Use store 
   vehicles.value = vehicleStore.getVehicles
   featuredVehicles.value = vehicleStore.getFeaturedVehicles
 
@@ -171,7 +163,7 @@ onMounted(async () => {
   loading.value = false
   vehicleOptions.value = vehicles.value.map((v: any) => ({
     label: `${v.make} ${v.model} ${v.variant || ''}`.trim(),
-    value: v.id, // or v.registration if you prefer
+    value: v.id,
   }));
 })
 
@@ -246,8 +238,7 @@ const filterByModel = (modelName: string) => {
       </div>
     </div>
     <div class="grid mx-auto" v-else-if="featuredVehicles" style="
-    justify-content: center;
-">
+    justify-content: center;">
       <div v-for="(car, index) in featuredVehicles" :key="car.id"
         :class="`col-12 sm:col-6 lg:col-4 px-3 mb-5 md:col-${12 / featuredVehicles.length}`">
         <PrimeCard class="border-round-lg overflow-hidden hover-card">
@@ -306,13 +297,6 @@ const filterByModel = (modelName: string) => {
               <InputText placeholder="Phone Number" class="w-full" v-model="form.phone" />
             </div>
             <div class="mb-4">
-              <!-- <Dropdown
-  :v-model="vehicleOptions.find(opt => opt.value === form.vehicle_id)?.label || 'Unknown Vehicle'"
-  :options="vehicleOptions"
-  placeholder="Selected Vehicle"
-  class="w-full"
-  :disabled="true"
-/> -->
               <p class="text-md text-gray-600 mt-2" v-if="form.vehicle_id">
                 Selected: {{
                   vehicleOptions.find(opt => opt.value === form.vehicle_id)?.label || 'Unknown Vehicle'
@@ -376,9 +360,7 @@ const filterByModel = (modelName: string) => {
       <div class="col-12 md:col-6 lg:col-4">
         <div class="text-center p-6">
           <!-- <i class="pi pi-shield text-5xl mb-4"></i> -->
-          <svg viewBox="0 0 304 112" style="
-    height: 42px;
-">
+          <svg viewBox="0 0 304 112" style="height: 42px;">
             <title>Suzuka</title>
             <g stroke="none" fill="none" fill-rule="evenodd">
               <path

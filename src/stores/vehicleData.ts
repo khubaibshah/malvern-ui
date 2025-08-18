@@ -1,4 +1,8 @@
 // store/vehicleData.ts
+
+// This store manages vehicle data, including individual vehicle details, a list of vehicles,
+// featured vehicles, and a registration number. It provides actions to set this data and getters
+// to retrieve it. The `vehiclesLoaded` flag prevents unnecessary refetching of vehicle data.
 import { defineStore } from 'pinia'
 
 export const useVehicleStore = defineStore('vehicleData', {
@@ -30,6 +34,3 @@ export const useVehicleStore = defineStore('vehicleData', {
     getFeaturedVehicles: (state) => state.featuredVehicles,
   }
 })
-// This store manages vehicle data, including individual vehicle details, a list of vehicles,
-// featured vehicles, and a registration number. It provides actions to set this data and getters
-// to retrieve it. The `vehiclesLoaded` flag prevents unnecessary refetching of vehicle data.

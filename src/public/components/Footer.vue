@@ -18,8 +18,8 @@
             <PrimeButton icon="pi pi-twitter" class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
             <!-- <a href="https://www.instagram.com/r.k.autobodies?igsh=MXgydDd3azgxb2Vnag%3D%3D&utm_source=qr"
               target="_blank" rel="noopener noreferrer"> -->
-              <PrimeButton icon="pi pi-instagram"
-                class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
+            <PrimeButton icon="pi pi-instagram"
+              class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
             <!-- </a> -->
 
             <PrimeButton icon="pi pi-tiktok" class="p-button-rounded p-button-text text-white hover:text-yellow-500" />
@@ -32,13 +32,19 @@
             Quick Links
           </h4>
           <ul class="list-none p-0 m-0">
-            <li class="mb-2"><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Home</a></li>
-            <li class="mb-2"><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Inventory</a>
+            <li class="mb-2">
+              <RouterLink to="/" class="text-gray-400 hover:text-yellow-500 transition-colors">Home</RouterLink>
             </li>
-            <li class="mb-2"><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Services</a></li>
-            <li class="mb-2"><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Finance</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Contact</a></li>
+            <li class="mb-2">
+              <RouterLink to="/car-search" class="text-gray-400 hover:text-yellow-500 transition-colors">Find & Buy
+              </RouterLink>
+            </li>
+            <li class="mb-2">
+              <RouterLink to="/vehicle-sale" class="text-gray-400 hover:text-yellow-500 transition-colors">Sell Your Car
+              </RouterLink>
+            </li>
           </ul>
+
         </div>
 
         <!-- Contact Info -->
@@ -49,11 +55,13 @@
           <ul class="list-none p-0 m-0">
             <li class="mb-3 flex align-items-start">
               <i class="pi pi-map-marker mt-1 mr-2"></i>
-              <span class="text-gray-400">123 Luxury Avenue, London, UK</span>
+              <span class="text-gray-400">Unit 20, Victoria Works Industrial Estate,
+                Accrington Rd,
+                Burnley BB11 5EF</span>
             </li>
             <li class="mb-3 flex align-items-start">
               <i class="pi pi-phone mt-1 mr-2"></i>
-              <span class="text-gray-400">+44 20 7123 4567</span>
+              <span class="text-gray-400">+44 1234 567890</span>
             </li>
             <li class="flex align-items-start">
               <i class="pi pi-envelope mt-1 mr-2"></i>
@@ -86,9 +94,25 @@
           &copy; 2023 Stanley Car Sales. All rights reserved.
         </span>
         <div class="flex gap-4">
-          <a href="#" class="text-gray-500 hover:text-yellow-500 transition-colors">Privacy Policy</a>
-          <a href="#" class="text-gray-500 hover:text-yellow-500 transition-colors">Terms of Service</a>
-          <a href="#" class="text-gray-500 hover:text-yellow-500 transition-colors">Sitemap</a>
+          <ul class="list-none p-0 m-0">
+  <li class="mb-2">
+    <RouterLink to="/privacy-policy" class="text-gray-500 hover:text-yellow-500 transition-colors">
+      Privacy Policy
+    </RouterLink>
+  </li>
+  <li class="mb-2">
+    <RouterLink to="/terms-of-service" class="text-gray-500 hover:text-yellow-500 transition-colors">
+      Terms of Service
+    </RouterLink>
+  </li>
+  <li class="mb-2">
+    <RouterLink to="/sitemap" class="text-gray-500 hover:text-yellow-500 transition-colors">
+      Sitemap
+    </RouterLink>
+  </li>
+</ul>
+
+          <!-- <a href="#" class="text-gray-500 hover:text-yellow-500 transition-colors">Sitemap</a> -->
         </div>
       </div>
     </div>

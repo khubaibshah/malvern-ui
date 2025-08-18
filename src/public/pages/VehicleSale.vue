@@ -99,7 +99,7 @@ const submitSellRequest = async () => {
     };
 
 
-    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/scs/sell-your-car`, payload);
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/scs/lead/sell-your-car`, payload);
 
     toast.add({
       severity: 'success',
