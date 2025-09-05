@@ -174,7 +174,7 @@ const filterByModel = (modelName: string) => {
 
 <template>
   <PrimeToast />
-  <div class="hero-section   overflow-hidden">
+  <div class="hero-section   overflow-hidden car-details-container">
     <!-- Background Images with Transition -->
     <transition name="fade" mode="out-in">
       <div :key="currentIndex" class="hero-slide relative w-full h-full">

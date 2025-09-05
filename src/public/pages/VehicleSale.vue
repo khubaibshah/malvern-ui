@@ -146,7 +146,7 @@ const transformToUpperCase = () => {
 
 <template>
   <PrimeToast />
-  <div class="surface-section p-5 md:p-6 lg:p-8 shadow-md rounded-xl">
+  <div class="surface-section p-5 md:p-6 lg:p-8 shadow-md rounded-xl car-details-container">
     <h2 class="text-3xl font-semibold mb-4">Trade In or Sell – Get the Best Offer for Your Car</h2>
     <PrimeDivider class="mb-4" />
     <div class="grid">
