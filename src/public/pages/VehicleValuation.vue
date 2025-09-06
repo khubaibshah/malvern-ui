@@ -101,7 +101,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import axios from 'axios';
+import { useToast } from "primevue/usetoast";
 
+const toast = useToast();
 const form = ref({
   registration: '',
   mileage: null as number | null,
@@ -119,12 +121,28 @@ const canSubmit = computed(() => {
 async function onGetValuation() {
   try {
     loading.value = true;
+
     const res = await axios.get(
-      `http://127.0.0.1:8000/scs/at/${form.value.registration}/${form.value.mileage}`
+      `${import.meta.env.VITE_API_BASE_URL}/scs/at/${form.value.registration}/${form.value.mileage}`
     );
+
     valuation.value = res.data.data;
-  } catch (err) {
+
+    toast.add({
+      severity: "success",
+      summary: "Valuation Retrieved",
+      detail: `Valuation fetched for ${form.value.registration}`,
+      life: 4000,
+    });
+  } catch (err: any) {
     console.error(err);
+
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: err.response?.data?.message || "Failed to fetch valuation",
+      life: 5000,
+    });
   } finally {
     loading.value = false;
   }
