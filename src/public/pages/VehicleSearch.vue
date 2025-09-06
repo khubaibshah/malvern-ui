@@ -298,7 +298,7 @@ const clearFilters = () => {
   ::v-deep(.p-dropdown) {
     background-color: #fff !important;
     color: #000 !important;
-    border: 1px solid #ccc !important;
+    /* border: 1px solid #ccc !important; */
   }
 
   ::v-deep(.p-dropdown .p-dropdown-label) {

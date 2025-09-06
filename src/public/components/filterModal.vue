@@ -236,7 +236,7 @@ defineExpose({
 
 <style scoped>
 .color-option {
-    border: 2px solid #ccc;
+    /* border: 2px solid #ccc; */
     /* Default border for visibility (incl. white) */
     transition: all 0.2s ease;
 }
