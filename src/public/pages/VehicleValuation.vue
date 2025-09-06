@@ -62,7 +62,7 @@
                   {{ valuation.make }} {{ valuation.model }} ({{ valuation.registration }})
                 </div>
                 <p class="text-gray-600 mb-2">
-                  {{ valuation.generation }} - {{ valuation.bodyType }} - {{ valuation.fuelType }} - {{ valuation.colour }}
+                  {{ valuation.fuelType }} - {{ valuation.colour }} - {{ valuation.generation }}
                 </p>
 
                 <div class="grid text-center">
@@ -70,7 +70,7 @@
                     <div class="p-3 surface-100 border-round">
                       <div class="text-sm text-gray-500">Retail</div>
                       <div class="text-2xl font-bold">£{{ valuation.valuations.retail.toLocaleString() }}</div>
-                    </div>
+                    </div>  
                   </div>
                   <div class="col-12 md:col-4">
                     <div class="p-3 surface-100 border-round">
@@ -83,6 +83,10 @@
                       <div class="text-sm text-gray-500">Private Sale</div>
                       <div class="text-2xl font-bold">£{{ valuation.valuations.private.toLocaleString() }}</div>
                     </div>
+                    <h3 class="text-md font-semibold text-gray-700">
+                        If you would like to sell your Vehicle through SCS car sales,<br/>
+                        please call us on +44 7514 149339
+                    </h3>
                   </div>
                 </div>
 

@@ -69,7 +69,7 @@
           <PrimeDivider />
         </li>
         <li class="block lg:hidden flex items-center">
-          <PrimeButton label="+44 1234 567890" icon="pi pi-phone" severity="contrast" class="text-sm" raised />
+          <PrimeButton label="+44 7514 149339" icon="pi pi-phone" severity="contrast" class="text-sm" raised />
         </li>
         <li class="block lg:hidden flex items-center">
           <PrimeButton label="sales@scscarsales.co.uk" icon="pi pi-envelope" iconPos="left" severity="contrast"
@@ -80,7 +80,7 @@
 
     <!-- Desktop Contact Buttons (Far Right Side) -->
     <div class="hidden lg:flex items-center gap-4 w-full flex-row-reverse">
-      <PrimeButton label="+44 1234 567890" icon="pi pi-phone" severity="contrast" class="text-sm" raised  />
+      <PrimeButton label="+44 7514 149339" icon="pi pi-phone" severity="contrast" class="text-sm" raised  />
 <PrimeButton
   label="sales@scscarsales.co.uk"
   icon="pi pi-envelope"

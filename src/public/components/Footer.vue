@@ -61,7 +61,7 @@
             </li>
             <li class="mb-3 flex align-items-start">
               <i class="pi pi-phone mt-1 mr-2"></i>
-              <span class="text-gray-400">+44 1234 567890</span>
+              <span class="text-gray-400">+44 7514 149339</span>
             </li>
             <li class="flex align-items-start">
               <i class="pi pi-envelope mt-1 mr-2"></i>
