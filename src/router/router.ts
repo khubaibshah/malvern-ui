@@ -9,7 +9,6 @@ import NotFound from "@/public/components/NotFound.vue";
 import PrivacyPolicy from "@/views/PrivacyPolicy.vue";
 import TermsOfService from "@/views/TermsOfService.vue";
 import Sitemap from "@/views/Sitemap.vue";
-import VehicleValuation from "@/public/pages/VehicleValuation.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, from, savedPosition) {
@@ -32,11 +31,7 @@ const router = createRouter({
       name: "vehicle-sale",
       component: vehicleSale,
     },
-    {
-      path: "/valuation",
-      name: "vehicle-valuation",
-      component: VehicleValuation,
-    },
+
     {
       path: "/vehicle/:id",
       name: "vehicle-details",
