@@ -228,7 +228,7 @@ const transformToUpperCase = () => {
 
     <!-- 🔙 Back to Edit Button -->
     <div class="mb-3 flex justify-end" v-if="formLocked">
-      <PrimeButton label="Back to Edit" icon="pi pi-pencil" @click="clearValuation" />
+      <PrimeButton label="Back to Edit" icon="pi pi-pencil" severity="contrast" @click="clearValuation" />
     </div>
 
     <!-- 🧾 Full Form (only shown when not locked) -->
