@@ -30,12 +30,25 @@
         </div>
 
         <!-- MOBILE FILTER BUTTON (only visible on small screens) -->
-        <div class="flex md:hidden w-full justify-end">
-          <PrimeButton icon="pi pi-sliders-h" label="Filters" class="w-full custom-black-button"
+        <div class="md:hidden w-full">
+         
+          
+            <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label"
+            class="w-full md:w-14rem custom-black-button" placeholder="Make" />
+          <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label"
+            class="w-full md:w-14rem custom-black-button" placeholder="Model" />
+          <Dropdown v-model="vehicle_variant" :options="filteredVariantOptions" optionLabel="label"
+            class="w-full md:w-14rem custom-black-button" placeholder="Variant" />
+          <PrimeButton icon="pi pi-filter" label="Advanced Filters" class="w-full md:w-14rem custom-black-button"
             @click="showFilters = true" />
+          <PrimeButton icon="pi pi-times" label="Clear filters" @click="clearFilters"
+            class="w-full md:w-auto custom-black-button" />
+            <!-- <PrimeButton icon="pi pi-sliders-h" label="Filters" class="w-full custom-black-button"
+            @click="showFilters = true" /> -->
         </div>
 
         <!-- MODAL -->
+        
         <FilterModel ref="filterModelRef" v-model:visible="showFilters" @applyFilters="fetchFilteredVehicles" />
         <!-- <PrimeDialog v-model:visible="advancedFilters" header="Advanced Filters" maximizable :maximized="true" modal
           :style="{ width: '100vw', height: '100vh' }" :breakpoints="{ '1199px': '100vw', '575px': '100vw' }">
