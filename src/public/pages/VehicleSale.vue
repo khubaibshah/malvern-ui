@@ -11,7 +11,7 @@ const toast = useToast()
 const vehicleStore = useVehicleStore()
 
 const availableVehicles = ref<any[]>([])          // stock: not WASTEBIN
-const vehicleOptions = ref<{label:string; value:number}[]>([])
+const vehicleOptions = ref<{ label: string; value: number }[]>([])
 const targetVehicleId = ref<number | null>(null)  // the car they want from your stock
 const targetVehicle = computed(() =>
   availableVehicles.value.find(v => v.id === targetVehicleId.value) || null
@@ -65,12 +65,12 @@ const formatGBP = (n: number | string) => {
 // present ±7.5% range (rounded to nearest £50)
 const round50 = (n: number) => Math.round(n / 50) * 50
 const partExBase = computed<number>(() => +valuation.value?.valuations?.partExchange || 0)
-const partExLow  = computed<number>(() => round50(partExBase.value * 0.925)) // slightly protective
+const partExLow = computed<number>(() => round50(partExBase.value * 0.925)) // slightly protective
 const partExHigh = computed<number>(() => round50(partExBase.value * 1.075))
 
 const changeToPay = computed<number>(() => {
   const price = +(targetVehicle.value?.price || 0)
-  const px    = partExBase.value
+  const px = partExBase.value
   return Math.max(price - px, 0)
 })
 
@@ -106,15 +106,18 @@ const resetForm = () => {
 }
 
 const loadStock = async () => {
-  // You can also use vehicleStore if it’s already hydrated elsewhere
   const data = await VehicleService.getAllVehicles()
   const list = (data.cars || []) as any[]
   availableVehicles.value = list.filter(v => String(v.vehicle_status).toUpperCase() !== 'WASTEBIN')
+
   vehicleOptions.value = availableVehicles.value.map(v => ({
     label: `${v.make} ${v.model}${v.variant ? ' ' + v.variant : ''} — £${formatGBP(v.price)}`,
-    value: v.id
+    value: v.id,
+    image: (Array.isArray(v.images) && v.images.length ? v.images[0] : '/src/assets/img/default.jpg'),
+    vehicle: v
   }))
 }
+
 
 const getDvsa = async () => {
   try {
@@ -182,7 +185,7 @@ const submitSellRequest = async () => {
 
 // init
 onMounted(async () => {
-  try { await loadStock() } catch {}
+  try { await loadStock() } catch { }
 })
 </script>
 
@@ -190,7 +193,8 @@ onMounted(async () => {
   <PrimeToast />
 
   <div class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container">
-    <div class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
+    <div
+      class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
       <div class="text-3xl font-medium text-900 mb-3" style="margin-left: 3px;">Trade In or Sell</div>
       <div class="text-500">Get an indicative offer for your car, against one of ours.</div>
     </div>
@@ -234,7 +238,7 @@ onMounted(async () => {
           <div class="col-12">
             <div class="p-3 border-round surface-card flex gap-4 align-items-center justify-content-between">
               <div class="text-base text-gray-700">
-                Estimated difference to change (vs. mid-range): 
+                Estimated difference to change (vs. mid-range):
                 <span class="font-bold">£{{ formatGBP(Math.max((+targetVehicle.price || 0) - partExBase, 0)) }}</span>
               </div>
               <div class="flex gap-2">
@@ -243,7 +247,8 @@ onMounted(async () => {
               </div>
             </div>
             <p class="text-xs text-gray-500 mt-2">
-              All figures are indicative and may vary with condition, history and market movement. Final offer confirmed after on-site appraisal.
+              All figures are indicative and may vary with condition, history and market movement. Final offer confirmed
+              after on-site appraisal.
             </p>
           </div>
         </div>
@@ -264,25 +269,50 @@ onMounted(async () => {
             <h3 class="text-lg font-semibold text-gray-700">1) Pick a car from our stock</h3>
           </template>
           <template #content>
-            <Dropdown
-              v-model="targetVehicleId"
-              :options="vehicleOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Select a vehicle"
-              class="w-full mb-3"
-            />
+            <Dropdown v-model="targetVehicleId" :options="vehicleOptions" optionLabel="label" optionValue="value"
+              placeholder="Select a vehicle" class="w-full mb-3">
+              <!-- Selected value display -->
+              <template #value="{ value, placeholder }">
+                <div v-if="value !== null" class="flex align-items-center gap-3">
+                  <img :src="vehicleOptions.find(o => o.value === value)?.image" alt="thumb"
+                    class="w-3rem h-2rem object-cover border-round" />
+                  <span class="text-sm">
+                    {{vehicleOptions.find(o => o.value === value)?.label}}
+                  </span>
+                </div>
+                <span v-else class="text-400">{{ placeholder }}</span>
+              </template>
+
+              <!-- Each option row -->
+              <template #option="{ option }">
+                <div class="flex align-items-center gap-3">
+                  <img :src="option.image" alt="thumb" class="w-3rem h-2rem object-cover border-round" />
+                  <span class="text-sm">{{ option.label }}</span>
+                </div>
+              </template>
+            </Dropdown>
+
             <PrimeMessage v-if="!targetVehicleId" severity="info" :closable="false">
               Choose a vehicle you’d like to buy — we’ll estimate your part-ex against it.
             </PrimeMessage>
 
             <div v-if="targetVehicle" class="p-3 border-1 surface-border border-round mt-2">
-              <div class="text-sm text-gray-500 mb-1">Selected:</div>
-              <div class="font-semibold">
-                {{ targetVehicle.make }} {{ targetVehicle.model }} {{ targetVehicle.variant || '' }}
+              <div class="flex gap-3">
+                <img
+                  :src="(Array.isArray(targetVehicle.images) && targetVehicle.images.length ? targetVehicle.images[0] : '/src/assets/img/default.jpg')"
+                  alt="selected car" class="w-8rem h-6rem object-cover border-round" />
+                <div class="flex flex-column justify-content-between">
+                  <div>
+                    <div class="text-sm text-gray-500 mb-1">Selected:</div>
+                    <div class="font-semibold">
+                      {{ targetVehicle.make }} {{ targetVehicle.model }} {{ targetVehicle.variant || '' }}
+                    </div>
+                  </div>
+                  <div class="text-xl font-bold mt-1">£{{ formatGBP(targetVehicle.price) }}</div>
+                </div>
               </div>
-              <div class="text-xl font-bold mt-1">£{{ formatGBP(targetVehicle.price) }}</div>
             </div>
+
           </template>
         </PrimeCard>
 
@@ -296,7 +326,8 @@ onMounted(async () => {
               <div class="col-12">
                 <label class="block text-sm font-medium">Full Name</label>
                 <InputText v-model="form.fullName" class="w-full" placeholder="John Smith" />
-                <PrimeInlineMessage v-if="formErrors.fullName" severity="error">Full name is required</PrimeInlineMessage>
+                <PrimeInlineMessage v-if="formErrors.fullName" severity="error">Full name is required
+                </PrimeInlineMessage>
               </div>
               <div class="col-12">
                 <label class="block text-sm font-medium">Email</label>
@@ -326,13 +357,8 @@ onMounted(async () => {
               <div class="text-sm text-gray-600 mb-2">Enter Registration</div>
               <InputGroup class="w-full h-3rem">
                 <InputGroupAddon style="background-color:#00309a;color:#fbe90a">GB</InputGroupAddon>
-                <InputText
-                  v-model="registrationNumber"
-                  style="background-color:#fbe90a;border-color:#00309a"
-                  placeholder="REG"
-                  class="w-full text-xl font-bold"
-                  @input="transformToUpperCase"
-                />
+                <InputText v-model="registrationNumber" style="background-color:#fbe90a;border-color:#00309a"
+                  placeholder="REG" class="w-full text-xl font-bold" @input="transformToUpperCase" />
                 <PrimeButton label="Lookup" severity="contrast" @click="getDvsa" />
               </InputGroup>
               <small class="text-gray-500">We’ll fetch basics. You can amend anything below.</small>
@@ -353,10 +379,7 @@ onMounted(async () => {
               </div>
               <div class="field col-12 md:col-6">
                 <label>Mileage</label>
-                <InputText
-                  v-model="vehData.odometerValue"
-                  placeholder="e.g. 75000"
-                />
+                <InputText v-model="vehData.odometerValue" placeholder="e.g. 75000" />
               </div>
               <div class="field col-12 md:col-6">
                 <label>First Used</label>
@@ -384,16 +407,12 @@ onMounted(async () => {
           <template #footer>
             <div class="grid mt-2">
               <div class="col-6">
-                <PrimeButton label="Reset" class="w-full p-button-outlined text-red-500 border-red-500" @click="resetForm" />
+                <PrimeButton label="Reset" class="w-full p-button-outlined text-red-500 border-red-500"
+                  @click="resetForm" />
               </div>
               <div class="col-6">
-                <PrimeButton
-                  label="Submit & Get Indicative Offer"
-                  class="w-full bg-black text-white font-semibold"
-                  :loading="loadingValuation"
-                  :disabled="!canRequestValuation"
-                  @click="submitSellRequest"
-                />
+                <PrimeButton label="Submit & Get Indicative Offer" class="w-full bg-black text-white font-semibold"
+                  :loading="loadingValuation" :disabled="!canRequestValuation" @click="submitSellRequest" />
               </div>
             </div>
             <small class="text-xs text-gray-500 block mt-2">
@@ -410,6 +429,11 @@ onMounted(async () => {
 
 
 <style scoped>
+/* put in <style scoped> or a global css */
+.object-cover {
+  object-fit: cover;
+}
+
 @keyframes my-fadein {
   0% {
     opacity: 0;
