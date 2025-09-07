@@ -3,17 +3,34 @@ import axios from 'axios'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { useVehicleStore } from '@/stores/vehicleData'
-import VehicleService from '@/services/VehicleService'
+import VehicleService from '@/services/VehicleService' // still needed for DVSA lookup
 import toUpperCase from '@/components/reusable/toUpperCase'
 
 // --- state ---
 const toast = useToast()
 const vehicleStore = useVehicleStore()
 
-const availableVehicles = ref<any[]>([]) // stock: not WASTEBIN
-const vehicleOptions = ref<{ label: string; value: number; image: string; vehicle: any }[]>([])
-const targetVehicleId = ref<number | null>(null) // the car they want from your stock
-const targetVehicle = computed(() =>
+// Use STORE for stock (no extra request)
+const stockVehicles = computed<any[]>(() => vehicleStore.getVehicles || [])
+
+// Filter out WASTEBIN
+const availableVehicles = computed<any[]>(() =>
+  stockVehicles.value.filter(v => String(v.vehicle_status || '').toUpperCase() !== 'WASTEBIN')
+)
+
+// Options for dropdown (thumb + label + id)
+const vehicleOptions = computed<{ label: string; value: number; image: string; vehicle: any }[]>(
+  () =>
+    availableVehicles.value.map(v => ({
+      label: `${v.make} ${v.model}${v.variant ? ' ' + v.variant : ''} — £${(+v.price || 0).toLocaleString('en-GB', { maximumFractionDigits: 0 })}`,
+      value: v.id,
+      image: (Array.isArray(v.images) && v.images.length ? v.images[0] : '/src/assets/img/default.jpg'),
+      vehicle: v
+    }))
+)
+
+const targetVehicleId = ref<number | null>(null)
+const targetVehicle = computed<any | null>(() =>
   availableVehicles.value.find(v => v.id === targetVehicleId.value) || null
 )
 
@@ -22,8 +39,8 @@ const valuationWarning = ref<string | null>(null)
 const hasValuation = ref(false)
 
 const loadingValuation = ref(false)
-const formLocked = ref(false) // when we’ve shown valuation summary
-const isLocked = ref(false)   // locks DVSA-populated fields
+const formLocked = ref(false)
+const isLocked = ref(false)
 const isMobile = ref(false)
 
 const registrationNumber = ref('')
@@ -40,7 +57,7 @@ const vehData = ref({
   fuelType: '',
   engineSize: '',
   primaryColour: '',
-  partEx: true, // default to part-ex ON
+  partEx: true, // default
 })
 
 // Lead details
@@ -59,12 +76,10 @@ const formErrors = ref({
 
 // --- helpers ---
 const transformToUpperCase = () => toUpperCase(registrationNumber)
-
 const formatGBP = (n: number | string) => {
   const v = +n || 0
   return v.toLocaleString('en-GB', { maximumFractionDigits: 0 })
 }
-
 const round50 = (n: number) => Math.round(n / 50) * 50
 
 // valuation numbers guarded
@@ -72,14 +87,8 @@ const partExBase = computed<number>(() => {
   const n = Number(valuation.value?.valuations?.partExchange)
   return Number.isFinite(n) && n > 0 ? n : 0
 })
-
-const partExLow = computed<number | null>(() =>
-  hasValuation.value ? round50(partExBase.value * 0.925) : null
-)
-const partExHigh = computed<number | null>(() =>
-  hasValuation.value ? round50(partExBase.value * 1.075) : null
-)
-
+const partExLow = computed<number | null>(() => (hasValuation.value ? round50(partExBase.value * 0.925) : null))
+const partExHigh = computed<number | null>(() => (hasValuation.value ? round50(partExBase.value * 1.075) : null))
 
 // Mid-range valuation (rounded to nearest £50)
 const pxMid = computed<number | null>(() => {
@@ -108,7 +117,6 @@ const surplusToYou = computed<number | null>(() => {
 
 const canRequestValuation = computed<boolean>(() => {
   const hasBasics = !!vehData.value.registration && !!vehData.value.odometerValue
-  // If selling only, no need to pick our car
   return vehData.value.partEx ? (hasBasics && !!targetVehicle.value) : hasBasics
 })
 
@@ -142,34 +150,18 @@ const resetForm = () => {
   clearValuation()
 }
 
-const loadStock = async () => {
-  const data = await VehicleService.getAllVehicles()
-  const list = (data.cars || []) as any[]
-  availableVehicles.value = list.filter(v => String(v.vehicle_status).toUpperCase() !== 'WASTEBIN')
-
-  vehicleOptions.value = availableVehicles.value.map(v => ({
-    label: `${v.make} ${v.model}${v.variant ? ' ' + v.variant : ''} — £${formatGBP(v.price)}`,
-    value: v.id,
-    image: (Array.isArray(v.images) && v.images.length ? v.images[0] : '/src/assets/img/default.jpg'),
-    vehicle: v
-  }))
-}
-
+// DVSA lookup — merge, don’t overwrite partEx
 const getDvsa = async () => {
   try {
     const response = await VehicleService.getDvsaVehicleByReg(registrationNumber.value)
     const prevPartEx = !!vehData.value.partEx
-
-    // merge in new fields but keep previous partEx
     vehData.value = { ...vehData.value, ...response, partEx: prevPartEx }
-
     isLocked.value = true
     vehicleStore.setVehicleData(vehData.value)
   } catch {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to retrieve vehicle details. Check the reg.', life: 4000 })
   }
 }
-
 
 const getValuation = async () => {
   try {
@@ -188,7 +180,6 @@ const getValuation = async () => {
 
     const payload = res?.data?.data ?? res?.data ?? {}
 
-    // capture AT warning (e.g., "Unable to provide a valuation")
     const warn = Array.isArray(payload.warnings)
       ? payload.warnings.find((w: any) => (w?.feature || '').toLowerCase() === 'valuations')
       : null
@@ -254,13 +245,13 @@ const submitSellRequest = async () => {
 // Responsive dropdown panel width
 const updateIsMobile = () => { isMobile.value = window.innerWidth <= 768 }
 
-onMounted(async () => {
+onMounted(() => {
   updateIsMobile()
   window.addEventListener('resize', updateIsMobile)
-  try { await loadStock() } catch {}
 })
 onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
 </script>
+
 
 <template>
   <PrimeToast />
@@ -287,13 +278,8 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
         </template>
         <template #content>
           <div class="flex align-items-center gap-3">
-            <PrimeToggleButton
-              v-model="vehData.partEx"
-              onLabel="Part-Exchange"
-              offLabel="Sell Only"
-              class="w-12rem"
-              severity="contrast"
-            />
+            <PrimeToggleButton v-model="vehData.partEx" onLabel="Part-Exchange" offLabel="Sell Only" class="w-12rem"
+              severity="contrast" />
             <small class="text-gray-500">
               Start here. Choose whether you’re part-exchanging or selling for cash.
             </small>
@@ -311,27 +297,16 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
               <h3 class="text-lg font-semibold text-gray-700">1) Pick a car from our stock</h3>
             </template>
             <template #content>
-              <Dropdown
-                v-model="targetVehicleId"
-                :options="vehicleOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select a vehicle"
-                class="w-full mb-3"
-                appendTo="body"
-                :panelStyle="{ width: isMobile ? '92vw' : '560px', maxWidth: '92vw' }"
-                scrollHeight="260px"
-              >
+              <Dropdown v-model="targetVehicleId" :options="vehicleOptions" optionLabel="label" optionValue="value"
+                :placeholder="vehicleOptions.length ? 'Select a vehicle' : 'Loading stock…'"
+                :disabled="!vehicleOptions.length" class="w-full mb-3" appendTo="body"
+                :panelStyle="{ width: isMobile ? '92vw' : '560px', maxWidth: '92vw' }" scrollHeight="260px">
                 <!-- Selected value (thumb + ellipsis) -->
                 <template #value="{ value, placeholder }">
                   <div v-if="value !== null" class="dd-value">
-                    <img
-                      :src="vehicleOptions.find(o => o.value === value)?.image"
-                      alt="thumb"
-                      class="dd-thumb"
-                    />
+                    <img :src="vehicleOptions.find(o => o.value === value)?.image" alt="thumb" class="dd-thumb" />
                     <span class="dd-text">
-                      {{ vehicleOptions.find(o => o.value === value)?.label }}
+                      {{vehicleOptions.find(o => o.value === value)?.label}}
                     </span>
                   </div>
                   <span v-else class="text-400">{{ placeholder }}</span>
@@ -355,9 +330,7 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
                 <div class="flex gap-3">
                   <img
                     :src="(Array.isArray(targetVehicle.images) && targetVehicle.images.length ? targetVehicle.images[0] : '/src/assets/img/default.jpg')"
-                    alt="selected car"
-                    class="w-8rem h-6rem object-cover border-round"
-                  />
+                    alt="selected car" class="w-8rem h-6rem object-cover border-round" />
                   <div class="flex flex-column justify-content-between">
                     <div>
                       <div class="text-sm text-gray-500 mb-1">Selected:</div>
@@ -387,7 +360,8 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
                 <div class="col-12">
                   <label class="block text-sm font-medium">Full Name</label>
                   <InputText v-model="form.fullName" class="w-full" placeholder="John Smith" />
-                  <PrimeInlineMessage v-if="formErrors.fullName" severity="error">Full name is required</PrimeInlineMessage>
+                  <PrimeInlineMessage v-if="formErrors.fullName" severity="error">Full name is required
+                  </PrimeInlineMessage>
                 </div>
                 <div class="col-12">
                   <label class="block text-sm font-medium">Email</label>
@@ -419,13 +393,8 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
                 <div class="text-sm text-gray-600 mb-2">Enter Registration</div>
                 <InputGroup class="w-full h-3rem">
                   <InputGroupAddon style="background-color:#00309a;color:#fbe90a">GB</InputGroupAddon>
-                  <InputText
-                    v-model="registrationNumber"
-                    style="background-color:#fbe90a;border-color:#00309a"
-                    placeholder="REG"
-                    class="w-full text-xl font-bold"
-                    @input="transformToUpperCase"
-                  />
+                  <InputText v-model="registrationNumber" style="background-color:#fbe90a;border-color:#00309a"
+                    placeholder="REG" class="w-full text-xl font-bold" @input="transformToUpperCase" />
                   <PrimeButton icon="pi pi-search" severity="contrast" @click="getDvsa" />
                 </InputGroup>
                 <small class="text-gray-500">We’ll fetch basics. You can amend anything below.</small>
@@ -475,20 +444,13 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
             <template #footer>
               <div class="grid mt-2">
                 <div class="col-6">
-                  <PrimeButton
-                    label="Reset"
-                    class="w-full p-button-outlined text-red-500 border-red-500"
-                    @click="resetForm"
-                  />
+                  <PrimeButton label="Reset" class="w-full p-button-outlined text-red-500 border-red-500"
+                    @click="resetForm" />
                 </div>
                 <div class="col-6">
-                  <PrimeButton
-                    :label="vehData.partEx ? 'Submit & Get Part-Ex Offer' : 'Submit & Get Cash Offer'"
-                    class="w-full bg-black text-white font-semibold"
-                    :loading="loadingValuation"
-                    :disabled="!canRequestValuation"
-                    @click="submitSellRequest"
-                  />
+                  <PrimeButton :label="vehData.partEx ? 'Submit & Get Part-Ex Offer' : 'Submit & Get Cash Offer'"
+                    class="w-full bg-black text-white font-semibold" :loading="loadingValuation"
+                    :disabled="!canRequestValuation" @click="submitSellRequest" />
                 </div>
               </div>
               <small class="text-xs text-gray-500 block mt-2">
@@ -520,9 +482,7 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
               <div class="flex gap-3">
                 <img
                   :src="(Array.isArray(targetVehicle.images) && targetVehicle.images.length ? targetVehicle.images[0] : '/src/assets/img/default.jpg')"
-                  alt="selected vehicle"
-                  class="w-7rem h-5rem object-cover border-round"
-                />
+                  alt="selected vehicle" class="w-7rem h-5rem object-cover border-round" />
                 <div>
                   <div class="text-base font-semibold">
                     {{ targetVehicle.make }} {{ targetVehicle.model }} {{ targetVehicle.variant || '' }}
@@ -569,54 +529,47 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
           </div>
 
           <!-- Footer row -->
-<div class="col-12">
-  <div
-    class="p-3 border-round surface-card
+          <div class="col-12">
+            <div class="p-3 border-round surface-card
            flex flex-column md:flex-row
            gap-3 md:gap-4
            align-items-start md:align-items-center
-           justify-content-start md:justify-content-between"
-  >
-    <!-- Text first -->
-    <div class="text-base text-gray-700">
-      <template v-if="vehData.partEx && targetVehicle && hasValuation">
-        <template v-if="(surplusToYou ?? 0) > 0">
-          Estimated surplus back to you (vs. mid-range):
-          <span class="font-bold">£{{ formatGBP(surplusToYou!) }}</span>
-        </template>
-        <template v-else>
-          Estimated difference to change (vs. mid-range):
-          <span class="font-bold">£{{ formatGBP(diffToPay!) }}</span>
-        </template>
-      </template>
+           justify-content-start md:justify-content-between">
+              <!-- Text first -->
+              <div class="text-base text-gray-700">
+                <template v-if="vehData.partEx && targetVehicle && hasValuation">
+                  <template v-if="(surplusToYou ?? 0) > 0">
+                    Estimated surplus back to you (vs. mid-range):
+                    <span class="font-bold">£{{ formatGBP(surplusToYou!) }}</span>
+                  </template>
+                  <template v-else>
+                    Estimated difference to change (vs. mid-range):
+                    <span class="font-bold">£{{ formatGBP(diffToPay!) }}</span>
+                  </template>
+                </template>
 
-      <template v-else-if="vehData.partEx && targetVehicle && !hasValuation">
-        We couldn’t price your car instantly. Book a quick inspection for a firm part-exchange offer.
-      </template>
+                <template v-else-if="vehData.partEx && targetVehicle && !hasValuation">
+                  We couldn’t price your car instantly. Book a quick inspection for a firm part-exchange offer.
+                </template>
 
-      <template v-else>
-        These figures are indicative. Book an appointment to receive a firm cash offer.
-      </template>
-    </div>
+                <template v-else>
+                  These figures are indicative. Book an appointment to receive a firm cash offer.
+                </template>
+              </div>
 
-    <!-- Buttons below on mobile, inline on md+ -->
-    <div class="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
-      <PrimeButton label="Book Inspection" severity="contrast" class="w-full md:w-auto" />
-      <PrimeButton
-        v-if="vehData.partEx"
-        label="Choose Another Car"
-        text
-        class="w-full md:w-auto"
-        @click="() => { formLocked = false; valuation = null; }"
-      />
-    </div>
-  </div>
+              <!-- Buttons below on mobile, inline on md+ -->
+              <div class="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
+                <PrimeButton label="Book Inspection" severity="contrast" class="w-full md:w-auto" />
+                <PrimeButton v-if="vehData.partEx" label="Choose Another Car" text class="w-full md:w-auto"
+                  @click="() => { formLocked = false; valuation = null; }" />
+              </div>
+            </div>
 
-  <p class="text-xs text-gray-500 mt-2">
-    All figures are indicative and may vary with condition, history and market movement. Final offer confirmed
-    after on-site appraisal.
-  </p>
-</div>
+            <p class="text-xs text-gray-500 mt-2">
+              All figures are indicative and may vary with condition, history and market movement. Final offer confirmed
+              after on-site appraisal.
+            </p>
+          </div>
 
         </div>
       </template>
@@ -639,12 +592,14 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
   border-radius: 6px;
   flex: 0 0 44px;
 }
+
 .dd-value {
   display: flex;
   align-items: center;
   gap: .5rem;
   min-width: 0;
 }
+
 .dd-option {
   display: flex;
   align-items: center;
@@ -652,6 +607,7 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
   min-width: 0;
   padding-block: 4px;
 }
+
 .dd-text,
 .dd-title {
   display: block;
@@ -661,14 +617,31 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
   flex: 1 1 auto;
   min-width: 0;
 }
+
 @media (max-width: 480px) {
-  .dd-thumb { width: 40px; height: 28px; }
+  .dd-thumb {
+    width: 40px;
+    height: 28px;
+  }
 }
 
 /* utility */
-.object-cover { object-fit: cover; }
+.object-cover {
+  object-fit: cover;
+}
 
 /* optional subtle animation you had */
-@keyframes my-fadein { 0% { opacity: 0; } 100% { opacity: 1; } }
-.my-fadein { animation: my-fadein 200ms linear; }
+@keyframes my-fadein {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.my-fadein {
+  animation: my-fadein 200ms linear;
+}
 </style>
