@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { useVehicleStore } from '@/stores/vehicleData'
 import VehicleService from '@/services/VehicleService'
@@ -9,6 +9,12 @@ import toUpperCase from '@/components/reusable/toUpperCase'
 // --- state ---
 const toast = useToast()
 const vehicleStore = useVehicleStore()
+
+
+const isMobile = ref(false)
+const updateIsMobile = () => { isMobile.value = window.innerWidth <= 768 }
+
+
 
 const availableVehicles = ref<any[]>([])          // stock: not WASTEBIN
 const vehicleOptions = ref<{ label: string; value: number }[]>([])
@@ -74,9 +80,12 @@ const changeToPay = computed<number>(() => {
   return Math.max(price - px, 0)
 })
 
-const canRequestValuation = computed<boolean>(() =>
-  !!vehData.value.registration && !!vehData.value.odometerValue && !!targetVehicle.value
-)
+const canRequestValuation = computed<boolean>(() => {
+  const hasBasics = !!vehData.value.registration && !!vehData.value.odometerValue
+  // If selling only, no need to pick our car
+  return vehData.value.partEx ? (hasBasics && !!targetVehicle.value) : hasBasics
+})
+
 
 // --- actions ---
 const clearValuation = () => {
@@ -85,6 +94,7 @@ const clearValuation = () => {
 }
 
 const resetForm = () => {
+  const keepPartEx = !!vehData.value.partEx
   vehData.value = {
     registration: '',
     make: '',
@@ -96,14 +106,19 @@ const resetForm = () => {
     fuelType: '',
     engineSize: '',
     primaryColour: '',
-    partEx: true,
+    partEx: keepPartEx,
   }
   form.value = { fullName: '', email: '', postcode: '', phone: '' }
   registrationNumber.value = ''
-  targetVehicleId.value = null
+  if (keepPartEx) {
+    // keep their selected car if they’re still part-exing; otherwise clear
+  } else {
+    targetVehicleId.value = null
+  }
   isLocked.value = false
   clearValuation()
 }
+
 
 const loadStock = async () => {
   const data = await VehicleService.getAllVehicles()
@@ -133,12 +148,13 @@ const getDvsa = async () => {
 const getValuation = async () => {
   try {
     if (!canRequestValuation.value) {
-      toast.add({ severity: 'warn', summary: 'Missing info', detail: 'Select one of our cars, enter reg & mileage.', life: 3500 })
+      const msg = vehData.value.partEx
+        ? 'Select one of our cars, and enter your reg & mileage.'
+        : 'Enter your reg & mileage.'
+      toast.add({ severity: 'warn', summary: 'Missing info', detail: msg, life: 3500 })
       return
     }
     loadingValuation.value = true
-
-    // Your existing valuation endpoint (reg + mileage only)
     const res = await axios.get(
       `${import.meta.env.VITE_API_BASE_URL}/scs/at/${vehData.value.registration}/${vehData.value.odometerValue}`
     )
@@ -173,20 +189,25 @@ const submitSellRequest = async () => {
       ...form.value,
       registration: vehData.value?.registration,
       vehicle: vehData.value,
-      partEx: true,
-      target_vehicle_id: targetVehicleId.value ?? undefined
+      partEx: !!vehData.value.partEx,
+      // only include the target vehicle if part-ex
+      target_vehicle_id: vehData.value.partEx ? (targetVehicleId.value ?? undefined) : undefined
     }
     await axios.post(`${import.meta.env.VITE_API_BASE_URL}/scs/lead/sell-your-car`, payload)
-    await getValuation() // show indicative instantly post submit
+    await getValuation()
   } catch {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to submit your details.', life: 4000 })
   }
 }
 
+
 // init
 onMounted(async () => {
   try { await loadStock() } catch { }
+  updateIsMobile()
+  window.addEventListener('resize', updateIsMobile)
 })
+onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
 </script>
 
 <template>
@@ -196,35 +217,279 @@ onMounted(async () => {
     <div
       class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
       <div class="text-3xl font-medium text-900 mb-3" style="margin-left: 3px;">Trade In or Sell</div>
-      <div class="text-500">Get an indicative offer for your car, against one of ours.</div>
+      <div class="text-500">
+        Get an indicative offer for your car — either sell for cash or part-exchange against one of ours.
+      </div>
     </div>
   </div>
 
   <div class="surface-section p-5 md:p-6 lg:p-8 shadow-md rounded-xl car-details-container">
-    <!-- SUMMARY / RESULT -->
-    <PrimeCard v-if="formLocked && valuation && targetVehicle" class="mb-4">
+
+    <!-- ===== FORM (EDIT MODE) ===== -->
+    <template v-if="!formLocked">
+
+      <!-- 0) DEAL TYPE FIRST -->
+      <PrimeCard class="mb-4">
+        <template #title>
+          <h3 class="text-lg font-semibold text-gray-700">Deal Type</h3>
+        </template>
+        <template #content>
+          <div class="flex align-items-center gap-3">
+            <PrimeToggleButton
+              v-model="vehData.partEx"
+              onLabel="Part-Exchange"
+              offLabel="Sell Only"
+              class="w-12rem"
+              severity="contrast"
+            />
+            <small class="text-gray-500">
+              Start here. Choose whether you’re part-exchanging or selling for cash.
+            </small>
+          </div>
+        </template>
+      </PrimeCard>
+
+      <div class="grid">
+        <!-- LEFT: pick our car (only when Part-Ex), then contact details -->
+        <div class="col-12 md:col-6">
+
+          <!-- 1) PICK A CAR (only for part-ex) -->
+          <PrimeCard v-if="vehData.partEx">
+            <template #title>
+              <h3 class="text-lg font-semibold text-gray-700">1) Pick a car from our stock</h3>
+            </template>
+            <template #content>
+              <Dropdown
+  v-model="targetVehicleId"
+  :options="vehicleOptions"
+  optionLabel="label"
+  optionValue="value"
+  placeholder="Select a vehicle"
+  class="w-full mb-3"
+  appendTo="body"
+  :panelStyle="{ width: isMobile ? '92vw' : '560px', maxWidth: '92vw' }"
+  scrollHeight="260px"
+>
+  <!-- Selected value (compact with ellipsis) -->
+  <template #value="{ value, placeholder }">
+    <div v-if="value !== null" class="dd-value">
+      <img
+        :src="vehicleOptions.find(o => o.value === value)?.image"
+        alt="thumb"
+        class="dd-thumb"
+      />
+      <span class="dd-text">
+        {{ vehicleOptions.find(o => o.value === value)?.label }}
+      </span>
+    </div>
+    <span v-else class="text-400">{{ placeholder }}</span>
+  </template>
+
+  <!-- Each option row (thumb + ellipsised text) -->
+  <template #option="{ option }">
+    <div class="dd-option">
+      <img :src="option.image" alt="thumb" class="dd-thumb" />
+      <span class="dd-title">{{ option.label }}</span>
+    </div>
+  </template>
+</Dropdown>
+
+
+              <PrimeMessage v-if="!targetVehicleId" severity="info" :closable="false">
+                Choose a vehicle you’d like to buy — we’ll estimate your part-ex against it.
+              </PrimeMessage>
+
+              <!-- Selected preview -->
+              <div v-if="targetVehicle" class="p-3 border-1 surface-border border-round mt-2">
+                <div class="flex gap-3">
+                  <img
+                    :src="(Array.isArray(targetVehicle.images) && targetVehicle.images.length ? targetVehicle.images[0] : '/src/assets/img/default.jpg')"
+                    alt="selected car"
+                    class="w-8rem h-6rem object-cover border-round"
+                  />
+                  <div class="flex flex-column justify-content-between">
+                    <div>
+                      <div class="text-sm text-gray-500 mb-1">Selected:</div>
+                      <div class="font-semibold">
+                        {{ targetVehicle.make }} {{ targetVehicle.model }} {{ targetVehicle.variant || '' }}
+                      </div>
+                    </div>
+                    <div class="text-xl font-bold mt-1">£{{ formatGBP(targetVehicle.price) }}</div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </PrimeCard>
+
+          <!-- Helper note for SELL ONLY -->
+          <PrimeMessage v-else severity="info" :closable="false" class="mt-2">
+            Selling only? No need to pick a car — just enter your car details on the right.
+          </PrimeMessage>
+
+          <!-- 2) YOUR CONTACT DETAILS -->
+          <PrimeCard class="mt-4">
+            <template #title>
+              <h3 class="text-lg font-semibold text-gray-700">2) Your Contact Details</h3>
+            </template>
+            <template #content>
+              <div class="grid gap-3">
+                <div class="col-12">
+                  <label class="block text-sm font-medium">Full Name</label>
+                  <InputText v-model="form.fullName" class="w-full" placeholder="John Smith" />
+                  <PrimeInlineMessage v-if="formErrors.fullName" severity="error">Full name is required</PrimeInlineMessage>
+                </div>
+                <div class="col-12">
+                  <label class="block text-sm font-medium">Email</label>
+                  <InputText type="email" v-model="form.email" class="w-full" placeholder="john@example.com" />
+                </div>
+                <div class="col-12">
+                  <label class="block text-sm font-medium">Postcode</label>
+                  <InputText v-model="form.postcode" class="w-full" placeholder="B1 2AA" />
+                </div>
+                <div class="col-12">
+                  <label class="block text-sm font-medium">Phone</label>
+                  <InputText v-model="form.phone" class="w-full" placeholder="07123 456789" />
+                </div>
+              </div>
+            </template>
+          </PrimeCard>
+        </div>
+
+        <!-- RIGHT: your car details -->
+        <div class="col-12 md:col-6">
+          <PrimeCard>
+            <template #title>
+              <h3 class="text-lg font-semibold text-gray-700">3) Your Car</h3>
+            </template>
+
+            <template #content>
+              <!-- Registration -->
+              <div class="p-3 border-round surface-100 mb-3">
+                <div class="text-sm text-gray-600 mb-2">Enter Registration</div>
+                <InputGroup class="w-full h-3rem">
+                  <InputGroupAddon style="background-color:#00309a;color:#fbe90a">GB</InputGroupAddon>
+                  <InputText
+                    v-model="registrationNumber"
+                    style="background-color:#fbe90a;border-color:#00309a"
+                    placeholder="REG"
+                    class="w-full text-xl font-bold"
+                    @input="transformToUpperCase"
+                  />
+                  <PrimeButton icon="pi pi-search" severity="contrast" @click="getDvsa" />
+                </InputGroup>
+                <small class="text-gray-500">We’ll fetch basics. You can amend anything below.</small>
+              </div>
+
+              <!-- Vehicle Info Form -->
+              <div class="grid formgrid p-fluid">
+                <div class="field col-12 md:col-6">
+                  <label>Registration</label>
+                  <InputText v-model="vehData.registration" :readonly="isLocked" />
+                </div>
+                <div class="field col-12 md:col-6">
+                  <label>Make</label>
+                  <InputText v-model="vehData.make" :readonly="isLocked" />
+                </div>
+                <div class="field col-12 md:col-6">
+                  <label>Model</label>
+                  <InputText v-model="vehData.model" :readonly="isLocked" />
+                </div>
+                <div class="field col-12 md:col-6">
+                  <label>Mileage</label>
+                  <InputText v-model="vehData.odometerValue" placeholder="e.g. 75000" />
+                </div>
+                <div class="field col-12 md:col-6">
+                  <label>First Used</label>
+                  <InputText v-model="vehData.firstUsedDate" />
+                </div>
+                <div class="field col-12 md:col-6">
+                  <label>Reg Date</label>
+                  <InputText v-model="vehData.registrationDate" :readonly="isLocked" />
+                </div>
+                <div class="field col-12 md:col-6">
+                  <label>Fuel</label>
+                  <InputText v-model="vehData.fuelType" :readonly="isLocked" />
+                </div>
+                <div class="field col-12 md:col-6">
+                  <label>Engine Size</label>
+                  <InputText v-model="vehData.engineSize" :readonly="isLocked" />
+                </div>
+                <div class="field col-12 md:col-6">
+                  <label>Colour</label>
+                  <InputText v-model="vehData.primaryColour" :readonly="isLocked" />
+                </div>
+              </div>
+            </template>
+
+            <template #footer>
+              <div class="grid mt-2">
+                <div class="col-6">
+                  <PrimeButton
+                    label="Reset"
+                    class="w-full p-button-outlined text-red-500 border-red-500"
+                    @click="resetForm"
+                  />
+                </div>
+                <div class="col-6">
+                  <PrimeButton
+                    :label="vehData.partEx ? 'Submit & Get Part-Ex Offer' : 'Submit & Get Cash Offer'"
+                    class="w-full bg-black text-white font-semibold"
+                    :loading="loadingValuation"
+                    :disabled="!canRequestValuation"
+                    @click="submitSellRequest"
+                  />
+                </div>
+              </div>
+              <small class="text-xs text-gray-500 block mt-2">
+                By continuing you agree that figures shown are indicative only and subject to in-person appraisal.
+              </small>
+            </template>
+          </PrimeCard>
+        </div>
+      </div>
+    </template>
+
+    <!-- ===== SUMMARY / RESULT (LOCKED) ===== -->
+    <PrimeCard v-else-if="valuation" class="mb-4">
       <template #title>
         <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between gap-3">
-          <h3 class="text-lg font-semibold text-gray-700 m-0">Your Indicative Part-Exchange Summary</h3>
+          <h3 class="text-lg font-semibold text-gray-700 m-0">
+            {{ vehData.partEx ? 'Your Part-Exchange Summary' : 'Your Sale-Only Indicative Offer' }}
+          </h3>
           <PrimeTag severity="warning" value="Subject to appraisal" />
         </div>
       </template>
+
       <template #content>
         <div class="grid">
-          <div class="col-12 md:col-6">
+          <!-- Selected Vehicle (only when part-ex & chosen) -->
+          <div v-if="vehData.partEx && targetVehicle" class="col-12 md:col-6">
             <div class="p-3 surface-100 border-round">
               <div class="text-sm text-gray-500 mb-1">Selected Vehicle</div>
-              <div class="text-base font-semibold">
-                {{ targetVehicle.make }} {{ targetVehicle.model }} {{ targetVehicle.variant || '' }}
-              </div>
-              <div class="text-2xl font-bold mt-2">
-                £{{ formatGBP(targetVehicle.price) }}
+              <div class="flex gap-3">
+                <img
+                  :src="(Array.isArray(targetVehicle.images) && targetVehicle.images.length ? targetVehicle.images[0] : '/src/assets/img/default.jpg')"
+                  alt="selected vehicle"
+                  class="w-7rem h-5rem object-cover border-round"
+                />
+                <div>
+                  <div class="text-base font-semibold">
+                    {{ targetVehicle.make }} {{ targetVehicle.model }} {{ targetVehicle.variant || '' }}
+                  </div>
+                  <div class="text-2xl font-bold mt-2">
+                    £{{ formatGBP(targetVehicle.price) }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-12 md:col-6">
+
+          <!-- Your car (always shown) -->
+          <div :class="vehData.partEx && targetVehicle ? 'col-12 md:col-6' : 'col-12'">
             <div class="p-3 surface-100 border-round">
-              <div class="text-sm text-gray-500 mb-1">Your Car (Indicative Part-Ex)</div>
+              <div class="text-sm text-gray-500 mb-1">
+                {{ vehData.partEx ? 'Your Car (Indicative Part-Ex)' : 'Your Car (Indicative Cash Offer)' }}
+              </div>
               <div class="text-base">
                 {{ valuation.make }} {{ valuation.model }} ({{ valuation.registration }})
               </div>
@@ -235,15 +500,28 @@ onMounted(async () => {
             </div>
           </div>
 
+          <!-- Footer row -->
           <div class="col-12">
             <div class="p-3 border-round surface-card flex gap-4 align-items-center justify-content-between">
               <div class="text-base text-gray-700">
-                Estimated difference to change (vs. mid-range):
-                <span class="font-bold">£{{ formatGBP(Math.max((+targetVehicle.price || 0) - partExBase, 0)) }}</span>
+                <template v-if="vehData.partEx && targetVehicle">
+                  Estimated difference to change (vs. mid-range):
+                  <span class="font-bold">
+                    £{{ formatGBP(Math.max((+targetVehicle.price || 0) - partExBase, 0)) }}
+                  </span>
+                </template>
+                <template v-else>
+                  These figures are indicative. Book an appointment to receive a firm cash offer.
+                </template>
               </div>
               <div class="flex gap-2">
                 <PrimeButton label="Book Inspection" severity="contrast" />
-                <PrimeButton label="Choose Another Car" text @click="() => { formLocked = false; valuation = null; }" />
+                <PrimeButton
+                  v-if="vehData.partEx"
+                  label="Choose Another Car"
+                  text
+                  @click="() => { formLocked = false; valuation = null; }"
+                />
               </div>
             </div>
             <p class="text-xs text-gray-500 mt-2">
@@ -253,183 +531,61 @@ onMounted(async () => {
           </div>
         </div>
       </template>
+
       <template #footer>
         <div class="flex justify-end">
           <PrimeButton label="Back to Edit" icon="pi pi-pencil" text @click="clearValuation" />
         </div>
       </template>
     </PrimeCard>
-
-    <!-- FORM -->
-    <div v-if="!formLocked" class="grid">
-      <!-- LEFT: pick one of your cars -->
-      <div class="col-12 md:col-6">
-        <PrimeCard>
-          <template #title>
-            <h3 class="text-lg font-semibold text-gray-700">1) Pick a car from our stock</h3>
-          </template>
-          <template #content>
-            <Dropdown v-model="targetVehicleId" :options="vehicleOptions" optionLabel="label" optionValue="value"
-              placeholder="Select a vehicle" class="w-full mb-3">
-              <!-- Selected value display -->
-              <template #value="{ value, placeholder }">
-                <div v-if="value !== null" class="flex align-items-center gap-3">
-                  <img :src="vehicleOptions.find(o => o.value === value)?.image" alt="thumb"
-                    class="w-3rem h-2rem object-cover border-round" />
-                  <span class="text-sm">
-                    {{vehicleOptions.find(o => o.value === value)?.label}}
-                  </span>
-                </div>
-                <span v-else class="text-400">{{ placeholder }}</span>
-              </template>
-
-              <!-- Each option row -->
-              <template #option="{ option }">
-                <div class="flex align-items-center gap-3">
-                  <img :src="option.image" alt="thumb" class="w-3rem h-2rem object-cover border-round" />
-                  <span class="text-sm">{{ option.label }}</span>
-                </div>
-              </template>
-            </Dropdown>
-
-            <PrimeMessage v-if="!targetVehicleId" severity="info" :closable="false">
-              Choose a vehicle you’d like to buy — we’ll estimate your part-ex against it.
-            </PrimeMessage>
-
-            <div v-if="targetVehicle" class="p-3 border-1 surface-border border-round mt-2">
-              <div class="flex gap-3">
-                <img
-                  :src="(Array.isArray(targetVehicle.images) && targetVehicle.images.length ? targetVehicle.images[0] : '/src/assets/img/default.jpg')"
-                  alt="selected car" class="w-8rem h-6rem object-cover border-round" />
-                <div class="flex flex-column justify-content-between">
-                  <div>
-                    <div class="text-sm text-gray-500 mb-1">Selected:</div>
-                    <div class="font-semibold">
-                      {{ targetVehicle.make }} {{ targetVehicle.model }} {{ targetVehicle.variant || '' }}
-                    </div>
-                  </div>
-                  <div class="text-xl font-bold mt-1">£{{ formatGBP(targetVehicle.price) }}</div>
-                </div>
-              </div>
-            </div>
-
-          </template>
-        </PrimeCard>
-
-        <!-- Your details -->
-        <PrimeCard class="mt-4">
-          <template #title>
-            <h3 class="text-lg font-semibold text-gray-700">2) Your Contact Details</h3>
-          </template>
-          <template #content>
-            <div class="grid gap-3">
-              <div class="col-12">
-                <label class="block text-sm font-medium">Full Name</label>
-                <InputText v-model="form.fullName" class="w-full" placeholder="John Smith" />
-                <PrimeInlineMessage v-if="formErrors.fullName" severity="error">Full name is required
-                </PrimeInlineMessage>
-              </div>
-              <div class="col-12">
-                <label class="block text-sm font-medium">Email</label>
-                <InputText type="email" v-model="form.email" class="w-full" placeholder="john@example.com" />
-              </div>
-              <div class="col-12">
-                <label class="block text-sm font-medium">Postcode</label>
-                <InputText v-model="form.postcode" class="w-full" placeholder="B1 2AA" />
-              </div>
-              <div class="col-12">
-                <label class="block text-sm font-medium">Phone</label>
-                <InputText v-model="form.phone" class="w-full" placeholder="07123 456789" />
-              </div>
-            </div>
-          </template>
-        </PrimeCard>
-      </div>
-
-      <!-- RIGHT: their car -->
-      <div class="col-12 md:col-6">
-        <PrimeCard>
-          <template #title>
-            <h3 class="text-lg font-semibold text-gray-700">3) Your Car (Part-Exchange)</h3>
-          </template>
-          <template #content>
-            <div class="p-3 border-round surface-100 mb-3">
-              <div class="text-sm text-gray-600 mb-2">Enter Registration</div>
-              <InputGroup class="w-full h-3rem">
-                <InputGroupAddon style="background-color:#00309a;color:#fbe90a">GB</InputGroupAddon>
-                <InputText v-model="registrationNumber" style="background-color:#fbe90a;border-color:#00309a"
-                  placeholder="REG" class="w-full text-xl font-bold" @input="transformToUpperCase" />
-                <PrimeButton label="Lookup" severity="contrast" @click="getDvsa" />
-              </InputGroup>
-              <small class="text-gray-500">We’ll fetch basics. You can amend anything below.</small>
-            </div>
-
-            <div class="grid formgrid p-fluid">
-              <div class="field col-12 md:col-6">
-                <label>Registration</label>
-                <InputText v-model="vehData.registration" :readonly="isLocked" />
-              </div>
-              <div class="field col-12 md:col-6">
-                <label>Make</label>
-                <InputText v-model="vehData.make" :readonly="isLocked" />
-              </div>
-              <div class="field col-12 md:col-6">
-                <label>Model</label>
-                <InputText v-model="vehData.model" :readonly="isLocked" />
-              </div>
-              <div class="field col-12 md:col-6">
-                <label>Mileage</label>
-                <InputText v-model="vehData.odometerValue" placeholder="e.g. 75000" />
-              </div>
-              <div class="field col-12 md:col-6">
-                <label>First Used</label>
-                <InputText v-model="vehData.firstUsedDate" />
-              </div>
-              <div class="field col-12 md:col-6">
-                <label>Reg Date</label>
-                <InputText v-model="vehData.registrationDate" :readonly="isLocked" />
-              </div>
-              <div class="field col-12 md:col-6">
-                <label>Fuel</label>
-                <InputText v-model="vehData.fuelType" :readonly="isLocked" />
-              </div>
-              <div class="field col-12 md:col-6">
-                <label>Engine Size</label>
-                <InputText v-model="vehData.engineSize" :readonly="isLocked" />
-              </div>
-              <div class="field col-12 md:col-6">
-                <label>Colour</label>
-                <InputText v-model="vehData.primaryColour" :readonly="isLocked" />
-              </div>
-            </div>
-          </template>
-
-          <template #footer>
-            <div class="grid mt-2">
-              <div class="col-6">
-                <PrimeButton label="Reset" class="w-full p-button-outlined text-red-500 border-red-500"
-                  @click="resetForm" />
-              </div>
-              <div class="col-6">
-                <PrimeButton label="Submit & Get Indicative Offer" class="w-full bg-black text-white font-semibold"
-                  :loading="loadingValuation" :disabled="!canRequestValuation" @click="submitSellRequest" />
-              </div>
-            </div>
-            <small class="text-xs text-gray-500 block mt-2">
-              By continuing you agree that figures shown are indicative only and subject to in-person appraisal.
-            </small>
-          </template>
-        </PrimeCard>
-      </div>
-    </div>
   </div>
 </template>
 
 
-
-
 <style scoped>
 /* put in <style scoped> or a global css */
+/* thumbnails */
+.dd-thumb {
+  width: 44px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex: 0 0 44px;
+}
+
+/* value (selected) container */
+.dd-value {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-width: 0; /* enable ellipsis */
+}
+
+/* options row */
+.dd-option {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0; /* enable ellipsis */
+  padding-block: 4px;
+}
+
+/* ellipsis text */
+.dd-text,
+.dd-title {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* small polish for very narrow screens */
+@media (max-width: 480px) {
+  .dd-thumb { width: 40px; height: 28px; }
+}
+
 .object-cover {
   object-fit: cover;
 }
