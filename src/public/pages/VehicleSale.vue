@@ -1,31 +1,89 @@
 <script setup lang="ts">
-import axios from 'axios';
-
-import { ref, onMounted } from 'vue';
-
-import { useVehicleStore } from '@/stores/vehicleData';
-
-import CarDetails from '@/public/pages/CarDetails.vue';
+import axios from 'axios'
+import { ref, onMounted, computed } from 'vue'
+import { useToast } from 'primevue/usetoast'
+import { useVehicleStore } from '@/stores/vehicleData'
 import VehicleService from '@/services/VehicleService'
 import toUpperCase from '@/components/reusable/toUpperCase'
-import { useToast } from 'primevue/usetoast';
 
-const toast = useToast();
-const valuation = ref<any | null>(null);
-const loadingValuation = ref(false);
-const showCarDetails = ref(false); // Reactive variable to control whether to show the car details section
-const formLocked = ref(false); // hide form inputs after valuation
+// --- state ---
+const toast = useToast()
+const vehicleStore = useVehicleStore()
 
+const availableVehicles = ref<any[]>([])          // stock: not WASTEBIN
+const vehicleOptions = ref<{label:string; value:number}[]>([])
+const targetVehicleId = ref<number | null>(null)  // the car they want from your stock
+const targetVehicle = computed(() =>
+  availableVehicles.value.find(v => v.id === targetVehicleId.value) || null
+)
 
+const valuation = ref<any | null>(null)
+const loadingValuation = ref(false)
+const formLocked = ref(false) // when we’ve shown valuation summary
+const isLocked = ref(false)   // locks DVSA-populated fields
+
+const registrationNumber = ref('')
+
+// Customer’s car quick dataset (DVSA payload)
+const vehData = ref({
+  registration: '',
+  make: '',
+  model: '',
+  odometerValue: '',
+  odometerUnit: '',
+  firstUsedDate: '',
+  registrationDate: '',
+  fuelType: '',
+  engineSize: '',
+  primaryColour: '',
+  partEx: true, // default to part-ex ON for this flow
+})
+
+// Lead details
+const form = ref({
+  fullName: '',
+  email: '',
+  postcode: '',
+  phone: '',
+})
+const formErrors = ref({
+  fullName: false,
+  email: false,
+  postcode: false,
+  phone: false,
+})
+
+// --- helpers ---
+const transformToUpperCase = () => toUpperCase(registrationNumber)
+
+const formatGBP = (n: number | string) => {
+  const v = +n || 0
+  return v.toLocaleString('en-GB', { maximumFractionDigits: 0 })
+}
+
+// So the “instant” valuation is clearly indicative,
+// present ±7.5% range (rounded to nearest £50)
+const round50 = (n: number) => Math.round(n / 50) * 50
+const partExBase = computed<number>(() => +valuation.value?.valuations?.partExchange || 0)
+const partExLow  = computed<number>(() => round50(partExBase.value * 0.925)) // slightly protective
+const partExHigh = computed<number>(() => round50(partExBase.value * 1.075))
+
+const changeToPay = computed<number>(() => {
+  const price = +(targetVehicle.value?.price || 0)
+  const px    = partExBase.value
+  return Math.max(price - px, 0)
+})
+
+const canRequestValuation = computed<boolean>(() =>
+  !!vehData.value.registration && !!vehData.value.odometerValue && !!targetVehicle.value
+)
+
+// --- actions ---
 const clearValuation = () => {
-  formLocked.value = false;
-  valuation.value = null;
-};
+  formLocked.value = false
+  valuation.value = null
+}
 
-const registrationNumber = ref(''); // Reactive variable to store the registration number input
-const vehicleStore = useVehicleStore();
-const isLocked = ref(false); // Controls read-only state
-const partEx = ref(false); // Default sale type
 const resetForm = () => {
   vehData.value = {
     registration: '',
@@ -38,157 +96,94 @@ const resetForm = () => {
     fuelType: '',
     engineSize: '',
     primaryColour: '',
-    partEx: partEx.value,
-  };
+    partEx: true,
+  }
+  form.value = { fullName: '', email: '', postcode: '', phone: '' }
+  registrationNumber.value = ''
+  targetVehicleId.value = null
+  isLocked.value = false
+  clearValuation()
+}
 
-  form.value = {
-    fullName: '',
-    email: '',
-    postcode: '',
-    phone: '',
-  };
+const loadStock = async () => {
+  // You can also use vehicleStore if it’s already hydrated elsewhere
+  const data = await VehicleService.getAllVehicles()
+  const list = (data.cars || []) as any[]
+  availableVehicles.value = list.filter(v => String(v.vehicle_status).toUpperCase() !== 'WASTEBIN')
+  vehicleOptions.value = availableVehicles.value.map(v => ({
+    label: `${v.make} ${v.model}${v.variant ? ' ' + v.variant : ''} — £${formatGBP(v.price)}`,
+    value: v.id
+  }))
+}
 
-  registrationNumber.value = '';
-};
-const vehData = ref({
-  registration: '',
-  make: '',
-  model: '',
-  odometerValue: '',
-  odometerUnit: '',
-  firstUsedDate: '',
-  registrationDate: '',
-  fuelType: '',
-  engineSize: '',
-  primaryColour: '',
-  partEx: partEx.value, // Default partEx value
-});
-
-
-// default is null, only gets populated after API call
-const form = ref({
-  fullName: '',
-  email: '',
-  postcode: '',
-  phone: '',
-});
-const formErrors = ref({
-  fullName: false,
-  email: false,
-  postcode: false,
-  phone: false,
-});
+const getDvsa = async () => {
+  try {
+    const response = await VehicleService.getDvsaVehicleByReg(registrationNumber.value)
+    vehData.value = response
+    isLocked.value = true
+    vehicleStore.setVehicleData(response)
+  } catch {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to retrieve vehicle details. Check the reg.', life: 4000 })
+  }
+}
 
 const getValuation = async () => {
   try {
-    if (!vehData.value.registration || !vehData.value.odometerValue) {
-      throw new Error('Missing registration or mileage for valuation');
+    if (!canRequestValuation.value) {
+      toast.add({ severity: 'warn', summary: 'Missing info', detail: 'Select one of our cars, enter reg & mileage.', life: 3500 })
+      return
     }
+    loadingValuation.value = true
 
-    loadingValuation.value = true;
-
+    // Your existing valuation endpoint (reg + mileage only)
     const res = await axios.get(
       `${import.meta.env.VITE_API_BASE_URL}/scs/at/${vehData.value.registration}/${vehData.value.odometerValue}`
-    );
-
-    valuation.value = res.data.data;
-
-    // valuation.value = response.data?.valuation; // ✅ This must be present
-    formLocked.value = true;
-    toast.add({
-      severity: "success",
-      summary: "Valuation Retrieved",
-      detail: `Valuation for ${vehData.value.registration}`,
-      life: 3000,
-    });
+    )
+    valuation.value = res.data.data
+    formLocked.value = true
+    toast.add({ severity: 'success', summary: 'Indicative valuation ready', detail: `For ${vehData.value.registration}`, life: 3000 })
   } catch (err: any) {
     toast.add({
-      severity: "error",
-      summary: "Valuation Failed",
-      detail: err.response?.data?.message || "Could not get valuation",
+      severity: 'error',
+      summary: 'Valuation failed',
+      detail: err?.response?.data?.message || 'Could not get valuation',
       life: 5000,
-    });
+    })
   } finally {
-    loadingValuation.value = false;
+    loadingValuation.value = false
   }
-};
+}
 
-
-//make post request to the backend to submit the form
 const submitSellRequest = async () => {
-  // Reset all errors
   formErrors.value = {
     fullName: !form.value.fullName,
     email: !form.value.email,
     postcode: !form.value.postcode,
     phone: !form.value.phone,
-  };
-
-  // If any are true, stop submission
-  if (Object.values(formErrors.value).some(v => v)) {
-    toast.add({
-      severity: 'error',
-      summary: 'Missing Fields',
-      detail: 'Please complete all required fields.',
-      life: 4000,
-    });
-    return;
+  }
+  if (Object.values(formErrors.value).some(Boolean)) {
+    toast.add({ severity: 'error', summary: 'Missing Fields', detail: 'Please complete all required fields.', life: 4000 })
+    return
   }
   try {
     const payload = {
       ...form.value,
       registration: vehData.value?.registration,
       vehicle: vehData.value,
-      partEx: vehData.value?.partEx ?? false, // <-- explicitly include
-    };
-
-
-    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/scs/lead/sell-your-car`, payload);
-
-    await getValuation();
-    // toast.add({
-    //   severity: 'success',
-    //   summary: 'Submitted!',
-    //   detail: 'Your car details have been received. You will be contacted shortly.',
-    //   life: 4000,
-    // });
-  } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to submit your car for sale.',
-      life: 4000,
-    });
+      partEx: true,
+      target_vehicle_id: targetVehicleId.value ?? undefined
+    }
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/scs/lead/sell-your-car`, payload)
+    await getValuation() // show indicative instantly post submit
+  } catch {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to submit your details.', life: 4000 })
   }
-};
+}
 
-// Method to make a request to the backend and display the details for vehicle details 
-const getDvsa = async () => {
-  try {
-    const response = await VehicleService.getDvsaVehicleByReg(registrationNumber.value);
-    vehData.value = response;
-    // await getValuation(); 
-    isLocked.value = true; // Lock the inputs
-    showCarDetails.value = true;
-    vehicleStore.setVehicleData(response) 
-
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to retrieve vehicle details. Please check the registration number.',
-      life: 4000,
-    });
-    // console.log('sdvczxv', error)
-    // console.error(error);
-  }
-};
-
-
-const transformToUpperCase = () => {
-  toUpperCase(registrationNumber)
-};
-
+// init
+onMounted(async () => {
+  try { await loadStock() } catch {}
+})
 </script>
 
 <template>
@@ -197,169 +192,219 @@ const transformToUpperCase = () => {
   <div class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container">
     <div class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
       <div class="text-3xl font-medium text-900 mb-3" style="margin-left: 3px;">Trade In or Sell</div>
-      <div class="text-500">Get the Best Offer for Your Car</div>
+      <div class="text-500">Get an indicative offer for your car, against one of ours.</div>
     </div>
   </div>
 
   <div class="surface-section p-5 md:p-6 lg:p-8 shadow-md rounded-xl car-details-container">
-
-    <!-- ✅ Valuation Card Only (when form is locked) -->
-    <PrimeCard v-if="formLocked && valuation" class="mb-4 text-center">
+    <!-- SUMMARY / RESULT -->
+    <PrimeCard v-if="formLocked && valuation && targetVehicle" class="mb-4">
       <template #title>
-        <h3 class="text-lg font-semibold text-gray-700">Estimated Valuation</h3>
+        <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between gap-3">
+          <h3 class="text-lg font-semibold text-gray-700 m-0">Your Indicative Part-Exchange Summary</h3>
+          <PrimeTag severity="warning" value="Subject to appraisal" />
+        </div>
       </template>
       <template #content>
-        <div class="text-lg font-medium text-gray-800 mb-2">
-          {{ valuation.make }} {{ valuation.model }} ({{ valuation.registration }})
-        </div>
-        <div class="text-sm text-gray-600 mb-2">
-          {{ valuation.fuelType }} - {{ valuation.colour }} - {{ valuation.generation }}
-        </div>
         <div class="grid">
-          <div class="col-12">
-            <div class="p-3 surface-100 border-round text-center">
-              <div class="text-sm text-gray-500">Part Exchange Value</div>
-              <div class="text-2xl font-bold text-green-600">£{{ valuation.valuations.partExchange.toLocaleString() }}</div>
+          <div class="col-12 md:col-6">
+            <div class="p-3 surface-100 border-round">
+              <div class="text-sm text-gray-500 mb-1">Selected Vehicle</div>
+              <div class="text-base font-semibold">
+                {{ targetVehicle.make }} {{ targetVehicle.model }} {{ targetVehicle.variant || '' }}
+              </div>
+              <div class="text-2xl font-bold mt-2">
+                £{{ formatGBP(targetVehicle.price) }}
+              </div>
             </div>
           </div>
+          <div class="col-12 md:col-6">
+            <div class="p-3 surface-100 border-round">
+              <div class="text-sm text-gray-500 mb-1">Your Car (Indicative Part-Ex)</div>
+              <div class="text-base">
+                {{ valuation.make }} {{ valuation.model }} ({{ valuation.registration }})
+              </div>
+              <div class="text-xs text-gray-500 mb-2">{{ valuation.fuelType }} • {{ valuation.colour }}</div>
+              <div class="text-xl font-bold">
+                £{{ formatGBP(partExLow) }} – £{{ formatGBP(partExHigh) }}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="p-3 border-round surface-card flex gap-4 align-items-center justify-content-between">
+              <div class="text-base text-gray-700">
+                Estimated difference to change (vs. mid-range): 
+                <span class="font-bold">£{{ formatGBP(Math.max((+targetVehicle.price || 0) - partExBase, 0)) }}</span>
+              </div>
+              <div class="flex gap-2">
+                <PrimeButton label="Book Inspection" severity="contrast" />
+                <PrimeButton label="Choose Another Car" text @click="() => { formLocked = false; valuation = null; }" />
+              </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">
+              All figures are indicative and may vary with condition, history and market movement. Final offer confirmed after on-site appraisal.
+            </p>
+          </div>
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex justify-end">
+          <PrimeButton label="Back to Edit" icon="pi pi-pencil" text @click="clearValuation" />
         </div>
       </template>
     </PrimeCard>
 
-    <!-- 🔙 Back to Edit Button -->
-    <div class="mb-3 flex justify-end" v-if="formLocked">
-      <PrimeButton label="Back to Edit" icon="pi pi-pencil" severity="contrast" @click="clearValuation" />
-    </div>
-
-    <!-- 🧾 Full Form (only shown when not locked) -->
+    <!-- FORM -->
     <div v-if="!formLocked" class="grid">
-      <!-- 👤 Your Details -->
+      <!-- LEFT: pick one of your cars -->
       <div class="col-12 md:col-6">
         <PrimeCard>
           <template #title>
-            <p class="mb-3">
-              Please get in touch using the form below and we'll get back to you via phone or email as soon as possible with a quote!
-            </p>
-            <h3 class="text-lg font-semibold text-gray-700">Your Details</h3>
+            <h3 class="text-lg font-semibold text-gray-700">1) Pick a car from our stock</h3>
+          </template>
+          <template #content>
+            <Dropdown
+              v-model="targetVehicleId"
+              :options="vehicleOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select a vehicle"
+              class="w-full mb-3"
+            />
+            <PrimeMessage v-if="!targetVehicleId" severity="info" :closable="false">
+              Choose a vehicle you’d like to buy — we’ll estimate your part-ex against it.
+            </PrimeMessage>
+
+            <div v-if="targetVehicle" class="p-3 border-1 surface-border border-round mt-2">
+              <div class="text-sm text-gray-500 mb-1">Selected:</div>
+              <div class="font-semibold">
+                {{ targetVehicle.make }} {{ targetVehicle.model }} {{ targetVehicle.variant || '' }}
+              </div>
+              <div class="text-xl font-bold mt-1">£{{ formatGBP(targetVehicle.price) }}</div>
+            </div>
+          </template>
+        </PrimeCard>
+
+        <!-- Your details -->
+        <PrimeCard class="mt-4">
+          <template #title>
+            <h3 class="text-lg font-semibold text-gray-700">2) Your Contact Details</h3>
           </template>
           <template #content>
             <div class="grid gap-3">
               <div class="col-12">
-                <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
-                <InputText id="fullName" v-model="form.fullName" class="w-full" placeholder="John Smith" />
+                <label class="block text-sm font-medium">Full Name</label>
+                <InputText v-model="form.fullName" class="w-full" placeholder="John Smith" />
                 <PrimeInlineMessage v-if="formErrors.fullName" severity="error">Full name is required</PrimeInlineMessage>
               </div>
               <div class="col-12">
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <InputText id="email" type="email" v-model="form.email" class="w-full" placeholder="john@example.com" />
+                <label class="block text-sm font-medium">Email</label>
+                <InputText type="email" v-model="form.email" class="w-full" placeholder="john@example.com" />
               </div>
               <div class="col-12">
-                <label for="postcode" class="block text-sm font-medium text-gray-700">Postcode</label>
-                <InputText id="postcode" v-model="form.postcode" class="w-full" placeholder="B1 2AA" />
+                <label class="block text-sm font-medium">Postcode</label>
+                <InputText v-model="form.postcode" class="w-full" placeholder="B1 2AA" />
               </div>
               <div class="col-12">
-                <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                <InputText id="phone" v-model="form.phone" class="w-full" placeholder="07123 456789" />
+                <label class="block text-sm font-medium">Phone</label>
+                <InputText v-model="form.phone" class="w-full" placeholder="07123 456789" />
               </div>
             </div>
           </template>
         </PrimeCard>
       </div>
 
-      <!-- 🚗 Vehicle Info -->
+      <!-- RIGHT: their car -->
       <div class="col-12 md:col-6">
-        <!-- Part Ex Toggle -->
-        <div class="p-4 border-round shadow-2 bg-white mb-4">
-          <h3 class="text-xl text-gray-600 font-bold">Part Ex?</h3>
-          <PrimeToggleButton v-model="vehData.partEx" class="w-6rem" onLabel="Yes" offLabel="No" severity="contrast" />
-        </div>
+        <PrimeCard>
+          <template #title>
+            <h3 class="text-lg font-semibold text-gray-700">3) Your Car (Part-Exchange)</h3>
+          </template>
+          <template #content>
+            <div class="p-3 border-round surface-100 mb-3">
+              <div class="text-sm text-gray-600 mb-2">Enter Registration</div>
+              <InputGroup class="w-full h-3rem">
+                <InputGroupAddon style="background-color:#00309a;color:#fbe90a">GB</InputGroupAddon>
+                <InputText
+                  v-model="registrationNumber"
+                  style="background-color:#fbe90a;border-color:#00309a"
+                  placeholder="REG"
+                  class="w-full text-xl font-bold"
+                  @input="transformToUpperCase"
+                />
+                <PrimeButton label="Lookup" severity="contrast" @click="getDvsa" />
+              </InputGroup>
+              <small class="text-gray-500">We’ll fetch basics. You can amend anything below.</small>
+            </div>
 
-        <!-- Registration Input -->
-        <div class="p-4 border-round shadow-2 bg-white mb-4">
-          <h3 class="text-xl text-gray-600 font-medium">Enter Registration</h3>
-          <InputGroup class="w-full h-4rem flex justify-center mb-3">
-            <InputGroupAddon style="background-color: #00309a; color: #fbe90a">GB</InputGroupAddon>
-            <InputText
-              v-model="registrationNumber"
-              style="background-color: #fbe90a; border-color: #00309a"
-              placeholder="REG"
-              class="text-5xl w-full text-100 font-bold"
-              @input="transformToUpperCase"
-            />
-          </InputGroup>
-          <PrimeButton severity="contrast" label="Generate Vehicle Details" @click="getDvsa"
-            class="w-full flex justify-content-end mt-2" />
-        </div>
+            <div class="grid formgrid p-fluid">
+              <div class="field col-12 md:col-6">
+                <label>Registration</label>
+                <InputText v-model="vehData.registration" :readonly="isLocked" />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label>Make</label>
+                <InputText v-model="vehData.make" :readonly="isLocked" />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label>Model</label>
+                <InputText v-model="vehData.model" :readonly="isLocked" />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label>Mileage</label>
+                <InputText
+                  v-model="vehData.odometerValue"
+                  placeholder="e.g. 75000"
+                />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label>First Used</label>
+                <InputText v-model="vehData.firstUsedDate" />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label>Reg Date</label>
+                <InputText v-model="vehData.registrationDate" :readonly="isLocked" />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label>Fuel</label>
+                <InputText v-model="vehData.fuelType" :readonly="isLocked" />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label>Engine Size</label>
+                <InputText v-model="vehData.engineSize" :readonly="isLocked" />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label>Colour</label>
+                <InputText v-model="vehData.primaryColour" :readonly="isLocked" />
+              </div>
+            </div>
+          </template>
 
-        <!-- Vehicle Info Form -->
-        <div class="p-4 border-round shadow-2 bg-white mb-4">
-          <h3 class="text-xl text-gray-600 font-medium">Vehicle Details</h3>
-          <p class="text-md text-gray-600">Amend any information below if required, and click the button to confirm your vehicle details.</p>
-          <div class="grid formgrid p-fluid mt-3">
-            <div class="field col-12 md:col-6">
-              <label for="registration">Registration</label>
-              <InputText id="registration" v-model="vehData.registration" :readonly="isLocked" />
+          <template #footer>
+            <div class="grid mt-2">
+              <div class="col-6">
+                <PrimeButton label="Reset" class="w-full p-button-outlined text-red-500 border-red-500" @click="resetForm" />
+              </div>
+              <div class="col-6">
+                <PrimeButton
+                  label="Submit & Get Indicative Offer"
+                  class="w-full bg-black text-white font-semibold"
+                  :loading="loadingValuation"
+                  :disabled="!canRequestValuation"
+                  @click="submitSellRequest"
+                />
+              </div>
             </div>
-            <div class="field col-12 md:col-6">
-              <label for="make">Make</label>
-              <InputText id="make" v-model="vehData.make" :readonly="isLocked" />
-            </div>
-            <div class="field col-12 md:col-6">
-              <label for="model">Model</label>
-              <InputText id="model" v-model="vehData.model" :readonly="isLocked" />
-            </div>
-            <div class="field col-12 md:col-6">
-              <label for="mileage">Mileage</label>
-              <InputText
-                id="mileage"
-                :value="vehData?.odometerValue ? vehData.odometerValue + ' ' + vehData.odometerUnit : ''"
-                :readonly="isLocked"
-              />
-            </div>
-            <div class="field col-12 md:col-6">
-              <label for="firstUsedDate">First Used Date</label>
-              <InputText id="firstUsedDate" v-model="vehData.firstUsedDate" />
-            </div>
-            <div class="field col-12 md:col-6">
-              <label for="registrationDate">Registration Date</label>
-              <InputText id="registrationDate" v-model="vehData.registrationDate" :readonly="isLocked" />
-            </div>
-            <div class="field col-12 md:col-6">
-              <label for="fuelType">Fuel Type</label>
-              <InputText id="fuelType" v-model="vehData.fuelType" :readonly="isLocked" />
-            </div>
-            <div class="field col-12 md:col-6">
-              <label for="engineSize">Engine Size</label>
-              <InputText id="engineSize" v-model="vehData.engineSize" :readonly="isLocked" />
-            </div>
-            <div class="field col-12 md:col-6">
-              <label for="primaryColour">Primary Colour</label>
-              <InputText id="primaryColour" v-model="vehData.primaryColour" :readonly="isLocked" />
-            </div>
-          </div>
-
-          <!-- Form Buttons -->
-          <div class="grid mt-3">
-            <div class="col-6">
-              <PrimeButton label="Reset Form" class="w-full p-button-outlined text-red-500 border-red-500"
-                @click="resetForm" />
-            </div>
-            <div class="col-6">
-              <PrimeButton
-                severity="contrast"
-                label="Submit"
-                class="w-full bg-black text-white font-semibold"
-                @click="submitSellRequest"
-              />
-            </div>
-          </div>
-        </div>
+            <small class="text-xs text-gray-500 block mt-2">
+              By continuing you agree that figures shown are indicative only and subject to in-person appraisal.
+            </small>
+          </template>
+        </PrimeCard>
       </div>
     </div>
   </div>
 </template>
-
-
 
 
 

@@ -292,7 +292,7 @@ const clearFilters = () => {
 
 /* Dim image when sold */
 .sold-dim {
-  filter: grayscale(40%) brightness(0.85);
+  filter: grayscale(50%) brightness(0.85);
 }
 
 :deep(.custom-black-button) {
