@@ -2,20 +2,21 @@
   <div>
     <PrimeToast />
     <div class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container">
-      <!-- <PrimeToast /> -->
       <div
         class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
         <div class="text-3xl font-medium text-900 mb-3" style="margin-left:3px;">Available Vehicles</div>
         <div class="text-500">Filter Vehicles based on your search criteria.</div>
       </div>
     </div>
+
     <!-- mega menu -->
     <div
       class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container md:align-items-center md:justify-content-between">
+
       <!-- Filter Bar -->
       <div class="filter-bar text-white py-1 flex flex-wrap gap-3 align-items-center justify-content-start">
 
-        <!-- DESKTOP FILTER CONTROLS (hidden on small screens) -->
+        <!-- DESKTOP FILTER CONTROLS -->
         <div class="hidden md:flex text-white px-2 py-3 flex-wrap gap-3 justify-start desktop-margin-left">
           <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label"
             class="w-full md:w-14rem custom-black-button" placeholder="Make" />
@@ -29,11 +30,9 @@
             class="w-full md:w-auto custom-black-button" />
         </div>
 
-        <!-- MOBILE FILTER BUTTON (only visible on small screens) -->
+        <!-- MOBILE FILTER CONTROLS -->
         <div class="md:hidden w-full">
-         
-          
-            <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label"
+          <Dropdown v-model="vehicle_make" :options="makeOptions" optionLabel="label"
             class="w-full md:w-14rem custom-black-button" placeholder="Make" />
           <Dropdown v-model="vehicle_model" :options="filteredModelOptions" optionLabel="label"
             class="w-full md:w-14rem custom-black-button" placeholder="Model" />
@@ -43,26 +42,16 @@
             @click="showFilters = true" />
           <PrimeButton icon="pi pi-times" label="Clear filters" @click="clearFilters"
             class="w-full md:w-auto custom-black-button" />
-            <!-- <PrimeButton icon="pi pi-sliders-h" label="Filters" class="w-full custom-black-button"
-            @click="showFilters = true" /> -->
         </div>
 
         <!-- MODAL -->
-        
         <FilterModel ref="filterModelRef" v-model:visible="showFilters" @applyFilters="fetchFilteredVehicles" />
-        <!-- <PrimeDialog v-model:visible="advancedFilters" header="Advanced Filters" maximizable :maximized="true" modal
-          :style="{ width: '100vw', height: '100vh' }" :breakpoints="{ '1199px': '100vw', '575px': '100vw' }">
-          <p class="m-0">
-
-
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore...
-          </p>
-        </PrimeDialog> -->
-
       </div>
+
       <div class="col-12 md:col-12 mt-2">
-        <div class="flex justify-content-between mb-4">
-        </div>
+        <div class="flex justify-content-between mb-4"></div>
+
+        <!-- Loading skeletons -->
         <div v-if="loading" class="grid">
           <div v-for="n in 6" :key="n" class="col-12 sm:col-6 lg:col-4 p-2">
             <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative">
@@ -77,30 +66,44 @@
             </div>
           </div>
         </div>
+
+        <!-- Vehicle cards -->
         <div class="grid" v-else-if="filteredVehicles.length > 0">
           <div v-for="(item, index) in filteredVehicles" :key="index" class="col-12 sm:col-6 lg:col-4 p-2">
             <RouterLink :to="{ name: 'vehicle-details', params: { id: item.id } }" class="no-underline">
-              <!-- <div class="p-3 border-1 surface-border surface-card border-round shadow-1 relative cursor-pointer"> -->
-              <!-- Image Carousel (or first image preview) -->
               <div class="relative">
                 <PrimeCard style="overflow: hidden" class="mb-4">
+                  <!-- IMAGE with SOLD overlay -->
                   <template #header>
-                    <img v-if="item.images && item.images.length > 0" :src="item.images[0]" alt="car"
-                      class="w-full border-round" style="object-fit: cover;" />
-                    <div v-else
-                      class="h-[180px] w-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                      No Image
+                    <div class="relative">
+                      <img
+                        v-if="item.images && item.images.length > 0"
+                        :src="item.images[0]"
+                        alt="car"
+                        class="w-full border-round"
+                        style="object-fit: cover;"
+                        :class="{ 'sold-dim': isSold(item) }"
+                      />
+                      <div v-else
+                        class="h-[180px] w-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                        No Image
+                      </div>
+
+                      <!-- SOLD ribbon -->
+                      <div v-if="isSold(item)" class="sold-ribbon" aria-label="Sold">SOLD</div>
                     </div>
                   </template>
+
                   <template #title>
                     <h3 class="text-sm font-bold text-800 mb-1">{{ item.make }} {{ item.model }}</h3>
                   </template>
+
                   <template #subtitle>
                     <div class="text-sm text-gray-500 mb-1">
                       {{ item.variant || 'No Variant' }} • {{ item.year || 'N/A' }} • {{ item.body_style || 'N/A' }}
-
                     </div>
                   </template>
+
                   <template #content>
                     <div class="flex gap-2 flex-wrap mt-2">
                       <span class="text-xs bg-gray-100 border-round px-2 py-1 text-gray-800 font-medium">
@@ -110,13 +113,19 @@
                         {{ item.year || 'Year' }}
                       </span>
                     </div>
-
                   </template>
+
                   <template #footer>
-                    <div class="flex gap-3 mt-1">
-                      <div class="text-xl text-green-400 font-bold mt-2">
+                    <div class="flex gap-3 mt-1 items-center">
+                      <div
+                        class="text-xl font-bold mt-2"
+                        :class="isSold(item) ? 'text-gray-400 line-through' : 'text-green-400'"
+                      >
                         £{{ item.price?.toLocaleString() || 'N/A' }}
                       </div>
+                      <span v-if="isSold(item)" class="text-xs px-2 py-1 bg-red-100 text-red-600 border-round font-semibold">
+                        Sold
+                      </span>
                     </div>
                   </template>
                 </PrimeCard>
@@ -124,6 +133,7 @@
             </RouterLink>
           </div>
         </div>
+
         <div v-else class="text-center text-gray-400 py-4">
           No vehicles found.
         </div>
@@ -131,6 +141,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
@@ -156,6 +167,7 @@ const modelOptions = ref([])
 const variantOptions = ref([])
 const loading = ref(true)
 const showFilters = ref(false);
+const isSold = (v:any) => String(v?.vehicle_status).toUpperCase() === 'WASTEBIN'
 
 
 const prepareDropdowns = () => {
@@ -261,6 +273,28 @@ const clearFilters = () => {
 </script>
 
 <style scoped>
+/* Diagonal ribbon */
+.sold-ribbon {
+  position: absolute;
+  top: 12px;
+  left: -40px;
+  transform: rotate(-45deg);
+  background: #ef4444;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 6px 56px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+/* Dim image when sold */
+.sold-dim {
+  filter: grayscale(40%) brightness(0.85);
+}
+
 :deep(.custom-black-button) {
   background-color: black !important;
   color: white !important;

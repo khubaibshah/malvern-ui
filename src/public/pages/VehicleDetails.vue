@@ -29,6 +29,13 @@ import EnquiryForm from '../components/enquiryForm.vue';
 
 const currentImageIndex = ref(0)
 
+
+const isSoldCar = computed(() =>
+  String(car.value?.vehicle_status || '').toUpperCase() === 'WASTEBIN'
+)
+
+
+
 watch(images, () => {
   if (images.value.length > 0) {
     const mainIdx = images.value.indexOf(car.value.main_image);
@@ -118,24 +125,27 @@ onMounted(fetchCar)
 </script>
 
 <template>
-
   <div class="surface-section px-3 py-5 md:px-6 lg:px-8">
-    <PrimeButton label="All Vehicles" text class="mt-2 mb-2" style="right: 15px; color: black;" icon="pi pi-arrow-left"
-      @click="router.back()" />
+    <PrimeButton
+      label="All Vehicles"
+      text
+      class="mt-2 mb-2"
+      style="right: 15px; color: black;"
+      icon="pi pi-arrow-left"
+      @click="router.back()"
+    />
+
+    <!-- Loading -->
     <div class="grid" v-if="loading">
-      <!-- Skeletons while loading -->
       <div class="col-12 md:col-6 lg:col-8">
         <PrimeSkeleton width="100%" height="350px" class="mb-3 border-round mx-auto max-w-[400px]" />
         <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
           <PrimeSkeleton v-for="n in 4" :key="n" width="7rem" height="5rem" class="border-round" />
         </div>
       </div>
-
       <div class="col-12 md:col-6 lg:col-4">
         <PrimeCard class="w-full">
-          <template #title>
-            <PrimeSkeleton width="70%" class="mb-2" />
-          </template>
+          <template #title><PrimeSkeleton width="70%" class="mb-2" /></template>
           <template #content>
             <PrimeSkeleton width="50%" class="mb-2" />
             <PrimeSkeleton width="50%" class="mb-2" />
@@ -147,32 +157,52 @@ onMounted(fetchCar)
       </div>
     </div>
 
+    <!-- Vehicle -->
     <div class="grid" v-else-if="car">
-
-      <!-- images and thumbail section -->
+      <!-- Images & thumbs -->
       <div class="col-12 md:col-6 lg:col-8">
-        <div class="mb-4 border rounded overflow-hidden max-w-[200px] mx-auto touch-area" @touchstart="startTouch"
-          @touchend="endTouch"> <img :src="mainImage" alt="Main Image" class="w-full h-[250px] object-cover rounded"
-            style="
-          border-radius: 12px;" />
-
+        <div
+          class="mb-4 border rounded overflow-hidden max-w-[200px] mx-auto touch-area relative"
+          @touchstart="startTouch"
+          @touchend="endTouch"
+        >
+          <img
+            :src="mainImage"
+            alt="Main Image"
+            class="w-full h-[250px] object-cover rounded"
+            :class="{ 'sold-dim': isSoldCar }"
+            style="border-radius: 12px;"
+          />
+          <!-- SOLD ribbon -->
+          <div v-if="isSoldCar" class="sold-ribbon" aria-label="Sold">SOLD</div>
         </div>
+
         <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
-          <img v-for="(img, idx) in images" :key="idx" :src="img" class="object-cover rounded cursor-pointer border-2"
-            style="    width: 7rem;
-          height: 5rem;" :class="{ 'border-blue-500': mainImage === img, 'border-gray-300': mainImage !== img }"
-            @click="() => { mainImage = img; currentImageIndex.value = idx }" />
+          <div v-for="(img, idx) in images" :key="idx" class="relative">
+            <img
+              :src="img"
+              class="object-cover rounded cursor-pointer border-2"
+              style="width: 7rem; height: 5rem;"
+              :class="{
+                'border-blue-500': mainImage === img,
+                'border-gray-300': mainImage !== img,
+                'sold-dim': isSoldCar
+              }"
+              @click="() => { mainImage = img; currentImageIndex.value = idx }"
+            />
+          </div>
         </div>
       </div>
 
-      <!-- vehicle details -->
+      <!-- Details -->
       <div class="col-12 md:col-6 lg:col-4">
-        <PrimeCard class="w-full border-color custom-shadow ">
-
+        <PrimeCard class="w-full border-color custom-shadow">
           <template #title>
-            <!-- {{ car }} -->
-            <div class="text-3xl font-medium text-900">{{ car.make }} {{ car.model }} {{ car.variant }}</div>
+            <div class="text-3xl font-medium text-900">
+              {{ car.make }} {{ car.model }} {{ car.variant }}
+            </div>
           </template>
+
           <template #content>
             <div class="grid grid-cols-2 gap-4 text-gray-800 text-sm" style="margin:0rem">
               <div class="flex items-center gap-2">
@@ -214,23 +244,61 @@ onMounted(fetchCar)
               </AccordionTab>
             </Accordion>
 
-            <p class="text-2xl text-green-600 font-bold mt-5 mb-4">£{{ car.price?.toLocaleString() }}</p>
+            <!-- Price + sold pill -->
+            <div class="flex items-center gap-3 mt-5 mb-4">
+              <p
+                class="text-2xl font-bold"
+                :class="isSoldCar ? 'text-gray-400 line-through' : 'text-green-600'"
+                style="margin:0"
+              >
+                £{{ car.price?.toLocaleString() }}
+              </p>
+              <span
+                v-if="isSoldCar"
+                class="text-xs px-2 py-1 bg-red-100 text-red-600 border-round font-semibold"
+              >
+                Sold
+              </span>
+            </div>
 
-            <PrimeButton label="Enquire / Book Test Drive" class="w-full custom-black-button"
-              @click="handleEnquireClick" />
+            <!-- Enquiry button disabled when sold -->
+            <PrimeButton
+              :label="isSoldCar ? 'Sold' : 'Enquire / Book Test Drive'"
+              class="w-full custom-black-button"
+              :disabled="isSoldCar"
+              @click="!isSoldCar && handleEnquireClick()"
+            />
           </template>
-
         </PrimeCard>
-
       </div>
     </div>
 
     <div v-else class="text-center py-12 text-gray-400">Loading vehicle details...</div>
   </div>
-
 </template>
 
+
 <style>
+/* Reuse same ribbon/dim everywhere */
+.sold-ribbon {
+  position: absolute;
+  top: 12px;
+  left: -40px;
+  transform: rotate(-45deg);
+  background: #ef4444;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 6px 56px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+.sold-dim {
+  filter: grayscale(40%) brightness(0.85);
+}
+
 @media (max-width: 768px) {
   img {
     max-width: 100%;
