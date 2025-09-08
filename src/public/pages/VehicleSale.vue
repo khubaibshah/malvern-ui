@@ -3,8 +3,46 @@ import axios from 'axios'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { useVehicleStore } from '@/stores/vehicleData'
-import VehicleService from '@/services/VehicleService' // still needed for DVSA lookup
+import VehicleService from '@/services/VehicleService'
 import toUpperCase from '@/components/reusable/toUpperCase'
+
+/* ------------------ image helpers (shared logic) ------------------ */
+const decodeImageUrl = (val: any): string => {
+  if (!val) return ''
+  const s = String(val)
+  if (/^https?:\/\//i.test(s)) return s
+  try {
+    const normalized = s.replace(/-/g, '+').replace(/_/g, '/')
+    return atob(normalized)
+  } catch {
+    return s
+  }
+}
+
+const imageList = (v: any): string[] => {
+  const imgs = v?.images
+  if (Array.isArray(imgs) && imgs.length && typeof imgs[0] === 'object') {
+    const sorted = [...imgs].sort((a: any, b: any) =>
+      Number(b?.is_main || 0) - Number(a?.is_main || 0) ||
+      (a?.sort_order ?? 1e9) - (b?.sort_order ?? 1e9) ||
+      (a?.id ?? 1e9) - (b?.id ?? 1e9)
+    )
+    return sorted.map((it: any) => decodeImageUrl(it?.car_image)).filter(Boolean)
+  }
+  if (Array.isArray(imgs)) {
+    return imgs.map(decodeImageUrl).filter(Boolean)
+  }
+  return []
+}
+
+const heroImage = (v: any): string => {
+  const fromMain = decodeImageUrl(v?.main_image)
+  if (fromMain) return fromMain
+  const list = imageList(v)
+  if (list.length) return list[0]
+  return '/src/assets/img/default.jpg'
+}
+/* ------------------------------------------------------------------ */
 
 // --- state ---
 const toast = useToast()
@@ -19,14 +57,13 @@ const availableVehicles = computed<any[]>(() =>
 )
 
 // Options for dropdown (thumb + label + id)
-const vehicleOptions = computed<{ label: string; value: number; image: string; vehicle: any }[]>(
-  () =>
-    availableVehicles.value.map(v => ({
-      label: `${v.make} ${v.model}${v.variant ? ' ' + v.variant : ''} — £${(+v.price || 0).toLocaleString('en-GB', { maximumFractionDigits: 0 })}`,
-      value: v.id,
-      image: (Array.isArray(v.images) && v.images.length ? v.images[0] : '/src/assets/img/default.jpg'),
-      vehicle: v
-    }))
+const vehicleOptions = computed<{ label: string; value: number; image: string; vehicle: any }[]>(() =>
+  availableVehicles.value.map(v => ({
+    label: `${v.make} ${v.model}${v.variant ? ' ' + v.variant : ''} — £${(+v.price || 0).toLocaleString('en-GB', { maximumFractionDigits: 0 })}`,
+    value: v.id,
+    image: heroImage(v),   // ✅ always a proper URL
+    vehicle: v
+  }))
 )
 
 const targetVehicleId = ref<number | null>(null)
@@ -41,7 +78,6 @@ const hasValuation = ref(false)
 const loadingValuation = ref(false)
 const formLocked = ref(false)
 const isLocked = ref(false)
-const isMobile = ref(false)
 
 const registrationNumber = ref('')
 
@@ -243,22 +279,17 @@ const submitSellRequest = async () => {
 }
 
 // Responsive dropdown panel width
+const isMobile = ref(false)
 const updateIsMobile = () => { isMobile.value = window.innerWidth <= 768 }
-
-onMounted(() => {
-  updateIsMobile()
-  window.addEventListener('resize', updateIsMobile)
-})
+onMounted(() => { updateIsMobile(); window.addEventListener('resize', updateIsMobile) })
 onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
 </script>
-
 
 <template>
   <PrimeToast />
 
   <div class="surface-section px-4 pt-5 md:px-6 lg:px-8 car-details-container">
-    <div
-      class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
+    <div class="flex md:align-items-center md:justify-content-between flex-column md:flex-row pb-4 border-bottom-1 surface-border">
       <div class="text-3xl font-medium text-900 mb-3" style="margin-left: 3px;">Trade In or Sell</div>
       <div class="text-500">
         Get an indicative offer for your car — either sell for cash or part-exchange against one of ours.
@@ -278,11 +309,8 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
         </template>
         <template #content>
           <div class="flex align-items-center gap-3">
-            <PrimeToggleButton v-model="vehData.partEx" onLabel="Part-Exchange" offLabel="Sell Only" class="w-12rem"
-              severity="contrast" />
-            <small class="text-gray-500">
-              Start here. Choose whether you’re part-exchanging or selling for cash.
-            </small>
+            <PrimeToggleButton v-model="vehData.partEx" onLabel="Part-Exchange" offLabel="Sell Only" class="w-12rem" severity="contrast" />
+            <small class="text-gray-500">Start here. Choose whether you’re part-exchanging or selling for cash.</small>
           </div>
         </template>
       </PrimeCard>
@@ -297,22 +325,30 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
               <h3 class="text-lg font-semibold text-gray-700">1) Pick a car from our stock</h3>
             </template>
             <template #content>
-              <Dropdown v-model="targetVehicleId" :options="vehicleOptions" optionLabel="label" optionValue="value"
+              <Dropdown
+                v-model="targetVehicleId"
+                :options="vehicleOptions"
+                optionLabel="label"
+                optionValue="value"
                 :placeholder="vehicleOptions.length ? 'Select a vehicle' : 'Loading stock…'"
-                :disabled="!vehicleOptions.length" class="w-full mb-3" appendTo="body"
-                :panelStyle="{ width: isMobile ? '92vw' : '560px', maxWidth: '92vw' }" scrollHeight="260px">
-                <!-- Selected value (thumb + ellipsis) -->
+                :disabled="!vehicleOptions.length"
+                class="w-full mb-3"
+                appendTo="body"
+                :panelStyle="{ width: isMobile ? '92vw' : '560px', maxWidth: '92vw' }"
+                scrollHeight="260px"
+              >
+                <!-- Selected value -->
                 <template #value="{ value, placeholder }">
                   <div v-if="value !== null" class="dd-value">
                     <img :src="vehicleOptions.find(o => o.value === value)?.image" alt="thumb" class="dd-thumb" />
                     <span class="dd-text">
-                      {{vehicleOptions.find(o => o.value === value)?.label}}
+                      {{ vehicleOptions.find(o => o.value === value)?.label }}
                     </span>
                   </div>
                   <span v-else class="text-400">{{ placeholder }}</span>
                 </template>
 
-                <!-- Each option row -->
+                <!-- Each option -->
                 <template #option="{ option }">
                   <div class="dd-option">
                     <img :src="option.image" alt="thumb" class="dd-thumb" />
@@ -329,8 +365,10 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
               <div v-if="targetVehicle" class="p-3 border-1 surface-border border-round mt-2">
                 <div class="flex gap-3">
                   <img
-                    :src="(Array.isArray(targetVehicle.images) && targetVehicle.images.length ? targetVehicle.images[0] : '/src/assets/img/default.jpg')"
-                    alt="selected car" class="w-8rem h-6rem object-cover border-round" />
+                    :src="heroImage(targetVehicle)"
+                    alt="selected car"
+                    class="w-8rem h-6rem object-cover border-round"
+                  />
                   <div class="flex flex-column justify-content-between">
                     <div>
                       <div class="text-sm text-gray-500 mb-1">Selected:</div>
@@ -347,7 +385,7 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
 
           <!-- Helper note for SELL ONLY -->
           <PrimeMessage v-else severity="info" :closable="false" class="mt-2">
-            Selling only? No need to pick a car — just enter your car details on the right.
+            Selling only? No need to pick a car — just enter your car details and get a valuation.
           </PrimeMessage>
 
           <!-- 2) YOUR CONTACT DETAILS -->
@@ -360,8 +398,7 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
                 <div class="col-12">
                   <label class="block text-sm font-medium">Full Name</label>
                   <InputText v-model="form.fullName" class="w-full" placeholder="John Smith" />
-                  <PrimeInlineMessage v-if="formErrors.fullName" severity="error">Full name is required
-                  </PrimeInlineMessage>
+                  <PrimeInlineMessage v-if="formErrors.fullName" severity="error">Full name is required</PrimeInlineMessage>
                 </div>
                 <div class="col-12">
                   <label class="block text-sm font-medium">Email</label>
@@ -393,8 +430,13 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
                 <div class="text-sm text-gray-600 mb-2">Enter Registration</div>
                 <InputGroup class="w-full h-3rem">
                   <InputGroupAddon style="background-color:#00309a;color:#fbe90a">GB</InputGroupAddon>
-                  <InputText v-model="registrationNumber" style="background-color:#fbe90a;border-color:#00309a"
-                    placeholder="REG" class="w-full text-xl font-bold" @input="transformToUpperCase" />
+                  <InputText
+                    v-model="registrationNumber"
+                    style="background-color:#fbe90a;border-color:#00309a"
+                    placeholder="REG"
+                    class="w-full text-xl font-bold"
+                    @input="transformToUpperCase"
+                  />
                   <PrimeButton icon="pi pi-search" severity="contrast" @click="getDvsa" />
                 </InputGroup>
                 <small class="text-gray-500">We’ll fetch basics. You can amend anything below.</small>
@@ -444,13 +486,16 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
             <template #footer>
               <div class="grid mt-2">
                 <div class="col-6">
-                  <PrimeButton label="Reset" class="w-full p-button-outlined text-red-500 border-red-500"
-                    @click="resetForm" />
+                  <PrimeButton label="Reset" class="w-full p-button-outlined text-red-500 border-red-500" @click="resetForm" />
                 </div>
                 <div class="col-6">
-                  <PrimeButton :label="vehData.partEx ? 'Submit & Get Part-Ex Offer' : 'Submit & Get Cash Offer'"
-                    class="w-full bg-black text-white font-semibold" :loading="loadingValuation"
-                    :disabled="!canRequestValuation" @click="submitSellRequest" />
+                  <PrimeButton
+                    :label="vehData.partEx ? 'Submit & Get Part-Ex Offer' : 'Submit & Get Cash Offer'"
+                    class="w-full bg-black text-white font-semibold"
+                    :loading="loadingValuation"
+                    :disabled="!canRequestValuation"
+                    @click="submitSellRequest"
+                  />
                 </div>
               </div>
               <small class="text-xs text-gray-500 block mt-2">
@@ -481,8 +526,10 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
               <div class="text-sm text-gray-500 mb-1">Selected Vehicle</div>
               <div class="flex gap-3">
                 <img
-                  :src="(Array.isArray(targetVehicle.images) && targetVehicle.images.length ? targetVehicle.images[0] : '/src/assets/img/default.jpg')"
-                  alt="selected vehicle" class="w-7rem h-5rem object-cover border-round" />
+                  :src="heroImage(targetVehicle)"
+                  alt="selected vehicle"
+                  class="w-7rem h-5rem object-cover border-round"
+                />
                 <div>
                   <div class="text-base font-semibold">
                     {{ targetVehicle.make }} {{ targetVehicle.model }} {{ targetVehicle.variant || '' }}
@@ -512,14 +559,12 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
                 {{ (valuation.colour || valuation?.vehicle?.colour) || '' }}
               </div>
 
-              <!-- Show range when we have a number -->
               <div v-if="hasValuation" class="text-xl font-bold">
                 £{{ partExLow !== null ? formatGBP(partExLow) : '' }}
                 –
                 £{{ partExHigh !== null ? formatGBP(partExHigh) : '' }}
               </div>
 
-              <!-- Friendly fallback when AT can’t price it -->
               <div v-else class="text-sm text-gray-700">
                 Instant valuation not available<span v-if="valuationWarning">: {{ valuationWarning }}</span>.
                 <br />
@@ -535,7 +580,6 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
            gap-3 md:gap-4
            align-items-start md:align-items-center
            justify-content-start md:justify-content-between">
-              <!-- Text first -->
               <div class="text-base text-gray-700">
                 <template v-if="vehData.partEx && targetVehicle && hasValuation">
                   <template v-if="(surplusToYou ?? 0) > 0">
@@ -557,11 +601,15 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
                 </template>
               </div>
 
-              <!-- Buttons below on mobile, inline on md+ -->
               <div class="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
                 <PrimeButton label="Book Inspection" severity="contrast" class="w-full md:w-auto" />
-                <PrimeButton v-if="vehData.partEx" label="Choose Another Car" text class="w-full md:w-auto"
-                  @click="() => { formLocked = false; valuation = null; }" />
+                <PrimeButton
+                  v-if="vehData.partEx"
+                  label="Choose Another Car"
+                  text
+                  class="w-full md:w-auto"
+                  @click="() => { formLocked = false; valuation = null; }"
+                />
               </div>
             </div>
 
@@ -626,22 +674,9 @@ onUnmounted(() => window.removeEventListener('resize', updateIsMobile))
 }
 
 /* utility */
-.object-cover {
-  object-fit: cover;
-}
+.object-cover { object-fit: cover; }
 
 /* optional subtle animation you had */
-@keyframes my-fadein {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
-.my-fadein {
-  animation: my-fadein 200ms linear;
-}
+@keyframes my-fadein { 0% { opacity: 0 } 100% { opacity: 1 } }
+.my-fadein { animation: my-fadein 200ms linear; }
 </style>
