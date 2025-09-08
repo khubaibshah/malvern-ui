@@ -1,6 +1,6 @@
 <script setup lang="ts">
+/* unchanged script from your message */
 import { formatEngineSize } from '@/utils/engineSizeFormat';
-
 
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -8,9 +8,10 @@ import axios from 'axios'
 import { getUkRegistrationLabel } from '@/utils/registration';
 import enquiryForm from '../components/enquiryForm.vue';
 import { useVehicleStore } from '@/stores/vehicleData';
-
 import VehicleService from '@/services/VehicleService'
 
+import router from '@/router/router';
+import EnquiryForm from '../components/enquiryForm.vue';
 
 const route = useRoute()
 const car = ref<any>(null)
@@ -19,59 +20,76 @@ const galleriaItems = ref<any[]>([])
 const mainImage = ref<string>('')
 const loading = ref(true)
 const formattedEngineSize = computed(() => formatEngineSize(car.value?.engine_size));
-
-
-
-import router from '@/router/router';
-import EnquiryForm from '../components/enquiryForm.vue';
-
-
-
 const currentImageIndex = ref(0)
-
 
 const isSoldCar = computed(() =>
   String(car.value?.vehicle_status || '').toUpperCase() === 'WASTEBIN'
 )
 
+/** ---- IMAGE HELPERS (DB first → main_image → default) ---- **/
+const decodeImageUrl = (val: any): string => {
+  if (!val) return ''
+  const s = String(val)
+  if (/^https?:\/\//i.test(s)) return s
+  try {
+    const normalized = s.replace(/-/g, '+').replace(/_/g, '/')
+    return atob(normalized)
+  } catch {
+    return s
+  }
+}
 
+const buildImageArray = (carObj: any): string[] => {
+  const imgs = carObj?.images
+  if (Array.isArray(imgs) && imgs.length && typeof imgs[0] === 'object') {
+    const sorted = [...imgs].sort((a: any, b: any) =>
+      Number(b?.is_main || 0) - Number(a?.is_main || 0) ||
+      (a?.sort_order ?? 1e9) - (b?.sort_order ?? 1e9) ||
+      (a?.id ?? 1e9) - (b?.id ?? 1e9)
+    )
+    return sorted.map((it: any) => decodeImageUrl(it?.car_image)).filter(Boolean)
+  }
+  if (Array.isArray(imgs)) {
+    return imgs.map(decodeImageUrl).filter(Boolean)
+  }
+  return []
+}
+
+const pickPrimary = (carObj: any, list: string[]): string => {
+  if (Array.isArray(carObj?.images) && carObj.images.length && typeof carObj.images[0] === 'object') {
+    const mainRow = carObj.images.find((it: any) => !!it?.is_main)
+    const fromDbMain = decodeImageUrl(mainRow?.car_image)
+    if (fromDbMain) return fromDbMain
+  }
+  const fromMain = decodeImageUrl(carObj?.main_image)
+  if (fromMain) return fromMain
+  if (list.length) return list[0]
+  return '/src/assets/img/default.jpg'
+}
+/** -------------------------------------------------------- **/
 
 watch(images, () => {
   if (images.value.length > 0) {
-    const mainIdx = images.value.indexOf(car.value.main_image);
-    currentImageIndex.value = mainIdx !== -1 ? mainIdx : 0;
-    mainImage.value = images.value[currentImageIndex.value];
+    const decodedMain = decodeImageUrl(car.value?.main_image)
+    const mainIdx = decodedMain ? images.value.indexOf(decodedMain) : -1
+    currentImageIndex.value = mainIdx !== -1 ? mainIdx : 0
+    mainImage.value = images.value[currentImageIndex.value]
   }
-});
+})
 
 let startX = 0
-
-const startTouch = (e: TouchEvent) => {
-  startX = e.changedTouches[0].clientX
-}
-
+const startTouch = (e: TouchEvent) => { startX = e.changedTouches[0].clientX }
 const endTouch = (e: TouchEvent) => {
   const endX = e.changedTouches[0].clientX
   const deltaX = endX - startX
-
-  if (Math.abs(deltaX) > 50) {
-    if (deltaX < 0) {
-      // swipe left
-      nextImage()
-    } else {
-      // swipe right
-      prevImage()
-    }
-  }
+  if (Math.abs(deltaX) > 50) deltaX < 0 ? nextImage() : prevImage()
 }
-
 const nextImage = () => {
   if (currentImageIndex.value < images.value.length - 1) {
     currentImageIndex.value++
     mainImage.value = images.value[currentImageIndex.value]
   }
 }
-
 const prevImage = () => {
   if (currentImageIndex.value > 0) {
     currentImageIndex.value--
@@ -79,37 +97,40 @@ const prevImage = () => {
   }
 }
 
+const setMain = (idx: number) => {
+  if (idx >= 0 && idx < images.value.length) {
+    currentImageIndex.value = idx
+    mainImage.value = images.value[idx]
+  }
+}
 
 const responsiveOptions = ref([
   { breakpoint: '1300px', numVisible: 4 },
   { breakpoint: '575px', numVisible: 1 }
 ])
+
 const vehicleStore = useVehicleStore();
+
 const fetchCar = async () => {
   try {
     const id = route.params.id
     const data = await VehicleService.getVehicleById(id)
-
     car.value = data.car
-    images.value = Array.isArray(car.value.images) ? car.value.images : []
+
+    images.value = buildImageArray(car.value)
+    mainImage.value = pickPrimary(car.value, images.value)
 
     galleriaItems.value = images.value.map((img: string) => ({
       itemImageSrc: img,
       thumbnailImageSrc: img,
       alt: `${car.value?.make} ${car.value?.model}`,
     }))
-
-    if (images.value.length > 0) {
-      mainImage.value = car.value.main_image || images.value[0]
-    }
   } catch (err) {
     console.error('Failed to load car data', err)
   } finally {
     loading.value = false
   }
 }
-
-
 
 const registrationLabel = computed(() => {
   const dateStr = car.value?.registration_date || car.value?.reg_date || '';
@@ -173,24 +194,32 @@ onMounted(fetchCar)
             :class="{ 'sold-dim': isSoldCar }"
             style="border-radius: 12px;"
           />
-          <!-- SOLD ribbon -->
           <div v-if="isSoldCar" class="sold-ribbon" aria-label="Sold">SOLD</div>
         </div>
 
-        <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
-          <div v-for="(img, idx) in images" :key="idx" class="relative">
+        <!-- Thumbnails: horizontal scroll on mobile, wrap/grid on desktop -->
+        <div
+          v-if="images.length > 1"
+          class="thumbs mx-auto mt-2 w-full"
+        >
+          <button
+            v-for="(img, idx) in images"
+            :key="idx"
+            type="button"
+            class="thumb-btn"
+            @click="setMain(idx)"
+          >
             <img
               :src="img"
-              class="object-cover rounded cursor-pointer border-2"
-              style="width: 7rem; height: 5rem;"
+              class="thumb-img object-cover rounded cursor-pointer border-2"
               :class="{
                 'border-blue-500': mainImage === img,
                 'border-gray-300': mainImage !== img,
                 'sold-dim': isSoldCar
               }"
-              @click="() => { mainImage = img; currentImageIndex.value = idx }"
+              :alt="`thumb ${idx + 1}`"
             />
-          </div>
+          </button>
         </div>
       </div>
 
@@ -244,7 +273,6 @@ onMounted(fetchCar)
               </AccordionTab>
             </Accordion>
 
-            <!-- Price + sold pill -->
             <div class="flex items-center gap-3 mt-5 mb-4">
               <p
                 class="text-2xl font-bold"
@@ -261,7 +289,6 @@ onMounted(fetchCar)
               </span>
             </div>
 
-            <!-- Enquiry button disabled when sold -->
             <PrimeButton
               :label="isSoldCar ? 'Sold' : 'Enquire / Book Test Drive'"
               class="w-full custom-black-button"
@@ -276,7 +303,6 @@ onMounted(fetchCar)
     <div v-else class="text-center py-12 text-gray-400">Loading vehicle details...</div>
   </div>
 </template>
-
 
 <style>
 /* Reuse same ribbon/dim everywhere */
@@ -299,6 +325,39 @@ onMounted(fetchCar)
   filter: grayscale(40%) brightness(0.85);
 }
 
+/* --- Thumbnails layout: mobile = horizontal scroll, desktop = wrap/grid --- */
+.thumbs {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+}
+.thumbs .thumb-btn {
+  flex: 0 0 auto;          /* prevent shrinking on mobile */
+  scroll-snap-align: start;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+.thumbs .thumb-img {
+  width: 7rem;
+  height: 5rem;
+}
+
+/* On >= md, allow wrapping (grid-like) and remove horizontal scroll */
+@media (min-width: 768px) {
+  .thumbs {
+    overflow: visible;
+    flex-wrap: wrap;
+  }
+  .thumbs .thumb-btn {
+    flex: 0 0 auto;
+  }
+}
+
 @media (max-width: 768px) {
   img {
     max-width: 100%;
@@ -317,18 +376,15 @@ onMounted(fetchCar)
   border: 1px solid black !important;
   box-shadow: none !important;
   border-radius: 0 !important;
-  /* removes rounding */
 }
 
 .custom-black-button:focus,
 .custom-black-button:focus-visible {
   box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.5) !important;
-  /* black focus ring */
   outline: none !important;
 }
 
 .custom-shadow {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-
 }
 </style>

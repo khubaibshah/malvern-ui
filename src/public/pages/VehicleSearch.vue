@@ -76,19 +76,14 @@
                   <!-- IMAGE with SOLD overlay -->
                   <template #header>
                     <div class="relative">
+                      <!-- CHANGED: unified image source selection -->
                       <img
-                        v-if="item.images && item.images.length > 0"
-                        :src="item.images[0]"
+                        :src="getPrimaryImage(item) || '/src/assets/img/default.jpg'"
                         alt="car"
                         class="w-full border-round"
                         style="object-fit: cover;"
                         :class="{ 'sold-dim': isSold(item) }"
                       />
-                      <div v-else
-                        class="h-[180px] w-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                        No Image
-                      </div>
-
                       <!-- SOLD ribbon -->
                       <div v-if="isSold(item)" class="sold-ribbon" aria-label="Sold">SOLD</div>
                     </div>
@@ -142,7 +137,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
@@ -156,24 +150,65 @@ const vehicleStore = useVehicleStore()
 
 const filterModelRef = ref(null);
 const toast = useToast()
-const vehicles = ref([])
+const vehicles = ref<any[]>([])
 const layout = ref('grid')
 const vehicle_make = ref()
 const vehicle_model = ref()
 const vehicle_variant = ref()
 const advancedFilters = ref(false);
-const makeOptions = ref([])
-const modelOptions = ref([])
-const variantOptions = ref([])
+const makeOptions = ref<any[]>([])
+const modelOptions = ref<any[]>([])
+const variantOptions = ref<any[]>([])
 const loading = ref(true)
 const showFilters = ref(false);
 const isSold = (v:any) => String(v?.vehicle_status).toUpperCase() === 'WASTEBIN'
 
+/** ---- IMAGE HELPERS (DB first → main_image → default) ---- **/
+const decodeImageUrl = (val: any): string => {
+  if (!val) return ''
+  const s = String(val)
+  if (/^https?:\/\//i.test(s)) return s
+  try {
+    // handle potential URL-safe base64 just in case
+    const normalized = s.replace(/-/g, '+').replace(/_/g, '/')
+    return atob(normalized)
+  } catch {
+    return s
+  }
+}
+
+const getPrimaryImage = (car: any): string => {
+  // 1) Prefer DB images if present (objects with car_image/is_main/sort_order)
+  if (Array.isArray(car.images) && car.images.length > 0) {
+    if (typeof car.images[0] === 'object' && car.images[0] !== null) {
+      const sorted = [...car.images].sort((a: any, b: any) =>
+        Number(b?.is_main || 0) - Number(a?.is_main || 0) ||
+        (a?.sort_order ?? 1e9) - (b?.sort_order ?? 1e9) ||
+        (a?.id ?? 1e9) - (b?.id ?? 1e9)
+      )
+      const first = sorted[0]?.car_image
+      const decoded = decodeImageUrl(first)
+      if (decoded) return decoded
+    } else {
+      // older format: array of base64/url strings
+      const decoded = decodeImageUrl(car.images[0])
+      if (decoded) return decoded
+    }
+  }
+  // 2) Fallback to main_image if provided
+  if (car.main_image) {
+    const decoded = decodeImageUrl(car.main_image)
+    if (decoded) return decoded
+  }
+  // 3) Final fallback
+  return '/src/assets/img/default.jpg'
+}
+/** -------------------------------------------------------- **/
 
 const prepareDropdowns = () => {
-  const makes = new Set();
-  const models = new Set();
-  const variants = new Set();
+  const makes = new Set<string>();
+  const models = new Set<string>();
+  const variants = new Set<string>();
 
   vehicles.value.forEach((v: any) => {
     if (v.make) makes.add(v.make);
@@ -190,7 +225,6 @@ onMounted(async () => {
   try {
     const cars = await VehicleService.loadVehicles();
     vehicles.value = cars;
-    console.log('Vehicles loaded:', vehicles.value);
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -215,9 +249,8 @@ const fetchFilteredVehicles = async (filters: any) => {
   }
 };
 
-
 const filteredModelOptions = computed(() => {
-  const models = new Set()
+  const models = new Set<string>()
   vehicles.value.forEach((v: any) => {
     if (!vehicle_make.value || v.make === vehicle_make.value.value) {
       if (v.model) models.add(v.model)
@@ -227,7 +260,7 @@ const filteredModelOptions = computed(() => {
 })
 
 const filteredVariantOptions = computed(() => {
-  const variants = new Set()
+  const variants = new Set<string>()
   vehicles.value.forEach((v: any) => {
     if (!vehicle_make.value || v.make === vehicle_make.value.value) {
       if (!vehicle_model.value || v.model === vehicle_model.value.value) {
@@ -269,7 +302,6 @@ const clearFilters = () => {
     life: 2000
   })
 }
-
 </script>
 
 <style scoped>
@@ -324,15 +356,11 @@ const clearFilters = () => {
   .filter-bar {
     background-color: #fff !important;
     color: #000 !important;
-    /* border: 2px solid #ddd !important;
-    border-radius: 1rem; */
-
   }
 
   ::v-deep(.p-dropdown) {
     background-color: #fff !important;
     color: #000 !important;
-    /* border: 1px solid #ccc !important; */
   }
 
   ::v-deep(.p-dropdown .p-dropdown-label) {
@@ -372,13 +400,9 @@ const clearFilters = () => {
 }
 
 .filter-bar {
-  /* border-radius: 0.75rem; */
-  /* margin-top: 2rem; */
   font-size: 0.95rem;
   font-weight: 500;
   background: #000000;
-
-  /* Matches Audi’s bar */
 }
 
 .white-btn {
@@ -392,11 +416,8 @@ const clearFilters = () => {
   border-color: #ccc;
 }
 
-
-
 @media (max-width: 768px) {
   .filter-bar {
-    /* flex-direction: column; */
     align-items: stretch;
   }
 }

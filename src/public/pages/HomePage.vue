@@ -85,8 +85,39 @@ const testimonials = ref([
 ]);
 const currentIndex = ref(0);
 const currentSlide = computed(() => images.value[currentIndex.value]);
-
 let interval: any = null;
+
+// Decode base64 → URL (safe if already a URL)
+const decodeImg = (val: any) => {
+  if (!val) return null
+  try {
+    if (/^https?:\/\//i.test(val)) return val
+    return atob(val)
+  } catch {
+    return val
+  }
+}
+
+// Pick the best main image for a car
+const mainImg = (car: any) => {
+  // Prefer explicit main_image from API
+  if (car?.main_image) return decodeImg(car.main_image)
+
+  // Otherwise find main in images[] (object shape) or first available
+  if (Array.isArray(car?.images) && car.images.length) {
+    const imgObj = typeof car.images[0] === 'object'
+      ? (car.images.find((x: any) => x.is_main) || car.images[0])
+      : null
+
+    if (imgObj) return decodeImg(imgObj.car_image || imgObj.url)
+    // legacy string-array fallback
+    return decodeImg(car.images[0])
+  }
+
+  return '/src/assets/img/default.jpg'
+}
+
+
 const submitTestDriveRequest = async () => {
   if (!form.value.name || !form.value.email || !form.value.phone || !form.value.vehicle_id) {
     toast.add({ severity: 'warn', summary: 'Incomplete', detail: 'Please fill out all fields and select a vehicle to schedule a test drive', life: 3000 });
@@ -246,7 +277,7 @@ const filterByModel = (modelName: string) => {
         <PrimeCard class="border-round-lg overflow-hidden hover-card">
           <template #header>
             <div class="relative">
-              <img :src="car.images?.[0] || '/src/assets/img/default.jpg'" :alt="car.make + ' ' + car.model"
+              <img :src="mainImg(car)":alt="car.make + ' ' + car.model"
                 class="w-full h-40 object-cover border-top-round-lg" :class="{ 'sold-dim': isSold(car) }" />
               <div v-if="isSold(car)" class="sold-ribbon">SOLD</div>
             </div>
@@ -328,7 +359,7 @@ const filterByModel = (modelName: string) => {
             }" style="width: 100%; overflow: hidden;">
               <template #header>
                 <div class="relative">
-                  <img :src="car.images?.[0] || '/src/assets/img/default.jpg'"
+                  <img :src="mainImg(car)"
                     :alt="car.make + ' ' + car.model"
                     class="w-full h-40 object-cover border-top-round-lg"
                     :class="{ 'sold-dim': isSold(car) }" />
