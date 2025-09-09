@@ -207,177 +207,153 @@ const filterByModel = (modelName: string) => {
 
 <template>
   <PrimeToast />
-  <div class="hero-section overflow-hidden car-details-container">
-    <!-- Background Images with Transition -->
-    <transition name="fade" mode="out-in">
-      <div :key="currentIndex" class="hero-slide relative w-full h-full">
-        <!-- Background Image -->
-        <img :src="currentSlide.itemImageSrc" :alt="currentSlide.alt"
-          class="w-full h-full object-cover absolute top-0 left-0 z-0" />
 
-        <!-- Overlay Content -->
-        <div class="z-10 absolute overlay-content text-white">
-          <h1 class="text-4xl md:text-6xl font-bold mb-4 animate-fade-in-up"
-            style="font-family: 'Montserrat', sans-serif;">
-            {{ slideText.title }}
-          </h1>
-          <PrimeButton label="Browse Vehicles" class="mb-4" severity="contrast"
-            @click="$router.push({ name: 'car-search' })" />
-          <div class="flex justify-center gap-3 mt-6">
-            <button v-for="(image, index) in images" :key="index" @click="currentIndex = index" class="dot-button"
-              :class="{
-                'dot-active': currentIndex === index,
-                'dot-inactive': currentIndex !== index
-              }" aria-label="Slide navigation button" />
-          </div>
+  <!-- ================= HERO ================= -->
+  <section class="hero-section overflow-hidden">
+    <!-- Background slider (uses your currentIndex interval) -->
+    <div class="hero-slider">
+      <div class="hero-track" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
+        <div v-for="(image, i) in images" :key="i" class="hero-slide">
+          <img :src="image.itemImageSrc" :alt="image.alt" class="hero-img" />
         </div>
       </div>
-    </transition>
-  </div>
+      <div class="hero-gradient"></div>
+    </div>
 
-  <!-- Featured Vehicles -->
-  <div class="text-center px-3 mb-8">
-    <h2 class="text-3xl font-bold mb-2 text-gray-700" style="margin-top: 4rem;">Our Featured Models</h2>
-    <p class="text-gray-500" style="padding: 0 10px;">
-      Experience the pinnacle of automotive excellence with our curated selection of premium vehicles
-    </p>
-  </div>
+    <!-- Glass CTA card -->
+    <div class="overlay-content glass-card text-white z-10">
+      <h1 class="hero-title">{{ slideText.title }}</h1>
+      <p class="hero-sub">{{ slideText.subtitle }}</p>
 
-  <!-- featured car section -->
-  <div class="surface-section px-3 md:px-6 lg:px-8">
-    <div class="grid" v-if="loading">
-      <!-- Skeletons while loading -->
+      <div class="cta-row">
+        <PrimeButton label="Browse Vehicles" class="cta-primary" severity="contrast"
+          @click="$router.push({ name: 'car-search' })"/>
+        <a href="#test-drive" class="cta-secondary">Schedule a Test Drive</a>
+      </div>
+
+      <!-- Dots -->
+      <div class="dots mt-4">
+        <button v-for="(image, index) in images" :key="index" @click="currentIndex = index"
+          class="dot-button" :class="{ 'dot-active': currentIndex === index }" aria-label="Slide"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VALUE / TRUST STRIP ================= -->
+  <section class="usp-strip px-3 md:px-6 lg:px-8">
+    <div class="grid grid-nogutter text-white">
+      <div class="col-12 md:col-3 usp-item">
+        <div class="usp-icon">✓</div>
+        <div class="usp-text"><strong>HPI Checked</strong><span>Every car fully inspected</span></div>
+      </div>
+      <div class="col-12 md:col-3 usp-item">
+        <div class="usp-icon">🚚</div>
+        <div class="usp-text"><strong>Home Delivery</strong><span>Nationwide options available</span></div>
+      </div>
+      <div class="col-12 md:col-3 usp-item">
+        <div class="usp-icon">💳</div>
+        <div class="usp-text"><strong>Flexible Finance</strong><span>Competitive monthly plans</span></div>
+      </div>
+      <div class="col-12 md:col-3 usp-item">
+        <div class="usp-icon">🛡️</div>
+        <div class="usp-text"><strong>Warranty</strong><span>Peace of mind as standard</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= POPULAR MODELS ================= -->
+  <section class="px-3 md:px-6 lg:px-8 popular-models">
+    <h2 class="section-title">Popular Models</h2>
+    <div class="chips">
+      <button v-for="o in (modelOptions || []).slice(0, 10)" :key="o.value" class="chip"
+        @click="filterByModel(o.value); $router.push({ name: 'car-search', query: { model: o.value } })">{{ o.label }}</button>
+    </div>
+  </section>
+
+  <!-- ================= FEATURED VEHICLES ================= -->
+  <section class="px-3 md:px-6 lg:px-8">
+    <div class="text-center mb-6">
+      <h2 class="section-title">Our Featured Models</h2>
+      <p class="muted">Experience the pinnacle of automotive excellence with our curated selection of premium vehicles</p>
+    </div>
+
+    <div class="grid mx-auto" v-if="loading">
       <div class="col-12 md:col-6 lg:col-8">
-        <PrimeSkeleton width="100%" height="350px" class="mb-3 border-round mx-auto max-w-[400px]" />
-        <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
+        <PrimeSkeleton width="100%" height="350px" class="mb-3 border-round mx-auto max-w-[640px]" />
+        <div class="flex gap-3 overflow-x-auto max-w-[640px] mx-auto">
           <PrimeSkeleton v-for="n in 4" :key="n" width="7rem" height="5rem" class="border-round" />
         </div>
       </div>
-
       <div class="col-12 md:col-6 lg:col-4">
-        <PrimeCard class="w-full">
-          <template #title>
-            <PrimeSkeleton width="70%" class="mb-2" />
-          </template>
+        <PrimeCard class="w-full"><template #title><PrimeSkeleton width="70%" class="mb-2"/></template>
           <template #content>
-            <PrimeSkeleton width="50%" class="mb-2" />
-            <PrimeSkeleton width="50%" class="mb-2" />
-            <PrimeSkeleton width="50%" class="mb-2" />
-            <PrimeSkeleton height="4rem" class="mt-4" />
-            <PrimeSkeleton width="100%" height="2.5rem" class="mt-3" />
+            <PrimeSkeleton width="50%" class="mb-2"/><PrimeSkeleton width="50%" class="mb-2"/>
+            <PrimeSkeleton width="50%" class="mb-2"/><PrimeSkeleton height="4rem" class="mt-4"/>
+            <PrimeSkeleton width="100%" height="2.5rem" class="mt-3"/>
           </template>
         </PrimeCard>
       </div>
     </div>
 
-    <!-- Actual Featured Vehicles -->
-    <div class="grid mx-auto" v-else-if="featuredVehicles" style="justify-content: center;">
-      <div v-for="(car, index) in featuredVehicles" :key="car.id"
-        :class="`col-12 sm:col-6 lg:col-4 px-3 mb-5 md:col-${12 / featuredVehicles.length}`">
-        <PrimeCard class="border-round-lg overflow-hidden hover-card">
+    <div class="grid mx-auto" v-else-if="featuredVehicles && featuredVehicles.length" style="justify-content:center;">
+      <div v-for="car in featuredVehicles" :key="car.id" class="col-12 sm:col-6 lg:col-4 mb-5">
+        <PrimeCard class="vehicle-card">
           <template #header>
-            <div class="relative">
-              <img :src="mainImg(car)":alt="car.make + ' ' + car.model"
-                class="w-full h-40 object-cover border-top-round-lg" :class="{ 'sold-dim': isSold(car) }" />
-              <div v-if="isSold(car)" class="sold-ribbon">SOLD</div>
+            <div class="v-media">
+              <img :src="mainImg(car)" :alt="car.make + ' ' + car.model" class="media-img" :class="{ 'sold-dim': isSold(car) }" />
+              <span class="price-chip">£{{ parseFloat(car.price).toLocaleString() }}</span>
+              <span v-if="isSold(car)" class="sold-ribbon">SOLD</span>
             </div>
           </template>
           <template #title>
-            <h3 class="text-sm font-bold text-800 mb-1">{{ car.make }} {{ car.model }}</h3>
+            <h3 class="v-title">{{ car.make }} {{ car.model }}</h3>
           </template>
           <template #content>
-            <div class="text-sm text-gray-500 mb-1">
-              {{ car.variant || 'No Variant' }} • {{ car.year || 'N/A' }}
-            </div>
+            <div class="v-meta">{{ car.variant || 'No Variant' }} • {{ car.year || 'N/A' }}</div>
           </template>
           <template #footer>
-            <div class="flex gap-3 mt-1">
-              <div class="text-lg font-bold text-green-600 mb-3 w-full">
-                £{{ parseFloat(car.price).toLocaleString() }}
-              </div>
-              <RouterLink :to="{ name: 'vehicle-details', params: { id: car.id } }" class="w-full no-underline">
-                <PrimeButton label="View Details" class="w-full text-right-btn p-button-sm" text />
-              </RouterLink>
-            </div>
+            <RouterLink :to="{ name: 'vehicle-details', params: { id: car.id } }" class="w-full no-underline">
+              <PrimeButton label="View Details" class="w-full" text />
+            </RouterLink>
           </template>
         </PrimeCard>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- call back request form -->
-  <div class="text-center px-3 mb-4">
-    <h2 class="text-3xl font-bold mb-2 text-gray-700">Schedule a Test Drive</h2>
-    <p class="text-gray-500" style="padding: 0 10px;">
-      Fill out the form below to request a test drive appointment for your selected vehicle.
-    </p>
-  </div>
-  <div class="surface-section px-3 md:px-6 lg:px-8">
+  <!-- ================= TEST DRIVE ================= -->
+  <section id="test-drive" class="px-3 md:px-6 lg:px-8 testdrive">
     <div class="grid">
-      <!-- Callback form -->
-      <div class="col-12 md:col-6 lg:col-6">
-        <PrimeCard>
+      <div class="col-12 lg:col-6">
+        <PrimeCard class="td-card">
           <template #title>
-            <p class="text-gray-500" style="padding: 0 10px;">
-              Please fill out your details and select a vehicle for a call back
-            </p>
+            <h3 class="td-title">Schedule a Test Drive</h3>
+            <p class="muted">Fill out the form below to request a test drive appointment for your selected vehicle.</p>
           </template>
           <template #content>
-            <div class="mb-4">
-              <InputText placeholder="Your Name" class="w-full" v-model="form.name" />
-            </div>
-            <div class="mb-4">
-              <InputText placeholder="Email Address" class="w-full" v-model="form.email" />
-            </div>
-            <div class="mb-4">
-              <InputText placeholder="Phone Number" class="w-full" v-model="form.phone" />
-            </div>
-            <div class="mb-4">
-              <p class="text-md text-gray-600 mt-2" v-if="form.vehicle_id">
-                Selected: {{
-                  vehicleOptions.find(opt => opt.value === form.vehicle_id)?.label || 'Unknown Vehicle'
-                }}
-              </p>
-            </div>
-            <div class="mb-4">
-              <PrimeButton label="Request Appointment" class="w-full bg-black text-white font-semibold"
-                severity="contrast" :loading="submitting" @click="submitTestDriveRequest()" />
-            </div>
+            <div class="mb-3"><InputText placeholder="Your Name" class="w-full" v-model="form.name"/></div>
+            <div class="mb-3"><InputText placeholder="Email Address" class="w-full" v-model="form.email"/></div>
+            <div class="mb-3"><InputText placeholder="Phone Number" class="w-full" v-model="form.phone"/></div>
+            <p class="text-sm text-gray-500" v-if="form.vehicle_id">Selected: {{ vehicleOptions.find(opt => opt.value === form.vehicle_id)?.label || 'Unknown Vehicle' }}</p>
+            <PrimeButton label="Request Appointment" class="w-full mt-3" severity="contrast" :loading="submitting" @click="submitTestDriveRequest()"/>
           </template>
         </PrimeCard>
       </div>
 
-      <!-- Vehicle selection carousel -->
-      <div class="col-12 md:col-6 lg:col-6">
-        <div class="flex overflow-x-auto gap-4 pb-2"
-          style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
-          <div v-for="(car, index) in vehicles" :key="car.id" class="flex-shrink-0"
-            style="scroll-snap-align: start; width: 22rem;">
-            <PrimeCard :class="{
-              'ring-2 ring-green-500': form.vehicle_id === car.id,
-              'hover-card': true
-            }" style="width: 100%; overflow: hidden;">
+      <div class="col-12 lg:col-6">
+        <div class="flex overflow-x-auto gap-4 pb-2 pick-strip">
+          <div v-for="car in vehicles" :key="car.id" class="flex-shrink-0 pick-item">
+            <PrimeCard :class="{ 'ring-2 ring-green-500': form.vehicle_id === car.id, 'hover-card': true }" style="width:100%;overflow:hidden;">
               <template #header>
                 <div class="relative">
-                  <img :src="mainImg(car)"
-                    :alt="car.make + ' ' + car.model"
-                    class="w-full h-40 object-cover border-top-round-lg"
-                    :class="{ 'sold-dim': isSold(car) }" />
+                  <img :src="mainImg(car)" :alt="car.make + ' ' + car.model" class="w-full h-40 object-cover border-top-round-lg" :class="{ 'sold-dim': isSold(car) }" />
                   <div v-if="isSold(car)" class="sold-ribbon">SOLD</div>
                 </div>
               </template>
               <template #title>{{ car.make }} {{ car.model }}</template>
               <template #subtitle>{{ car.variant || 'No Variant' }}</template>
-              <template #content>
-                <p class="m-0 text-sm text-gray-700">
-                  Discover the thrill of driving {{ car.make }}'s {{ car.model }} — packed with features, performance,
-                  and style.
-                </p>
-              </template>
               <template #footer>
-                <PrimeButton label="Select This Car" size="small"
-                  class="w-full"
-                  :disabled="isSold(car)"
+                <PrimeButton label="Select This Car" size="small" class="w-full" :disabled="isSold(car)"
                   :outlined="form.vehicle_id !== car.id"
                   :severity="form.vehicle_id === car.id ? 'success' : 'secondary'"
                   @click="form.vehicle_id = car.id" />
@@ -387,208 +363,153 @@ const filterByModel = (modelName: string) => {
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- testimonials etc (unchanged below this point) -->
+  <!-- ================= TESTIMONIALS ================= -->
+  <section class="px-3 md:px-6 lg:px-8 testimonials">
+    <h2 class="section-title text-center">What Drivers Say</h2>
+    <div class="grid">
+      <div v-for="t in testimonials" :key="t.name" class="col-12 md:col-6">
+        <PrimeCard class="testi-card">
+          <template #content>
+            <p class="quote">“{{ t.quote }}”</p>
+            <div class="byline">— {{ t.name }}, {{ t.role }}</div>
+          </template>
+        </PrimeCard>
+      </div>
+    </div>
+  </section>
 </template>
 
-
 <style scoped>
-.sold-ribbon {
-  position: absolute;
-  top: 12px;
-  left: -40px;
-  transform: rotate(-45deg);
-  background: #ef4444;
-  color: #fff;
-  font-weight: 800;
-  letter-spacing: 1px;
-  padding: 6px 56px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.25);
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  pointer-events: none;
-}
-.sold-dim {
-  filter: grayscale(40%) brightness(0.85);
+/* ================== THEME TOKENS ================== */
+:root {
+  --bg: #0b0f14;
+  --ink: #0c1322;
+  --ink-2: #111827;
+  --primary: #0ea5e9; /* sky-500 */
+  --glass: rgba(14, 23, 35, 0.55);
 }
 
-@media (max-width: 768px) {
-  .dot-button {
-    width: 16px;
-    height: 16px;
-    border-radius: 9999px;
-    border: 2px solid white;
-    background-color: transparent;
-    transition: all 0.3s ease;
-    left: 10rem;
-  }
+/* ================== HERO ================== */
+.hero-section { position: relative; height: clamp(72vh, 92vh, 92vh); }
+.hero-slider { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+.hero-track { display: flex; height: 100%; transition: transform 800ms ease-in-out; }
+.hero-slide { flex: 0 0 100%; height: 100%; position: relative; }
+.hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.hero-gradient { position: absolute; inset: 0; background: radial-gradient(1200px 600px at 20% 70%, rgba(0,0,0,.6), transparent 70%), linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,.15) 45%, rgba(0,0,0,.45) 100%); pointer-events: none; }
 
-  .dot-button:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-  }
+.overlay-content { position: absolute; left: 50%; transform: translateX(-50%); width: min(48rem, 90vw); bottom: 22vh; z-index: 2; }
+.glass-card { background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.16); border-radius: 18px; padding: 24px 28px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.hero-title { font-family: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif; font-weight: 800; font-size: clamp(1.6rem, 4.2vw, 3rem); line-height: 1.1; margin: 0 0 .25rem; }
+.hero-sub { font-size: clamp(.95rem, 1.6vw, 1.15rem); opacity: .9; margin-bottom: 1rem; }
+.cta-row { display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; }
+.cta-secondary { color:#e5e7eb; text-decoration: underline; opacity:.9; }
 
-  .dot-active {
-    background-color: white;
-    transform: scale(1.2);
-  }
+/* Dots */
+.dots { display:flex; gap:.5rem; align-items:center; }
+.dot-button { width: 12px; height: 12px; border-radius: 9999px; border: 2px solid #fff; background: transparent; transition: all .25s ease; }
+.dot-active { background:#fff; transform: scale(1.1); }
 
-  .dot-inactive {
-    background-color: transparent;
-  }
-
-  .hero-section {
-    position: relative;
-    width: 100%;
-    height: 42vh;
-    max-height: 800px;
-  }
-
-  .hero-section img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    object-fit: cover;
-    height: 22rem;
-  }
+/* Mobile hero sizing with tasteful overlap */
+@media (max-width: 767px) {
+  .hero-section { height: 88vh; }
+  .overlay-content { width: 92vw; bottom: -6vh; }
+  .hero-section + .usp-strip { margin-top: 10vh; }
 }
 
-.overlay-content {
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 0 1rem;
-  /* max-width: 20rem; */
-  text-align: left;
-  width: 23rem;
-}
+/* ================== USP STRIP ================== */
+.usp-strip { margin-top: 1.5rem; margin-bottom: 1.25rem; }
+.usp-strip .grid { background: linear-gradient(90deg, rgba(2,6,23,.85), rgba(2,6,23,.65)); border-radius: 16px; overflow: hidden; }
+.usp-item { display:flex; align-items:center; gap:.75rem; padding: .9rem 1rem; border-right: 1px solid rgba(255,255,255,.06); }
+.usp-item:last-child { border-right: 0; }
+.usp-icon { width: 36px; height: 36px; display:grid; place-items:center; background: rgba(255,255,255,.08); border-radius: 10px; font-size: 18px; }
+.usp-text { display:flex; flex-direction:column; line-height:1.1; }
+.usp-text span { opacity:.8; font-size:.9rem; }
 
-@media (min-width: 768px) {
-  .dot-button {
-    width: 25px;
-    height: 25px;
-    border-radius: 9999px;
-    border: 2px solid white;
-    background-color: transparent;
-    transition: all 0.3s ease;
-  }
+/* ================== SHARED TYPO ================== */
+.section-title { font-family: "Montserrat", system-ui; font-weight:800; font-size: clamp(1.4rem, 2.8vw, 2.2rem); color:#1f2937; margin: 0 0 .5rem; }
+.muted { color:#6b7280; max-width: 60ch; margin: 0 auto; }
 
-  .dot-button:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-  }
+/* ================== POPULAR MODELS ================== */
+.popular-models { margin: 1.25rem 0 1.75rem; }
+.chips { display:flex; flex-wrap:wrap; gap:.5rem; }
+.chip { appearance:none; border:1px solid #e5e7eb; background:#fff; color:#111827; border-radius:999px; padding:.55rem .9rem; font-weight:600; font-size:.95rem; transition: all .2s ease; }
+.chip:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,.08); border-color:#111827; }
 
-  .dot-active {
-    background-color: white;
-    transform: scale(1.2);
-  }
+/* ================== FEATURED VEHICLES ================== */
+.vehicle-card { border-radius: 16px; overflow:hidden; transition: transform .3s ease, box-shadow .3s ease; }
+.vehicle-card:hover { transform: translateY(-4px); box-shadow: 0 30px 40px rgba(0,0,0,.15); }
+.v-media { position: relative; height: 220px; }
+.media-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.price-chip { position:absolute; bottom:12px; right:12px; background: rgba(17,24,39,.9); color:#fff; padding:.35rem .6rem; border-radius:10px; font-weight:800; font-size: .95rem; }
+.sold-ribbon { position: absolute; top: 12px; left: -40px; transform: rotate(-45deg); background: #ef4444; color: #fff; font-weight: 800; letter-spacing: 1px; padding: 6px 56px; box-shadow: 0 8px 20px rgba(0,0,0,.25); text-transform: uppercase; font-size: 0.85rem; pointer-events: none; }
+.sold-dim { filter: grayscale(40%) brightness(0.85); }
+.v-title { font-weight:800; color:#111827; margin:.35rem 0; }
+.v-meta { color:#6b7280; }
 
-  .dot-inactive {
-    background-color: transparent;
-  }
+/* ================== TEST DRIVE ================== */
+.testdrive { margin-top: 1.25rem; }
+.td-card { border-radius: 16px; overflow:hidden; }
+.td-title { margin: 0; font-weight: 800; color: #111827; }
+.pick-strip { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+.pick-item { scroll-snap-align:start; width: 22rem; }
 
-  .hero-section {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    /* max-height: 800px; */
-  }
+/* ================== TESTIMONIALS ================== */
+.testi-card { border-radius: 16px; }
+.quote { font-size: 1.1rem; color: #111827; }
+.byline { color:#6b7280; margin-top: .5rem; }
 
-  .hero-section img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 91vh;
-    object-fit: cover;
-  }
-
+/* Lift the hero CTA card on mobile */
+@media (max-width: 767px) {
   .overlay-content {
-    bottom: 23rem;
-    left: 15rem;
-    transform: none;
-    padding: 0;
-    text-align: left;
-    width: 23rem;
+    bottom: 18vh !important;     /* try 16–22vh to taste */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 92vw !important;
+    padding: 16px 18px !important;
+  }
+
+  /* Reduce the extra gap below the hero now that we’re not overlapping */
+  .hero-section + .text-center {
+    margin-top: 1.5rem !important;
   }
 }
 
-
-
-
-/* Dots container */
-.flex.justify-center.gap-2 {
-
-  gap: 0.5rem;
-  z-index: 20;
-  /* Ensure dots stay above other elements */
+@media (max-width: 767px) {
+  .hero-section { height: 88vh !important; } /* was 85vh */
 }
-
-/* Individual dot styling */
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1.1s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-/* Animation classes */
-.animate-fade-in-up {
-  animation: fadeInUp 1s ease-out forwards;
-  opacity: 0;
-}
-
-.delay-100 {
-  animation-delay: 0.1s;
-}
-
-.delay-200 {
-  animation-delay: 0.1s;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+/* === Compact hero on phones (short + fitted) === */
+@media (max-width: 767px) {
+  /* Make the hero much shorter */
+  .hero-section {
+    height: clamp(350px, 46vh, 500px) !important; /* pick your vibe: 34–42vh */
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  /* Keep the image neatly fitted inside the shorter hero */
+  .hero-img {
+    height: 100% !important;
+    width: 100%;
+    object-fit: cover;        /* swap to 'contain' if you prefer no crop + letterboxing */
+    object-position: center;  /* or 'center 40%' to bias the car up */
   }
-}
 
-
-
-.fade-slide {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeSlideIn 1s ease-out forwards;
-}
-
-@keyframes fadeSlideIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  /* Pull the glass card up so it sits within the short hero */
+  .overlay-content {
+    width: 92vw !important;
+    bottom: 6vh !important;   /* tweak 4–10vh to taste */
+    padding: 14px 16px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
   }
+
+  /* Slightly smaller text for the tighter space */
+  .hero-title { font-size: 1.35rem !important; line-height: 1.15 !important; }
+  .hero-sub   { font-size: .95rem  !important; }
+
+  /* Remove the big gap that was added when we overlapped before */
+  .hero-section + .usp-strip { margin-top: 1rem !important; }
 }
 
-.text-right-btn {
-  justify-content: flex-end !important;
-  text-align: right !important;
-}
-
-.hover-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.hover-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 30px 40px rgba(0, 0, 0, 0.15);
-
-}
 </style>
+
