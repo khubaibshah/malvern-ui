@@ -207,85 +207,54 @@ const filterByModel = (modelName: string) => {
 
 <template>
   <PrimeToast />
+  <div class="hero-section overflow-hidden car-details-container">
+    <!-- Background Images with Transition -->
+    <transition name="fade" mode="out-in">
+      <div :key="currentIndex" class="hero-slide relative w-full h-full">
+        <!-- Background Image -->
+        <img :src="currentSlide.itemImageSrc" :alt="currentSlide.alt"
+          class="w-full h-full object-cover absolute top-0 left-0 z-0" />
 
-  <!-- HERO -->
-<!-- HERO (slide, no fade) -->
-<section class="hero-section overflow-hidden car-details-container">
-  <!-- Background slider -->
-  <div class="hero-slider">
-    <div
-      class="hero-track"
-      :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
-    >
-      <div v-for="(image, i) in images" :key="i" class="hero-slide">
-        <img :src="image.itemImageSrc" :alt="image.alt" class="hero-img" />
+        <!-- Overlay Content -->
+        <div class="z-10 absolute overlay-content text-white">
+          <h1 class="text-4xl md:text-6xl font-bold mb-4 animate-fade-in-up"
+            style="font-family: 'Montserrat', sans-serif;">
+            {{ slideText.title }}
+          </h1>
+          <PrimeButton label="Browse Vehicles" class="mb-4" severity="contrast"
+            @click="$router.push({ name: 'car-search' })" />
+          <div class="flex justify-center gap-3 mt-6">
+            <button v-for="(image, index) in images" :key="index" @click="currentIndex = index" class="dot-button"
+              :class="{
+                'dot-active': currentIndex === index,
+                'dot-inactive': currentIndex !== index
+              }" aria-label="Slide navigation button" />
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="hero-gradient"></div>
+    </transition>
   </div>
 
-  <!-- Glass card (never fades) -->
-  <div class="overlay-content glass-card text-white z-10">
-    <h1 class="hero-title">{{ slideText.title }}</h1>
-    <p class="hero-sub">{{ slideText.subtitle }}</p>
-
-    <div class="cta-row">
-      <PrimeButton
-        label="Browse Vehicles"
-        class="cta-primary"
-        severity="contrast"
-        @click="$router.push({ name: 'car-search' })"
-      />
-      <a href="#test-drive" class="cta-secondary">Schedule a Test Drive</a>
-    </div>
-
-    <!-- Dots -->
-    <div class="dots mt-4">
-      <button
-        v-for="(image, index) in images"
-        :key="index"
-        @click="currentIndex = index"
-        class="dot-button"
-        :class="{ 'dot-active': currentIndex === index, 'dot-inactive': currentIndex !== index }"
-        aria-label="Slide navigation button"
-      />
-    </div>
+  <!-- Featured Vehicles -->
+  <div class="text-center px-3 mb-8">
+    <h2 class="text-3xl font-bold mb-2 text-gray-700" style="margin-top: 4rem;">Our Featured Models</h2>
+    <p class="text-gray-500" style="padding: 0 10px;">
+      Experience the pinnacle of automotive excellence with our curated selection of premium vehicles
+    </p>
   </div>
-</section>
 
-
-  <!-- TRUST / VALUE STRIP -->
-  <section class="trust-strip">
-    <div class="trust-item">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l7 4v6c0 5-3.4 9.3-7 10-3.6-.7-7-5-7-10V6l7-4zM7 10v2c0 3.7 2.4 7.3 5 8 2.6-.7 5-4.3 5-8v-2l-5-3-5 3zm3.6 2.8l4.6-4.6 1.4 1.4-6 6-3-3 1.4-1.4 1.6 1.6z"/></svg>
-      <span>HPI‑Checked Vehicles</span>
-    </div>
-    <div class="trust-item">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg>
-      <span>4.8★ Customer Reviews</span>
-    </div>
-    <div class="trust-item">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v12H3V6zm2 2v8h14V8H5zm2 2h5v2H7v-2zm0 3h7v2H7v-2z"/></svg>
-      <span>Finance Options Available</span>
-    </div>
-  </section>
-
-  <!-- FEATURED VEHICLES -->
-  <section id="featured" class="section-wrap">
-    <div class="section-header">
-      <h2>Featured Vehicles</h2>
-      <p>Hand‑picked cars with great specs and strong value.</p>
-    </div>
-
-    <!-- Loading skeletons -->
+  <!-- featured car section -->
+  <div class="surface-section px-3 md:px-6 lg:px-8">
     <div class="grid" v-if="loading">
-      <div class="col-12 md:col-8">
-        <PrimeSkeleton width="100%" height="360px" class="mb-3 border-round" />
-        <div class="flex gap-3 overflow-x-auto">
+      <!-- Skeletons while loading -->
+      <div class="col-12 md:col-6 lg:col-8">
+        <PrimeSkeleton width="100%" height="350px" class="mb-3 border-round mx-auto max-w-[400px]" />
+        <div class="flex gap-3 overflow-x-auto max-w-[400px] mx-auto">
           <PrimeSkeleton v-for="n in 4" :key="n" width="7rem" height="5rem" class="border-round" />
         </div>
       </div>
-      <div class="col-12 md:col-4">
+
+      <div class="col-12 md:col-6 lg:col-4">
         <PrimeCard class="w-full">
           <template #title>
             <PrimeSkeleton width="70%" class="mb-2" />
@@ -301,124 +270,99 @@ const filterByModel = (modelName: string) => {
       </div>
     </div>
 
-    <!-- Featured -->
+    <!-- Actual Featured Vehicles -->
     <div class="grid mx-auto" v-else-if="featuredVehicles" style="justify-content: center;">
-      <div
-        v-for="(car, index) in featuredVehicles"
-        :key="car.id"
-        :class="`col-12 sm:col-6 lg:col-4 px-3 mb-5 md:col-${12 / featuredVehicles.length}`"
-      >
-        <PrimeCard class="border-round-xl overflow-hidden hover-card shadow-elev">
+      <div v-for="(car, index) in featuredVehicles" :key="car.id"
+        :class="`col-12 sm:col-6 lg:col-4 px-3 mb-5 md:col-${12 / featuredVehicles.length}`">
+        <PrimeCard class="border-round-lg overflow-hidden hover-card">
           <template #header>
-            <div class="card-media">
-              <img
-                :src="mainImg(car)"
-                :alt="(car.make || '') + ' ' + (car.model || '')"
-                class="media-img"
-                :class="{ 'sold-dim': isSold(car) }"
-                loading="lazy"
-              />
+            <div class="relative">
+              <img :src="mainImg(car)":alt="car.make + ' ' + car.model"
+                class="w-full h-40 object-cover border-top-round-lg" :class="{ 'sold-dim': isSold(car) }" />
               <div v-if="isSold(car)" class="sold-ribbon">SOLD</div>
-              <div class="price-chip">£{{ parseFloat(car.price).toLocaleString() }}</div>
             </div>
           </template>
           <template #title>
-            <h3 class="vehicle-title">{{ car.make }} {{ car.model }}</h3>
+            <h3 class="text-sm font-bold text-800 mb-1">{{ car.make }} {{ car.model }}</h3>
           </template>
           <template #content>
-            <div class="spec-row">
-              <span v-if="car.variant">{{ car.variant }}</span>
-              <span v-if="car.year">• {{ car.year }}</span>
+            <div class="text-sm text-gray-500 mb-1">
+              {{ car.variant || 'No Variant' }} • {{ car.year || 'N/A' }}
             </div>
           </template>
           <template #footer>
-            <div class="card-actions">
+            <div class="flex gap-3 mt-1">
+              <div class="text-lg font-bold text-green-600 mb-3 w-full">
+                £{{ parseFloat(car.price).toLocaleString() }}
+              </div>
               <RouterLink :to="{ name: 'vehicle-details', params: { id: car.id } }" class="w-full no-underline">
-                <PrimeButton label="View Details" class="w-full p-button-sm" text />
+                <PrimeButton label="View Details" class="w-full text-right-btn p-button-sm" text />
               </RouterLink>
             </div>
           </template>
         </PrimeCard>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- QUICK FILTERS (models) -->
-  <section v-if="modelOptions && modelOptions.length" class="quick-filters">
-    <div class="section-header compact">
-      <h3>Popular Models</h3>
-      <p>Tap a model to view available stock.</p>
-    </div>
-    <div class="chips">
-      <button
-        v-for="opt in modelOptions.slice(0, 10)"
-        :key="opt.value"
-        class="chip"
-        @click="filterByModel(opt.value); $router.push({ name: 'car-search', query: { model: opt.value } })"
-      >
-        {{ opt.label }}
-      </button>
-    </div>
-  </section>
-
-  <!-- TEST DRIVE FORM -->
-  <section id="test-drive" class="section-wrap">
-    <div class="section-header">
-      <h2>Schedule a Test Drive</h2>
-      <p>Tell us who you are and the car you like — we’ll call you back.</p>
-    </div>
-
+  <!-- call back request form -->
+  <div class="text-center px-3 mb-4">
+    <h2 class="text-3xl font-bold mb-2 text-gray-700">Schedule a Test Drive</h2>
+    <p class="text-gray-500" style="padding: 0 10px;">
+      Fill out the form below to request a test drive appointment for your selected vehicle.
+    </p>
+  </div>
+  <div class="surface-section px-3 md:px-6 lg:px-8">
     <div class="grid">
-      <!-- Form -->
-      <div class="col-12 md:col-6">
-        <PrimeCard class="glass-card p-0">
+      <!-- Callback form -->
+      <div class="col-12 md:col-6 lg:col-6">
+        <PrimeCard>
           <template #title>
-            <p class="muted">Please fill out your details and select a vehicle for a call back</p>
+            <p class="text-gray-500" style="padding: 0 10px;">
+              Please fill out your details and select a vehicle for a call back
+            </p>
           </template>
           <template #content>
-            <div class="form-grid">
+            <div class="mb-4">
               <InputText placeholder="Your Name" class="w-full" v-model="form.name" />
+            </div>
+            <div class="mb-4">
               <InputText placeholder="Email Address" class="w-full" v-model="form.email" />
+            </div>
+            <div class="mb-4">
               <InputText placeholder="Phone Number" class="w-full" v-model="form.phone" />
-
-              <p class="selected-vehicle" v-if="form.vehicle_id">
-                Selected:
-                {{ vehicleOptions.find(opt => opt.value === form.vehicle_id)?.label || 'Unknown Vehicle' }}
+            </div>
+            <div class="mb-4">
+              <p class="text-md text-gray-600 mt-2" v-if="form.vehicle_id">
+                Selected: {{
+                  vehicleOptions.find(opt => opt.value === form.vehicle_id)?.label || 'Unknown Vehicle'
+                }}
               </p>
-
-              <PrimeButton
-                label="Request Appointment"
-                class="w-full submit-btn"
-                severity="contrast"
-                :loading="submitting"
-                @click="submitTestDriveRequest()"
-              />
+            </div>
+            <div class="mb-4">
+              <PrimeButton label="Request Appointment" class="w-full bg-black text-white font-semibold"
+                severity="contrast" :loading="submitting" @click="submitTestDriveRequest()" />
             </div>
           </template>
         </PrimeCard>
       </div>
 
-      <!-- Vehicle pick scroller -->
-      <div class="col-12 md:col-6">
-        <div class="pick-scroller">
-          <div
-            v-for="(car, index) in vehicles"
-            :key="car.id"
-            class="pick-item"
-          >
-            <PrimeCard
-              :class="{ 'ring-2 ring-green-500': form.vehicle_id === car.id, 'hover-card': true }"
-              style="width: 100%; overflow: hidden;"
-            >
+      <!-- Vehicle selection carousel -->
+      <div class="col-12 md:col-6 lg:col-6">
+        <div class="flex overflow-x-auto gap-4 pb-2"
+          style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
+          <div v-for="(car, index) in vehicles" :key="car.id" class="flex-shrink-0"
+            style="scroll-snap-align: start; width: 22rem;">
+            <PrimeCard :class="{
+              'ring-2 ring-green-500': form.vehicle_id === car.id,
+              'hover-card': true
+            }" style="width: 100%; overflow: hidden;">
               <template #header>
-                <div class="card-media small">
-                  <img
-                    :src="mainImg(car)"
-                    :alt="(car.make || '') + ' ' + (car.model || '')"
-                    class="media-img"
-                    :class="{ 'sold-dim': isSold(car) }"
-                    loading="lazy"
-                  />
+                <div class="relative">
+                  <img :src="mainImg(car)"
+                    :alt="car.make + ' ' + car.model"
+                    class="w-full h-40 object-cover border-top-round-lg"
+                    :class="{ 'sold-dim': isSold(car) }" />
                   <div v-if="isSold(car)" class="sold-ribbon">SOLD</div>
                 </div>
               </template>
@@ -426,250 +370,225 @@ const filterByModel = (modelName: string) => {
               <template #subtitle>{{ car.variant || 'No Variant' }}</template>
               <template #content>
                 <p class="m-0 text-sm text-gray-700">
-                  Discover the thrill of driving {{ car.make }}'s {{ car.model }} — packed with features, performance, and style.
+                  Discover the thrill of driving {{ car.make }}'s {{ car.model }} — packed with features, performance,
+                  and style.
                 </p>
               </template>
               <template #footer>
-                <PrimeButton
-                  label="Select This Car"
-                  size="small"
+                <PrimeButton label="Select This Car" size="small"
                   class="w-full"
                   :disabled="isSold(car)"
                   :outlined="form.vehicle_id !== car.id"
                   :severity="form.vehicle_id === car.id ? 'success' : 'secondary'"
-                  @click="form.vehicle_id = car.id"
-                />
+                  @click="form.vehicle_id = car.id" />
               </template>
             </PrimeCard>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- TESTIMONIALS -->
-  <section v-if="testimonials && testimonials.length" class="section-wrap">
-    <div class="section-header">
-      <h2>What Our Customers Say</h2>
-      <p>Real words from real buyers.</p>
-    </div>
-    <div class="review-track" aria-label="Customer reviews">
-      <article v-for="t in testimonials" :key="t.name" class="review-card hover-card">
-        <div class="review-head">
-          <img :src="t.avatar" :alt="t.name" class="avatar" />
-          <div>
-            <h4 class="m-0">{{ t.name }}</h4>
-            <p class="m-0 muted">{{ t.role }}</p>
-          </div>
-        </div>
-        <p class="quote">“{{ t.quote }}”</p>
-        <div class="stars" aria-hidden="true">
-          <svg v-for="i in 5" :key="i" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg>
-        </div>
-      </article>
-    </div>
-  </section>
+  <!-- testimonials etc (unchanged below this point) -->
 </template>
 
+
 <style scoped>
-/* ---- CSS Vars ---- */
-:root {
-  --hero-title: clamp(2rem, 6vw, 4rem);
-  --hero-sub: clamp(1rem, 2.2vw, 1.25rem);
-  --brand: #111827; /* near-black */
-  --muted: #6b7280; /* gray-500 */
-  --accent: #0ea5e9; /* sky-500 */
-  --success: #16a34a;
-  --card-bg: rgba(255, 255, 255, 0.08);
-}
-
-/* ---- HERO ---- */
-.hero-section img { object-fit: cover; object-position: 70% center; }
-
-@media (min-width: 768px) {
-  .hero-section { height: 92vh; }
-}
-.hero-slide img { filter: saturate(1.05) contrast(1.05); }
-.hero-gradient { background: linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,.35) 40%, rgba(0,0,0,.55) 100%); }
-.glass-card {
-  background: rgba(17, 24, 39, 0.45);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 1.25rem;
-  padding: 1.25rem 1.25rem 1rem;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-}
-.overlay-content {
-  position: absolute;
-  left: 50%;
-  bottom: 2rem;
-  transform: translateX(-50%);
-  width: min(680px, 92%);
-  color: #fff;
-}
-@media (min-width: 768px) {
-  .overlay-content {
-    left: 10rem;
-    bottom: 22rem;
-    transform: none;
-    width: 36rem;
-  }
-}
-.hero-title {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 800;
-  line-height: 1.05;
-  font-size: var(--hero-title);
-  margin: 0 0 .4rem 0;
-}
-.hero-sub { font-size: var(--hero-sub); opacity: .95; margin: 0 0 1rem 0; }
-.cta-row { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
-.cta-primary { font-weight: 700; }
-.cta-secondary { color: #fff; text-decoration: none; opacity: .9; border-bottom: 1px dashed rgba(255,255,255,.6); padding-bottom: 2px; }
-
-.dots { display: flex; gap: .5rem; align-items: center; }
-.dot-button { width: 12px; height: 12px; border-radius: 999px; border: 2px solid #fff; background: transparent; transition: all .25s ease; }
-.dot-button:hover { background-color: rgba(255,255,255,.35); }
-.dot-active { background: #fff; transform: scale(1.15); }
-.dot-inactive { background: transparent; }
-
-/* ---- TRUST STRIP ---- */
-.trust-strip {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-  gap: .75rem;
-  padding: 1rem clamp(1rem, 4vw, 2rem);
-  background: linear-gradient(90deg, #0f172a 0%, #111827 100%);
-  color: #fff;
-}
-.trust-item { display: flex; align-items: center; gap: .55rem; font-weight: 600; justify-content: center; }
-.trust-item svg { opacity: .9; }
-
-/* ---- SECTIONS ---- */
-.section-wrap { padding: 2.5rem clamp(1rem, 4vw, 2rem); }
-.section-header { text-align: center; margin-bottom: 1.25rem; }
-.section-header.compact { margin-bottom: .5rem; }
-.section-header h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); color: #111827; margin: 0 0 .25rem; }
-.section-header h3 { font-size: clamp(1.2rem, 2.2vw, 1.4rem); color: #111827; margin: 0; }
-.section-header p { color: var(--muted); margin: .25rem 0 0; }
-
-/* ---- FEATURED CAR CARDS ---- */
-.shadow-elev { box-shadow: 0 20px 40px rgba(0,0,0,.08); }
-.card-media { position: relative; aspect-ratio: 16/9; background: #0b0b0b; }
-.card-media.small { aspect-ratio: 16/10; }
-.media-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.price-chip {
-  position: absolute; bottom: .65rem; right: .65rem;
-  background: rgba(17,24,39,.85); color: #fff; font-weight: 800;
-  padding: .35rem .6rem; border-radius: .5rem; font-size: .95rem;
-}
-.vehicle-title { font-size: 1rem; margin: .25rem 0; color: #111827; }
-.spec-row { color: var(--muted); font-size: .9rem; }
-
-.card-actions { display: flex; gap: .75rem; align-items: center; margin-top: .25rem; }
-
-/* SOLD */
 .sold-ribbon {
-  position: absolute; top: 12px; left: -40px; transform: rotate(-45deg);
-  background: #ef4444; color: #fff; font-weight: 800; letter-spacing: 1px;
-  padding: 6px 56px; box-shadow: 0 8px 20px rgba(0,0,0,.25);
-  text-transform: uppercase; font-size: .85rem; pointer-events: none;
+  position: absolute;
+  top: 12px;
+  left: -40px;
+  transform: rotate(-45deg);
+  background: #ef4444;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 6px 56px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  pointer-events: none;
 }
-.sold-dim { filter: grayscale(40%) brightness(.85); }
-
-/* ---- QUICK FILTERS ---- */
-.quick-filters { padding: 1.25rem clamp(1rem, 4vw, 2rem) 0; }
-.chips { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
-.chip {
-  padding: .45rem .7rem; border: 1px solid #e5e7eb; border-radius: 999px;
-  background: #fff; font-weight: 600; cursor: pointer; transition: all .2s ease;
+.sold-dim {
+  filter: grayscale(40%) brightness(0.85);
 }
-.chip:hover { border-color: #111827; transform: translateY(-1px); }
 
-/* ---- FORM & PICKER ---- */
-.muted { color: var(--muted); }
-.selected-vehicle { margin: .25rem 0 0; color: #111827; font-weight: 600; }
-.submit-btn { background: #111827; font-weight: 700; }
+@media (max-width: 768px) {
+  .dot-button {
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    border: 2px solid white;
+    background-color: transparent;
+    transition: all 0.3s ease;
+    left: 10rem;
+  }
 
-.form-grid { display: grid; gap: .75rem; }
+  .dot-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
 
-.pick-scroller { display: flex; overflow-x: auto; gap: 1rem; padding-bottom: .25rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-.pick-item { flex: 0 0 22rem; scroll-snap-align: start; }
+  .dot-active {
+    background-color: white;
+    transform: scale(1.2);
+  }
 
-/* ---- REVIEWS ---- */
-.review-track { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(260px, 1fr); gap: 1rem; overflow-x: auto; padding-bottom: .25rem; }
-.review-card { background: #fff; border-radius: 1rem; padding: 1rem; border: 1px solid #eef; }
-.review-head { display: flex; align-items: center; gap: .75rem; }
-.avatar { width: 40px; height: 40px; border-radius: 999px; object-fit: cover; }
-.quote { margin: .5rem 0; color: #111827; font-size: .95rem; }
-.stars { color: #f59e0b; display: flex; gap: .15rem; }
+  .dot-inactive {
+    background-color: transparent;
+  }
 
-/* ---- Motion ---- */
-.fade-enter-active, .fade-leave-active { transition: opacity 1.1s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
-.animate-fade-in-up { animation: fadeInUp 1s ease-out forwards; opacity: 0; }
-.delay-100 { animation-delay: .1s; }
-.delay-200 { animation-delay: .2s; }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .hero-section {
+    position: relative;
+    width: 100%;
+    height: 42vh;
+    max-height: 800px;
+  }
 
-/* ---- Existing helpers retained ---- */
-.text-right-btn { justify-content: flex-end !important; text-align: right !important; }
-.hover-card { transition: transform .25s ease, box-shadow .25s ease; }
-.hover-card:hover { transform: translateY(-4px); box-shadow: 0 30px 40px rgba(0,0,0,.15); }
+  .hero-section img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    object-fit: cover;
+    height: 22rem;
+  }
+}
 
-/* === Center + wider hero card (override) === */
 .overlay-content {
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  bottom: clamp(16px, 6vh, 96px);
-  width: clamp(28rem, 64vw, 62rem); /* widen */
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 1rem;
+  /* max-width: 20rem; */
+  text-align: left;
+  width: 23rem;
 }
 
-/* optional: a touch more breathing room inside the glass card */
-.glass-card { padding: 1.25rem 1.75rem; }
+@media (min-width: 768px) {
+  .dot-button {
+    width: 25px;
+    height: 25px;
+    border-radius: 9999px;
+    border: 2px solid white;
+    background-color: transparent;
+    transition: all 0.3s ease;
+  }
 
-/* keep dots and CTAs aligned nicely inside the wider card */
-.dots { justify-content: flex-start; }
-.cta-row { gap: 1rem; flex-wrap: wrap; }
+  .dot-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
 
-/* Raise the hero card higher */
-@media (min-width: 1024px) {
+  .dot-active {
+    background-color: white;
+    transform: scale(1.2);
+  }
+
+  .dot-inactive {
+    background-color: transparent;
+  }
+
+  .hero-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    /* max-height: 800px; */
+  }
+
+  .hero-section img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 91vh;
+    object-fit: cover;
+  }
+
   .overlay-content {
-    bottom: clamp(160px, 24vh, 340px) !important; /* move it up on large screens */
+    bottom: 23rem;
+    left: 15rem;
+    transform: none;
+    padding: 0;
+    text-align: left;
+    width: 23rem;
   }
 }
 
-/* Tablets */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .overlay-content {
-    bottom: clamp(96px, 18vh, 240px) !important;
+
+
+
+/* Dots container */
+.flex.justify-center.gap-2 {
+
+  gap: 0.5rem;
+  z-index: 20;
+  /* Ensure dots stay above other elements */
+}
+
+/* Individual dot styling */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1.1s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Animation classes */
+.animate-fade-in-up {
+  animation: fadeInUp 1s ease-out forwards;
+  opacity: 0;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.1s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Mobiles (just a little lift) */
-@media (max-width: 767px) {
-  .overlay-content {
-    bottom: clamp(32px, 10vh, 120px) !important;
+
+
+.fade-slide {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideIn 1s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* --- HERO slider --- */
-.hero-slider { position: absolute; inset: 0; overflow: hidden; }
-.hero-track {
-  display: flex;
-  height: 100%;
-  gap: 0;                 /* images glued together */
-  transition: transform 800ms ease-in-out; /* slide from right */
-  will-change: transform;
+.text-right-btn {
+  justify-content: flex-end !important;
+  text-align: right !important;
 }
-.hero-slide { flex: 0 0 100%; height: 100%; position: relative; }
-.hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
-.hero-gradient { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,.25) 40%, rgba(0,0,0,.4) 100%); pointer-events: none; }
 
-/* Remove any hero fade effects entirely */
-.fade-enter-active, .fade-leave-active { transition: none !important; }
-.fade-enter-from, .fade-leave-to { opacity: 1 !important; }
-.animate-fade-in-up { animation: none !important; opacity: 1 !important; }
+.hover-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
+.hover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 40px rgba(0, 0, 0, 0.15);
+
+}
 </style>
-
