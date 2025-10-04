@@ -8,20 +8,25 @@
       <img :src="newLogo" alt="Logo" class="logo-img lg:mr-6 cursor-pointer" />
     </router-link>
 
-    <a
-      v-ripple
-      class="cursor-pointer block lg:hidden text-gray-800 mt-1 p-ripple"
+    <button
+      type="button"
+      class="hamburger-btn block lg:hidden text-gray-800 mt-1"
       @click="toggleMobileMenu"
       :aria-expanded="isMobileMenuOpen"
       aria-controls="mobile-menu"
+      :class="{ 'is-active': isMobileMenuOpen }"
     >
-      <i class="pi pi-bars text-4xl"></i>
-    </a>
+      <span class="sr-only">Toggle navigation</span>
+      <span aria-hidden="true" class="hamburger-line line-top"></span>
+      <span aria-hidden="true" class="hamburger-line line-middle"></span>
+      <span aria-hidden="true" class="hamburger-line line-bottom"></span>
+    </button>
 
     <div
       id="mobile-menu"
       :class="[
-        'align-items-center flex-grow-1 justify-content-between menu-container flex lg:flex',
+        'menu-container flex flex-column flex-grow-1',
+        'lg:flex lg:flex-row lg:align-items-center lg:justify-content-between',
         isMobileMenuOpen ? 'menu-open' : ''
       ]"
     >
@@ -122,41 +127,122 @@ onBeforeUnmount(() => {
 
 <style scoped>
 
+
 .logo-img {
   width: 110px;
   height: auto;
 }
 
-.menu-container {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: white;
-  z-index: 1;
-  box-shadow: none;
-  border-top: none;
+.hamburger-btn {
+  position: relative;
+  width: 2.75rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
   padding: 0;
-  max-height: 0;
+  cursor: pointer;
+}
+
+.hamburger-btn:focus-visible {
+  outline: 2px solid #1f2937;
+  outline-offset: 4px;
+}
+
+.hamburger-line {
+  position: absolute;
+  width: 1.8rem;
+  height: 0.16rem;
+  background: #1f2937;
+  border-radius: 999px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.line-top {
+  transform: translateY(-0.55rem);
+}
+
+.line-middle {
+  transform: translateY(0);
+}
+
+.line-bottom {
+  transform: translateY(0.55rem);
+}
+
+.hamburger-btn.is-active .line-top {
+  transform: translateY(0) rotate(45deg);
+}
+
+.hamburger-btn.is-active .line-middle {
   opacity: 0;
+  transform: scaleX(0.4);
+}
+
+.hamburger-btn.is-active .line-bottom {
+  transform: translateY(0) rotate(-45deg);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.menu-container {
+  position: fixed;
+  top: 5rem;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: calc(100vh - 5rem);
+  background: white;
+  z-index: 900;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transform: translateY(-0.5rem);
-  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, transform 0.3s ease;
+  transform: translateY(-1rem);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  overflow: hidden;
 }
 
 .menu-container.menu-open {
-  padding: 0.5rem 1.25rem 1.25rem;
-  max-height: 600px;
+  padding: 2rem 1.5rem;
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
-  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  box-shadow: 0 20px 40px -16px rgba(17, 24, 39, 0.4);
 }
 
-/* Added spacing for mobile menu items */
+/* Mobile menu layout */
+.mobile-menu-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .mobile-menu-list li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.mobile-menu-list a {
+  display: inline-flex;
+  align-items: center;
 }
 
 @media (max-width: 768px) {
@@ -180,15 +266,30 @@ onBeforeUnmount(() => {
     padding: 0;
     background: transparent;
     flex-grow: 1;
-    max-height: none;
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
     transform: none;
+    width: auto;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    overflow: visible;
   }
-  
-  /* Remove spacing for desktop */
+  .menu-container .mobile-menu-list {
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+  }
   .mobile-menu-list li {
     margin-bottom: 0;
   }
+  .mobile-menu-list a {
+    white-space: nowrap;
+  }
+  
+  /* Remove spacing for desktop */
 }
 </style>
