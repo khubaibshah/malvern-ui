@@ -134,7 +134,8 @@ onBeforeUnmount(() => {
   width: 100%;
   background: white;
   z-index: 1;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+  border-top: none;
   padding: 0;
   max-height: 0;
   opacity: 0;
@@ -145,11 +146,12 @@ onBeforeUnmount(() => {
 }
 
 .menu-container.menu-open {
-  padding: 1rem;
+  padding: 0.5rem 1.25rem 1.25rem;
   max-height: 600px;
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
+  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.2);
 }
 
 /* Added spacing for mobile menu items */
