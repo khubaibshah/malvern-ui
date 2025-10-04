@@ -99,6 +99,10 @@ const closeMobileMenu = () => {
 
 <style scoped>
 
+.logo-img {
+  width: 110px;
+  height: auto;
+}
 
 .menu-container {
   position: absolute;
