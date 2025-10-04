@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="navRef"
     class="bg-white px-6 flex align-items-center justify-content-between fixed"
     style="z-index: 1000; width: 100%; height: 5rem;"
   >
@@ -10,19 +11,19 @@
     <a
       v-ripple
       class="cursor-pointer block lg:hidden text-gray-800 mt-1 p-ripple"
-      v-styleclass="{
-        selector: '#mobile-menu',
-        enterClass: 'hidden',
-        leaveToClass: 'hidden',
-        hideOnOutsideClick: true,
-      }"
+      @click="toggleMobileMenu"
+      :aria-expanded="isMobileMenuOpen"
+      aria-controls="mobile-menu"
     >
       <i class="pi pi-bars text-4xl"></i>
     </a>
 
     <div
       id="mobile-menu"
-      class="align-items-center flex-grow-1 justify-content-between hidden lg:flex menu-container"
+      :class="[
+        'align-items-center flex-grow-1 justify-content-between menu-container flex lg:flex',
+        isMobileMenuOpen ? 'menu-open' : ''
+      ]"
     >
       <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row mobile-menu-list">
         <li>
@@ -85,16 +86,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import router from '@/router/router';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import newLogo from '@/assets/img/newlogo1.png';
 
+const navRef = ref<HTMLElement | null>(null);
+const isMobileMenuOpen = ref(false);
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
+
 const closeMobileMenu = () => {
-  const mobileMenu = document.getElementById('mobile-menu');
-  if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-    mobileMenu.classList.add('hidden');
+  isMobileMenuOpen.value = false;
+};
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (!isMobileMenuOpen.value) {
+    return;
+  }
+
+  const target = event.target as Node;
+  if (navRef.value && !navRef.value.contains(target)) {
+    isMobileMenuOpen.value = false;
   }
 };
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <style scoped>
@@ -112,7 +135,21 @@ const closeMobileMenu = () => {
   background: white;
   z-index: 1;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateY(-0.5rem);
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, transform 0.3s ease;
+}
+
+.menu-container.menu-open {
   padding: 1rem;
+  max-height: 600px;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 /* Added spacing for mobile menu items */
@@ -141,6 +178,10 @@ const closeMobileMenu = () => {
     padding: 0;
     background: transparent;
     flex-grow: 1;
+    max-height: none;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
   }
   
   /* Remove spacing for desktop */
